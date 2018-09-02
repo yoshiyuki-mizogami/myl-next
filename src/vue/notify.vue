@@ -4,7 +4,7 @@
   top 10%
   right 0
   padding 3px
-  border-radius 3px 0px 0px 3px
+  border-radius 2px 0px 0px 2px
   background-color var(--notify-bg)
 .notify-enter-active, .notify-leave-active
   transition transform .3s ease

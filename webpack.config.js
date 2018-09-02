@@ -44,7 +44,7 @@ module.exports = [{
       filenam:'[name].css'
     })
   ],
-  devtool:'source-map'
+  devtool:'cheap-evel-source-map'
 },
 {
   target:'electron-main', 
@@ -66,6 +66,6 @@ module.exports = [{
         test:/\.ts$/
       }
     ]
-  }
-
+  },
+  devtool:'cheap-eval-source-map'
 }]

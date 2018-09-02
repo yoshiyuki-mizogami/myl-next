@@ -1,5 +1,6 @@
 {
   "EDIT":"編集",
   "REMOVE":"削除",
-  "OPEN_PARENT":"親フォルダを開く"
+  "OPEN_PARENT":"親フォルダを開く",
+  "INPUT_NEW_CATEGORY":"新カテゴリ名を入力"
 }

@@ -4,5 +4,6 @@
   "REMOVE":"Remove",
   "OPEN_PARENT":"Open parent",
   "REQUIRE_NAME":"Require name",
-  "NAME_UPDATED":"Name updated."
+  "NAME_UPDATED":"Name updated.",
+  "INPUT_NEW_CATEGORY":"Input new category name"
 }

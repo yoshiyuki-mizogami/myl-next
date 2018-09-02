@@ -4,7 +4,7 @@
   height 60px
   background-color var(--dialog-back)
   padding 5px
-  border-radius 5px
+  border-radius 2px
   text-align center
   position fixed
   top 0

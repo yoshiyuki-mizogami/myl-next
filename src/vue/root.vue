@@ -1,3 +1,83 @@
+<style lang="stylus">
+html,body
+  height 100%
+  width 100%
+  padding 0
+  margin 0
+  box-sizing border-box
+  font-family 'メイリオ'
+  overflow hidden
+  background-color var(--base)
+.layer-enter-active, .layer-leave-active
+  transition opacity .3s ease
+  opacity 1
+.layer-enter, .layer-leave-to
+  opacity 0
+input
+  outline none
+  border-radius 2px
+  padding 2px
+  border none
+  text-align center
+  background-color rgb(244,244,244)
+div,input, textarea, select
+  box-sizing border-box
+  font-family 'メイリオ'
+input[type=button],button
+  transition background .3s ease
+  &:hover
+    background-color rgb(255,223,233)
+
+.whole
+  width 100%
+.header
+  height 20px
+  width:100%
+  -webkit-app-region drag
+  background-color var(--header-color)
+  text-align right
+  .header-btn
+    -webkit-app-region no-drag
+    width 20px
+    height 20px
+    background-color white
+    border-radius 10%
+    display inline-block
+    cursor pointer
+    &.new-cate-btn
+      background-color rgb(120, 200, 255)
+    &.aot
+      background-color rgb(255,255,155)
+    &.close-btn
+      background-color rgb(255, 100, 120)
+
+.content
+  height calc(100% - 20px)
+  width 100%
+  display flex
+  flex-direction row
+  .categories
+    min-height 100px
+    height 100%
+    width 150px
+    display flexbox
+    text-align center
+    flex-basis 35%
+  .items
+    background-color var(--item-back)
+    flex-basis 65%
+.loading
+  position fixed
+  top 0
+  left 0
+  height 1000px
+  width 100%
+  background-color rgba(0,0,0,.5)
+.loading-enter-active,.loading-leave-active
+  transition opacity .3s ease 
+.loading-enter,.loading-leave-to
+  opacity 0
+</style>
 <template>
   <div class="whole" ref="app">
     <transition name="loading">
@@ -40,8 +120,10 @@ const draggable = require('vuedraggable')
 const thisWindow = remote.getCurrentWindow()
 export default Vue.extend({ 
   async created(){
+    hub.pushLayer(this)
     await this.$store.dispatch('init')
     hub.$on('adjust', this.adjust)
+    document.documentElement.addEventListener('keydown', hub.keydown)
   },
   watch:{
     async selectedCategory(v){
@@ -126,83 +208,3 @@ export default Vue.extend({
 })
 </script>
 
-<style lang="stylus">
-html,body
-  height 100%
-  width 100%
-  padding 0
-  margin 0
-  box-sizing border-box
-  font-family 'メイリオ'
-  overflow hidden
-  background-color var(--base)
-.layer-enter-active, .layer-leave-active
-  transition opacity .3s ease
-  opacity 1
-.layer-enter, .layer-leave-to
-  opacity 0
-input
-  outline none
-  border-radius 2px
-  padding 2px
-  border none
-  text-align center
-  background-color rgb(244,244,244)
-div,input, textarea, select
-  box-sizing border-box
-  font-family 'メイリオ'
-input[type=button],button
-  transition background .3s ease
-  &:hover
-    background-color rgb(255,223,233)
-
-.whole
-  width 100%
-.header
-  height 20px
-  width:100%
-  -webkit-app-region drag
-  background-color var(--header-color)
-  text-align right
-  .header-btn
-    -webkit-app-region no-drag
-    width 20px
-    height 20px
-    background-color white
-    border-radius 100%
-    display inline-block
-    cursor pointer
-    &.new-cate-btn
-      background-color rgb(120, 200, 255)
-    &.aot
-      background-color rgb(255,255,155)
-    &.close-btn
-      background-color rgb(255, 100, 120)
-
-.content
-  height calc(100% - 20px)
-  width 100%
-  display flex
-  flex-direction row
-  .categories
-    min-height 100px
-    height 100%
-    width 150px
-    display flexbox
-    text-align center
-    flex-basis 35%
-  .items
-    background-color var(--item-back)
-    flex-basis 65%
-.loading
-  position fixed
-  top 0
-  left 0
-  height 1000px
-  width 100%
-  background-color rgba(0,0,0,.5)
-.loading-enter-active,.loading-leave-active
-  transition opacity .3s ease 
-.loading-enter,.loading-leave-to
-  opacity 0
-</style>

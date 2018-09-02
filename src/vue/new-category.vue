@@ -12,7 +12,8 @@
     background-color white
     text-align center
     padding 10px
-    border-radius 10px
+    border-radius 2px
+    box-shadow 0px 3px 5px black
     input
       padding 5px
 </style>
@@ -21,7 +22,8 @@
   <div class="layer-back" v-if="show">
     <div class="new-category">
       Input new category name
-      <input type="text" class="new-category-input" @keydown.enter="addNewCategory">
+      <input type="text" class="new-category-input" @keydown.enter="addNewCategory"
+             :placeholder="ui.INPUT_NEW_CATEGORY">
     </div>
   </div>
   </transition>
@@ -29,12 +31,17 @@
 <script lang="ts">
 import Vue from 'vue'
 import {mapState} from 'vuex'
+import layerMixin from './layer'
 export default Vue.extend({
+  mixins:[layerMixin],
   computed:mapState({
+    ui:'ui',
     show:'showNewCategoryDialog'
   }),
   created(){
-    
+    this.setShortcut({
+      'Escape':this.close
+    })
   },
   methods:{
     addNewCategory(ev){

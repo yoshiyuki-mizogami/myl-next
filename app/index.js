@@ -94,7 +94,7 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! path */ \"path\");\n/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron */ \"electron\");\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_1__);\n\r\n\r\nvar mainWindow;\r\nglobal['ROOTDIR'] = __dirname;\r\nelectron__WEBPACK_IMPORTED_MODULE_1__[\"app\"].on('ready', function () {\r\n    console.log(__dirname);\r\n    mainWindow = new electron__WEBPACK_IMPORTED_MODULE_1__[\"BrowserWindow\"]({\r\n        height: 300,\r\n        width: 350,\r\n        frame: false,\r\n        resizable: false\r\n    });\r\n    mainWindow.loadFile(Object(path__WEBPACK_IMPORTED_MODULE_0__[\"join\"])(__dirname, 'index.html'));\r\n    mainWindow.on('closed', function () {\r\n        electron__WEBPACK_IMPORTED_MODULE_1__[\"app\"].quit();\r\n    });\r\n});\r\n\n\n//# sourceURL=webpack:///./src/index.ts?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! path */ \"path\");\n/* harmony import */ var path__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(path__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! electron */ \"electron\");\n/* harmony import */ var electron__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(electron__WEBPACK_IMPORTED_MODULE_1__);\n\r\n\r\nvar mainWindow;\r\nglobal['ROOTDIR'] = __dirname;\r\nelectron__WEBPACK_IMPORTED_MODULE_1__[\"app\"].on('ready', function () {\r\n    console.log(__dirname);\r\n    mainWindow = new electron__WEBPACK_IMPORTED_MODULE_1__[\"BrowserWindow\"]({\r\n        height: 300,\r\n        width: 350,\r\n        frame: false,\r\n        resizable: false\r\n    });\r\n    mainWindow.loadFile(Object(path__WEBPACK_IMPORTED_MODULE_0__[\"join\"])(__dirname, 'index.html'));\r\n    mainWindow.on('closed', function () {\r\n        electron__WEBPACK_IMPORTED_MODULE_1__[\"app\"].quit();\r\n    });\r\n});\r\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiLi9zcmMvaW5kZXgudHMuanMiLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8vLi9zcmMvaW5kZXgudHM/NzFiZCJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBqb2luIH0gZnJvbSAncGF0aCc7XHJcbmltcG9ydCB7IGFwcCwgQnJvd3NlcldpbmRvdyB9IGZyb20gJ2VsZWN0cm9uJztcclxudmFyIG1haW5XaW5kb3c7XHJcbmdsb2JhbFsnUk9PVERJUiddID0gX19kaXJuYW1lO1xyXG5hcHAub24oJ3JlYWR5JywgZnVuY3Rpb24gKCkge1xyXG4gICAgY29uc29sZS5sb2coX19kaXJuYW1lKTtcclxuICAgIG1haW5XaW5kb3cgPSBuZXcgQnJvd3NlcldpbmRvdyh7XHJcbiAgICAgICAgaGVpZ2h0OiAzMDAsXHJcbiAgICAgICAgd2lkdGg6IDM1MCxcclxuICAgICAgICBmcmFtZTogZmFsc2UsXHJcbiAgICAgICAgcmVzaXphYmxlOiBmYWxzZVxyXG4gICAgfSk7XHJcbiAgICBtYWluV2luZG93LmxvYWRGaWxlKGpvaW4oX19kaXJuYW1lLCAnaW5kZXguaHRtbCcpKTtcclxuICAgIG1haW5XaW5kb3cub24oJ2Nsb3NlZCcsIGZ1bmN0aW9uICgpIHtcclxuICAgICAgICBhcHAucXVpdCgpO1xyXG4gICAgfSk7XHJcbn0pO1xyXG4iXSwibWFwcGluZ3MiOiJBQUFBO0FBQUE7QUFBQTtBQUFBO0FBQUE7QUFBQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOyIsInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///./src/index.ts\n");
 
 /***/ }),
 
@@ -105,7 +105,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var path
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"electron\");\n\n//# sourceURL=webpack:///external_%22electron%22?");
+module.exports = require("electron");
 
 /***/ }),
 
@@ -116,7 +116,7 @@ eval("module.exports = require(\"electron\");\n\n//# sourceURL=webpack:///extern
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("module.exports = require(\"path\");\n\n//# sourceURL=webpack:///external_%22path%22?");
+module.exports = require("path");
 
 /***/ })
 
