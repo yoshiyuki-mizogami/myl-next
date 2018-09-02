@@ -1,0 +1,101 @@
+<style lang="stylus">
+.item
+  padding 0
+  width 100%
+  background-color var(--item-bg)
+  font-size 13px
+  word-wrap break-word
+  transition background .3s ease
+  cursor pointer
+  >span
+    vertical-align middle
+  &:nth-child(even)
+    background-color var(--item-even-bg)
+  .item-icon
+    vertical-align middle
+    margin 0
+    margin-right 1px
+    padding 0
+    display inline-block
+    height 22px
+    width 22px
+    background-repeat no-repeat
+    background-position center
+    background-size cover
+  &:hover
+    background-color var(--item-hover) !important
+</style>
+<template>
+  <div @contextmenu="showContentMenu" @dblclick="call" class="item">
+    <div class="item-icon" :style="{'background-image':dataUrl}"></div>
+    <span class="item-content">{{item.name}}</span>
+  </div>
+</template>
+<script lang="ts">
+import Vue from 'vue'
+import hub from '../ts/event-hub'
+import Item from '../ts/models/item'
+import {remote} from 'electron'
+const {Menu, MenuItem} = remote
+export default Vue.extend({
+  props:{
+    item:Item
+  }, 
+  computed:{
+    dataUrl(){
+      return `url(${this.item.icon})`
+    }
+  },
+  methods:{
+    call(){
+      this.item.call()
+    },
+    showContentMenu(ev:MouseEvent){
+      contextMenu(this.$store, ev, this.item)
+    }
+  }
+})
+function contextMenu(store, ev:MouseEvent, item:Item){
+  const menu = new Menu()
+  const openParent = new MenuItem({
+    id:'OpenParent',
+    accelerator:'o',
+    type:'normal',
+    label:'Open parent',
+    click(){
+      item.openParent()
+    }
+  })
+  const editItem  = new MenuItem({
+    id:'Edit', 
+    accelerator:'e',
+    type:'normal',
+    label:'Edit', 
+    click(){
+      store.dispatch('showItemEditor', item)
+    }
+  })
+  const removeItem = new MenuItem({
+    id:'Remove',
+    accelerator:'r',
+    type:'normal',
+    label:'Remove',
+    click(){
+      hub.$emit('show-dialog' ,{
+        y:ev.clientY,
+        x:ev.clientX,
+        message:'Remove ok?',
+        onOk(){
+          store.dispatch('removeItem', item)
+        },
+        cancelable:true
+      })
+    }
+  })
+  menu.append(openParent)
+  menu.append(editItem)
+  menu.append(removeItem)
+  menu.popup({})
+}
+</script>
+

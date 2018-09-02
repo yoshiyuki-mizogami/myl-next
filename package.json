@@ -1,0 +1,32 @@
+{
+  "name": "myl-next",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "dev": "gulp dev"
+  },
+  "author": "yoshiyuki mizogami",
+  "license": "MIT",
+  "devDependencies": {
+    "css-loader": "^1.0.0",
+    "electron": "^3.0.0-beta.8",
+    "mini-css-extract-plugin": "^0.4.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "ts-loader": "^4.5.0",
+    "typescript": "^3.0.3",
+    "vue": "^2.5.17",
+    "vue-loader": "^15.4.1",
+    "vue-style-loader": "^4.1.2",
+    "vue-template-compiler": "^2.5.17",
+    "vuex": "^3.0.1",
+    "webpack": "^4.17.1"
+  },
+  "dependencies": {
+    "dexie": "^2.0.4",
+    "eslint-plugin-vue": "^4.7.1",
+    "gulp": "^3.9.1",
+    "vuedraggable": "^2.16.0"
+  }
+}
