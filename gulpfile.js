@@ -24,3 +24,28 @@ g.task('boot', ()=>{
 g.task('dev', ['webpack'], ()=>{
   bootElectron()
 })
+
+
+g.task('build' ,()=>{
+  const builder = require('electron-builder')
+  return builder.build({
+    config:{
+      productName:'MylNext',
+      directories:{
+        app:'app',
+        output:'dist'
+      },
+      copyright:'Copyright © 2018 Yoshiyuki Mizogami',
+      win:{
+        target:['nsis'],
+        icon:'app/imgs/icon.ico'
+      },
+      nsis:{
+        oneClick:true,
+        shortcutName:'MylNext',
+        installerIcon:'app/imgs/icon.ico',
+        uninstallerIcon:'app/imgs/icon.ico'
+      }
+    }
+  })
+})
