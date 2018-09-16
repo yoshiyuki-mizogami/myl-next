@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "dexie": "^2.0.4",
+    "electron-builder": "^20.28.3",
     "eslint-plugin-vue": "^4.7.1",
     "gulp": "^3.9.1",
     "vuedraggable": "^2.16.0"
