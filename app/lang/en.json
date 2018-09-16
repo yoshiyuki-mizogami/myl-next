@@ -1,6 +1,8 @@
 {
   "EDIT":"Edit",
   "INVALID_URL":"Invalid url",
+  "ITEM_NAME":"Name",
+  "ITEM_PATH":"Path",
   "REMOVE":"Remove",
   "OPEN_PARENT":"Open parent",
   "REQUIRE_NAME":"Require name",

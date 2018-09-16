@@ -6,6 +6,7 @@
   cursor pointer
   transition background .3s ease
   font-size 13px
+  word-wrap break-all
   input,textarea
     font-size inherit
     padding inherit
@@ -20,7 +21,10 @@
 </style>
 
 <template>
-  <div @contextmenu="showContextMenu" :class="{selected}" @click="$parent.$parent.selectCategory(category)" class="category">
+  <div @contextmenu="showContextMenu" :class="{selected}"
+    @drop="dropToCategory"
+    @dragstart="dragStartCategory"
+    @click="$parent.$parent.selectCategory(category)" class="category">
     <span v-if="!editMode">{{category.name}}</span>
     <span v-else><input ref="editor" @focusout="updateName" type="text" class="category-name-editor" v-model="category.name"></span>
   </div>
@@ -53,6 +57,9 @@ export default Vue.extend({
     }
   },
   methods:{
+    dragStartCategory(ev:DragEvent){
+      ev.dataTransfer.setData('myl/category', '1')
+    },
     showContextMenu(ev:MouseEvent){
       contextMenu(this,this.$store,ev,this.category)
     },
@@ -74,6 +81,19 @@ export default Vue.extend({
       }
       hub.$emit('notify', this.$store.state.ui.NAME_UPDATED)
       this.$store.dispatch('updateCategoryName', this.category)
+    },
+    dropToCategory(ev:DragEvent){
+      const {dataTransfer:dt} = ev
+      const fromCategory = dt.getData('myl/category')
+      if(fromCategory){
+        return ev.stopPropagation()
+      }
+      const fromThis = dt.getData('myl/item')
+      if(!fromThis){
+        return
+      }
+      ev.stopPropagation()
+      return this.$store.dispatch('moveItem', this.category)
     }
   }
 })

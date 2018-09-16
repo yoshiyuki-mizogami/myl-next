@@ -5,7 +5,7 @@ global['ROOTDIR'] = __dirname
 app.on('ready', ()=>{
   console.log(__dirname)
   mainWindow = new BrowserWindow({
-    height:300,
+    height:400,
     width:350,
     frame:false,
     resizable:false

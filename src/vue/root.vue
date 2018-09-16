@@ -57,7 +57,7 @@ input[type=button],button
   display flex
   flex-direction row
   .categories
-    min-height 100px
+    min-height 170px
     height 100%
     width 150px
     display flexbox
@@ -101,6 +101,7 @@ input[type=button],button
       </div>
     </div>
     <new-cate-dialog/>
+    <item-detail/>
     <app-dialog/>
     <notify/>
   </div>
@@ -115,6 +116,7 @@ import NewCateDialog from './new-category.vue'
 import Dialog from './dialog.vue'
 import Notify from './notify.vue'
 import hub from '../ts/event-hub'
+import ItemDetail from './item-detail.vue'
 declare var require:(moduleId:string) => any
 const draggable = require('vuedraggable')
 const thisWindow = remote.getCurrentWindow()
@@ -162,6 +164,7 @@ export default Vue.extend({
     'a-category':Category,
     'an-item':Item,
     'app-dialog':Dialog,
+    ItemDetail,
     draggable,
     'notify':Notify
   },
@@ -182,6 +185,10 @@ export default Vue.extend({
       const files = df.files
       if(!files.length){
         const dragString = df.getData('text/plain')
+        const fromThis = df.getData('myl/item')
+        if(fromThis){
+          return
+        }
         await this.$store.dispatch('addUrl', {url:dragString})
         return 
       }

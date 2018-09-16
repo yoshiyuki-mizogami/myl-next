@@ -46,16 +46,26 @@ export default class MylDB extends Dexie{
       await this.items.where({cateId:cate.id}).delete()
     })
   }
+  getMaxId(id:number){
+    return this.getItems(id)
+      .then(cateItems=>{
+        return cateItems.reduce((m, c)=>{
+          return Math.max(m, c.sort)
+        }, 0) + 1
+      })
+  }
   async addItem(itemProps:any):Promise<Item>{
     const {cateId} = itemProps
-    const cateItems = await this.getItems(cateId)
-    const maxSort = cateItems.reduce((m, c)=>{
-      return Math.max(m, c.sort)
-    }, 0) + 1
-    itemProps.sort = maxSort
+    itemProps.sort = await this.getMaxId(cateId)
     const newItem = new Item(itemProps)
     await this.items.add(newItem)
     return newItem
+  }
+  async moveItem(item:any, cateId:number){
+    const {id} = item
+    const maxSortNumber = await this.getMaxId(cateId)
+    await this.items.update(id , {cateId, sort:maxSortNumber})
+    return true
   }
   async removeItem(item:Item):Promise<void>{
     return this.items.delete(item.id)

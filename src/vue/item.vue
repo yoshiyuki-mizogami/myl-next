@@ -7,6 +7,7 @@
   word-wrap break-word
   transition background .3s ease
   cursor pointer
+  word-wrap break-all
   >span
     vertical-align middle
   &:nth-child(even)
@@ -26,7 +27,7 @@
     background-color var(--item-hover) !important
 </style>
 <template>
-  <div @contextmenu="showContentMenu" @dblclick="call" class="item">
+  <div @contextmenu="showContentMenu" @dblclick="call" class="item" @dragstart="setDrag">
     <div class="item-icon" :style="{'background-image':dataUrl}"></div>
     <span class="item-content">{{item.name}}</span>
   </div>
@@ -52,6 +53,10 @@ export default Vue.extend({
     },
     showContentMenu(ev:MouseEvent){
       contextMenu(this.$store, ev, this.item)
+    },
+    setDrag(ev:DragEvent){
+      this.$store.commit('setDragItem', this.item)
+      ev.dataTransfer.setData('myl/item', '1')
     }
   }
 })
@@ -72,7 +77,7 @@ function contextMenu(store, ev:MouseEvent, item:Item){
     type:'normal',
     label:'Edit', 
     click(){
-      store.dispatch('showItemEditor', item)
+      store.dispatch('showItemDetail', item)
     }
   })
   const removeItem = new MenuItem({

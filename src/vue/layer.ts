@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Hub from '../ts/event-hub'
+import { mapState } from "vuex";
 export default {
   watch:{
     show(v){
@@ -9,9 +10,11 @@ export default {
       Hub.popLayer()
     }
   },
+  computed:mapState({
+    ui:'ui'
+  }),
   created(){
     this.$on('keydown',ev=>{
-      console.log(ev)
       const {key} = ev
       const func = this.shortCuts[key]
       if(!func){

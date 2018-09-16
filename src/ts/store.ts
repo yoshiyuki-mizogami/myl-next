@@ -37,7 +37,8 @@ const storeData = {
     selectedCategory:null,
     config,
     loading:false,
-    ui:{}
+    ui:{},
+    dragItem:null as object | unknown
   },
   mutations:{
     setNewCategoryDialog(state, tf:boolean){
@@ -51,9 +52,22 @@ const storeData = {
     },
     toggleAOT(state){
       state.config.AOT = !state.config.AOT
+    },
+    setDragItem(state, item:object){
+      state.dragItem = item
     }
   },
   actions:{
+    async moveItem({state}, destCategory:any){
+      if(destCategory === state.selectedCategory){
+        return
+      }
+      const {dragItem} = state
+      state.dragItem = null
+      const ind = state.items.indexOf(dragItem)
+      Vue.delete(state.items, ind)
+      await db.moveItem(dragItem, destCategory.id)
+    },
     async init({state}){
       state.categories = await db.getCategories()
       state.selectedCategory = state.categories[0]
@@ -116,6 +130,12 @@ const storeData = {
         hub.$emit('notify', state.ui.INVALID_URL)
         return
       }
+    },
+    async showItemDetail(_, item){
+      hub.$emit('show-item-detail', item)
+    },
+    updateItem({state}, item){
+      db.items.update(item.id, item)
     }
   }
 }
