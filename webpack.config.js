@@ -44,7 +44,7 @@ module.exports = [{
       filenam:'[name].css'
     })
   ],
-  devtool:'cheap-evel-source-map'
+  devtool:'inline-source-map'
 },
 {
   target:'electron-main', 
@@ -67,5 +67,5 @@ module.exports = [{
       }
     ]
   },
-  devtool:'cheap-eval-source-map'
+  devtool:'inline-source-map'
 }]

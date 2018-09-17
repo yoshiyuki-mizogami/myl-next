@@ -25,8 +25,20 @@ g.task('dev', ['webpack'], ()=>{
   bootElectron()
 })
 
-
-g.task('build' ,()=>{
+g.task('pack-production', clbk=>{
+  const wpConfig = require('./webpack.config')
+  process.env.NODE_ENV = 'production'
+  wpConfig.forEach(c=>{
+    c.devtool = false
+    c.mode = 'production'
+  })
+  const comp = webpack(wpConfig)
+  comp.run((er, stat)=>{
+    console.log(stat.toString({colors:true}))
+    clbk()
+  })
+})
+g.task('build',['pack-production'],()=>{
   const builder = require('electron-builder')
   return builder.build({
     config:{
@@ -35,7 +47,7 @@ g.task('build' ,()=>{
         app:'app',
         output:'dist'
       },
-      copyright:'Copyright © 2018 Yoshiyuki Mizogami',
+      copyright:'Copyright ï¿½ 2018 Yoshiyuki Mizogami',
       win:{
         target:['nsis'],
         icon:'app/imgs/icon.ico'

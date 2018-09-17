@@ -7,14 +7,15 @@ const {IMGDIR} =  globals
 const FILEICONSIZE = 32
 const LINKSUFF = '.lnk'
 
-const ICON_OPT:FileIconOptions = {
+export const ICON_OPT:FileIconOptions = {
   size:'normal'
 }
-const RESIZE_OPT:ResizeOptions = {
+export const RESIZE_OPT:ResizeOptions = {
   height:22,
   width:22,
   quality:'best'
 }
+
 interface FileInfo {
   cateId?:number
   path:string
@@ -33,9 +34,7 @@ export default async function getFileInfo(filepath:string, trackLink:boolean):Pr
       resolve(type)
     })
   })
-  console.log('2')
   let icon = await getIcon(filepath)
-  console.log('3')
   const ext = extname(filepath).toLowerCase()
   if( ext === LINKSUFF){
     try{
@@ -56,7 +55,7 @@ export default async function getFileInfo(filepath:string, trackLink:boolean):Pr
     icon:dateUrl
   }
 }
-function getIcon(filepath:string):Promise<NativeImage>{
+export function getIcon(filepath:string):Promise<NativeImage>{
   return new Promise<NativeImage>(resolve=>{
     remote.app.getFileIcon(filepath, ICON_OPT, (er, icon)=>{
       resolve(icon)

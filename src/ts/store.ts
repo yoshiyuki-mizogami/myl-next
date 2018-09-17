@@ -130,6 +130,9 @@ const storeData = {
         hub.$emit('notify', state.ui.INVALID_URL)
         return
       }
+      const urlItem = await db.addUrlItem(url, state.selectedCategory.id)
+      state.items.push(urlItem)
+      Vue.nextTick(()=>hub.$emit('adjust'))
     },
     async showItemDetail(_, item){
       hub.$emit('show-item-detail', item)

@@ -22,7 +22,7 @@
   <div class="layer-back" v-if="show">
     <div class="new-category">
       Input new category name
-      <input type="text" class="new-category-input" @keydown.enter="addNewCategory"
+      <input ref="input" type="text" class="new-category-input" @keydown.enter="addNewCategory"
              :placeholder="ui.INPUT_NEW_CATEGORY">
     </div>
   </div>
@@ -42,6 +42,14 @@ export default Vue.extend({
     this.setShortcut({
       'Escape':this.close
     })
+  },
+  watch:{
+    show(v){
+      if(!v){
+        return
+      }
+      this.$nextTick(()=>this.$refs.input.focus())
+    }
   },
   methods:{
     addNewCategory(ev){

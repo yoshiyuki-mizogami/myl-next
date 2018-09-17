@@ -57,6 +57,7 @@ export default Vue.extend({
     setDrag(ev:DragEvent){
       this.$store.commit('setDragItem', this.item)
       ev.dataTransfer.setData('myl/item', '1')
+      ev.dataTransfer.setData('text/plain', this.item.path)
     }
   }
 })

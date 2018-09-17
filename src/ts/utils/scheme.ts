@@ -1,8 +1,10 @@
 import Dexie from 'dexie'
 import Category from '../models/category'
 import Item from '../models/item'
+import {getIcon,RESIZE_OPT, ICON_OPT} from '../../ts/utils/get-file-info'
 import Config from '../models/config'
 import Sortable from '../models/sortable'
+import url from 'url'
 function sortFunc(a:Sortable, b:Sortable){
   return a.sort - b.sort
 }
@@ -38,6 +40,7 @@ export default class MylDB extends Dexie{
     }, 0) + 1
     const newCategory = new Category(name, maxSort)
     await this.categories.add(newCategory)
+    console.log('add category done')
     return newCategory
   }
   async removeCategory(cate:Category){
@@ -58,6 +61,23 @@ export default class MylDB extends Dexie{
     const {cateId} = itemProps
     itemProps.sort = await this.getMaxId(cateId)
     const newItem = new Item(itemProps)
+    await this.items.add(newItem)
+    return newItem
+  }
+  async addUrlItem(urlString:string, cateId:number):Promise<Item>{
+    const webIcon = await getIcon(location.href)
+    const {host} = url.parse(urlString)
+    const resizedIcon = webIcon.resize(RESIZE_OPT)
+    const dateUrl = resizedIcon.toDataURL()
+    const sort = await this.getMaxId(cateId)
+    const newItem = new Item({
+      name:host,
+      icon:dateUrl,
+      sort,
+      cateId,
+      path:urlString,
+      type:'url'
+    })
     await this.items.add(newItem)
     return newItem
   }
