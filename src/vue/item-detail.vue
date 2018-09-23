@@ -7,6 +7,7 @@
     left 0
     background-color rgba(0,0,0 .5)
   .item-detail
+    position relative
     width 90%
     height 200px
     margin 20px auto
@@ -30,6 +31,7 @@
 <template>
   <div class="item-wrap" v-if="show">
     <div class="item-detail">
+      <div class="close-btn icon-close" @click="hideMe"></div>
       <div class="prop">
         <span class="prop-title">{{ui.ITEM_NAME}}</span>
         <input type="text" class="prop-text" v-model.lazy="data.name">

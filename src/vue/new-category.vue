@@ -7,6 +7,7 @@
   height 100%
   width 100%
   .new-category
+    position relative
     width 300px
     margin 10% auto
     background-color white
@@ -21,6 +22,7 @@
   <transition name="layer">
   <div class="layer-back" v-if="show">
     <div class="new-category">
+      <div class="icon-close close-btn" @click="close"></div>
       Input new category name
       <input ref="input" type="text" class="new-category-input" @keydown.enter="addNewCategory"
              :placeholder="ui.INPUT_NEW_CATEGORY">

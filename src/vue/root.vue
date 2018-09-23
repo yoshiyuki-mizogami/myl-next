@@ -38,18 +38,25 @@ input[type=button],button
   text-align right
   .header-btn
     -webkit-app-region no-drag
+    text-align center
     width 20px
     height 20px
-    background-color white
+    font-size 18px
+    color rgb(100,100,100)
     border-radius 10%
     display inline-block
     cursor pointer
     &.new-cate-btn
-      background-color rgb(120, 200, 255)
+      color rgb(120, 200, 255)
+    &.aot-btn
+      transition color .3s ease
+      font-size 15px
     &.aot
-      background-color rgb(255,255,155)
-    &.close-btn
-      background-color rgb(255, 100, 120)
+      color rgb(255,255,30)
+    &.close-app
+      color rgb(255, 100, 120)
+    &.setting
+      color rgb(200,200,100)
 
 .content
   height calc(100% - 20px)
@@ -77,6 +84,19 @@ input[type=button],button
   transition opacity .3s ease 
 .loading-enter,.loading-leave-to
   opacity 0
+.close-btn
+  position absolute
+  font-size 20px
+  top 0
+  right 0
+  width 25px
+  height 25px
+  text-align center
+  color gray
+  cursor pointer
+  transition color .2s ease
+  &:hover
+    color black
 </style>
 <template>
   <div class="whole" ref="app">
@@ -84,9 +104,10 @@ input[type=button],button
       <div class="loading" v-if="loading"/>
     </transition>
     <div class="header">
-      <div class="header-btn new-cate-btn" @click="addNewCategory"></div>
-      <div :class="{aot:config.AOT}" class="header-btn" @click="toggleAOT"></div>
-      <div class="header-btn close-btn" @click="close"></div>
+      <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory"></div>
+      <div class="icon-gear header-btn setting" @click="openSetting"></div>
+      <div :class="{aot:config.AOT}" class="icon-clone header-btn aot-btn" @click="toggleAOT"></div>
+      <div class="icon-sign-out header-btn close-app" @click="close"></div>
     </div>
     <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
       <div class="categories">
@@ -101,6 +122,7 @@ input[type=button],button
       </div>
     </div>
     <new-cate-dialog/>
+    <app-setting/>
     <item-detail/>
     <app-dialog/>
     <notify/>
@@ -117,6 +139,7 @@ import Dialog from './dialog.vue'
 import Notify from './notify.vue'
 import hub from '../ts/event-hub'
 import ItemDetail from './item-detail.vue'
+import AppSetting from './app-setting.vue'
 declare var require:(moduleId:string) => any
 const draggable = require('vuedraggable')
 const thisWindow = remote.getCurrentWindow()
@@ -164,6 +187,7 @@ export default Vue.extend({
     'a-category':Category,
     'an-item':Item,
     'app-dialog':Dialog,
+    AppSetting,
     ItemDetail,
     draggable,
     'notify':Notify
@@ -210,6 +234,9 @@ export default Vue.extend({
     },
     showWindow(){
       thisWindow.show()
+    },
+    openSetting(){
+      hub.$emit('open-setting')
     }
   }
 })

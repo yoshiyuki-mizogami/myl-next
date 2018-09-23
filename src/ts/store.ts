@@ -9,7 +9,7 @@ import MylDB from './utils/scheme'
 import hub from './event-hub'
 import {Store} from 'vuex'
 import langSwitch from './lang/lang-swicher'
-
+const thisWindow = remote.getCurrentWindow()
 enum Themes{
   NORMAL = 'normal'
 }
@@ -72,6 +72,7 @@ const storeData = {
       state.categories = await db.getCategories()
       state.selectedCategory = state.categories[0]
       state.ui = await langSwitch(state.config.lang)
+      thisWindow.show()
     },
     updateItemsOrder({state}, newOrders:Array<Item>):void{
       state.items = newOrders
@@ -137,8 +138,14 @@ const storeData = {
     async showItemDetail(_, item){
       hub.$emit('show-item-detail', item)
     },
-    updateItem({state}, item){
+    updateItem(_, item){
       db.items.update(item.id, item)
+    },
+    importJson(){
+
+    },
+    exportJson(){
+
     }
   }
 }

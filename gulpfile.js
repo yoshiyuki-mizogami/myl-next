@@ -41,6 +41,7 @@ g.task('pack-production', clbk=>{
 g.task('build',['pack-production'],()=>{
   const builder = require('electron-builder')
   return builder.build({
+    arch:'ia32',
     config:{
       productName:'MylNext',
       directories:{
