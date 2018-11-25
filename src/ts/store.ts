@@ -26,12 +26,12 @@ export enum Langs{
 interface IConfig{
   lang:Langs,
   theme:string,
-  AOT:boolean
+  aot:boolean
 }
 const config:IConfig = {
   lang:Langs.EN,
   theme:Themes.PLAIN,
-  AOT:false
+  aot:false
 }
 const db = new MylDB()
 const isUrl = /^https?:\/\//
@@ -58,7 +58,7 @@ const storeData = {
       state.selectedCategory = c
     },
     toggleAOT(state){
-      state.config.AOT = !state.config.AOT
+      state.config.aot = !state.config.aot
     },
     setDragItem(state, item:object){
       state.dragItem = item

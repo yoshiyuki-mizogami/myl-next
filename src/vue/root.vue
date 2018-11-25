@@ -106,7 +106,7 @@ input[type=button],button
     <div class="header">
       <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory"></div>
       <div class="icon-gear header-btn setting" @click="openSetting"></div>
-      <div :class="{aot:config.AOT}" class="icon-clone header-btn aot-btn" @click="toggleAOT"></div>
+      <div class="icon-clone header-btn aot-btn" :class="{aot}" @click="toggleAOT"></div>
       <div class="icon-sign-out header-btn close-app" @click="close"></div>
     </div>
     <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
@@ -172,9 +172,14 @@ export default Vue.extend({
         this.$store.dispatch('updateCategoriesOrder', v)
       }
     },
+    aot(){
+      return this.$store.state.config.aot
+    },
+    config(){
+      return this.$store.state.config
+    },
     ...mapState({
       selectedCategory:'selectedCategory',
-      config:'config',
       loading:'loading'
     })
   },
@@ -201,7 +206,7 @@ export default Vue.extend({
     },
     toggleAOT(){
       this.$store.commit('toggleAOT')
-      thisWindow.setAlwaysOnTop(this.config.AOT)
+      thisWindow.setAlwaysOnTop(this.aot)
     },
     async dropAny(e:DragEvent):Promise<void>{
       const trackLink = e.ctrlKey
