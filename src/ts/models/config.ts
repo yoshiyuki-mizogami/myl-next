@@ -1,9 +1,17 @@
+interface MylConfig{
+  lang:string
+  aot:boolean
+  theme:string
+}
+const DEF = {
+  lang:'en',
+  aot:false,
+  theme:'plain'
+} as MylConfig
 export default class Config{
-  config:string;
-  get data(){
-    return JSON.parse(this.config)
-  }
-  set data(v){
-    this.config = JSON.stringify(v)
+  id?:number
+  config:MylConfig = DEF
+  constructor(def:MylConfig = DEF){
+    Object.assign(this.config, def)
   }
 }

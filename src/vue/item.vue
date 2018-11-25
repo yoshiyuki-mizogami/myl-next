@@ -62,12 +62,13 @@ export default Vue.extend({
   }
 })
 function contextMenu(store, ev:MouseEvent, item:Item){
+  const {state:{ui}} = store
   const menu = new Menu()
   const openParent = new MenuItem({
     id:'OpenParent',
     accelerator:'o',
     type:'normal',
-    label:'Open parent',
+    label:ui.OPEN_PARENT,
     click(){
       item.openParent()
     }
@@ -76,7 +77,7 @@ function contextMenu(store, ev:MouseEvent, item:Item){
     id:'Edit', 
     accelerator:'e',
     type:'normal',
-    label:'Edit', 
+    label:ui.EDIT, 
     click(){
       store.dispatch('showItemDetail', item)
     }
@@ -85,7 +86,7 @@ function contextMenu(store, ev:MouseEvent, item:Item){
     id:'Remove',
     accelerator:'r',
     type:'normal',
-    label:'Remove',
+    label:ui.REMOVE,
     click(){
       hub.$emit('show-dialog' ,{
         y:ev.clientY,

@@ -64,7 +64,7 @@ input[type=button],button
   display flex
   flex-direction row
   .categories
-    min-height 170px
+    min-height 210px
     height 100%
     width 150px
     display flexbox

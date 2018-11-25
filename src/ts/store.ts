@@ -7,24 +7,30 @@ import Item from '../ts/models/item'
 import getFileInfo from './utils/get-file-info'
 import MylDB from './utils/scheme'
 import hub from './event-hub'
-import {Store} from 'vuex'
+import Vuex, {Store} from 'vuex'
 import langSwitch from './lang/lang-swicher'
+Vue.use(Vuex)
 const thisWindow = remote.getCurrentWindow()
-enum Themes{
-  NORMAL = 'normal'
+export const Themes = {
+  PLAIN:'plain',
+  DARK:'dark',
+  CLOUD:'cloud',
+  LIGHT:'light',
+  POP:'pop',
+  MONO:'mono'
 }
-enum Langs{
+export enum Langs{
   EN = 'en',
   JA = 'ja'
 }
-interface Config{
+interface IConfig{
   lang:Langs,
-  theme:Themes,
+  theme:string,
   AOT:boolean
 }
-const config:Config = {
+const config:IConfig = {
   lang:Langs.EN,
-  theme:Themes.NORMAL,
+  theme:Themes.PLAIN,
   AOT:false
 }
 const db = new MylDB()
@@ -36,6 +42,7 @@ const storeData = {
     showNewCategoryDialog:false,
     selectedCategory:null,
     config,
+    configRaw:null as any,
     loading:false,
     ui:{},
     dragItem:null as object | unknown
@@ -55,6 +62,9 @@ const storeData = {
     },
     setDragItem(state, item:object){
       state.dragItem = item
+    },
+    langSwitch(state, lang:string){
+      state.config.lang = lang
     }
   },
   actions:{
@@ -68,11 +78,24 @@ const storeData = {
       Vue.delete(state.items, ind)
       await db.moveItem(dragItem, destCategory.id)
     },
-    async init({state}){
+    async init(store){
+      const {state} = store
+      await store.dispatch('loadConfig')
       state.categories = await db.getCategories()
       state.selectedCategory = state.categories[0]
       state.ui = await langSwitch(state.config.lang)
       thisWindow.show()
+    },
+    async loadConfig({state}){
+      state.configRaw = await db.loadConfig()
+      state.config = state.configRaw.config
+    },
+    async saveConfig({state}){
+      db.saveConfig(state.configRaw)
+    },
+    async langSwitch(store, lang:string){
+      store.state.ui = await langSwitch(lang)
+      store.dispatch('saveConfig')
     },
     updateItemsOrder({state}, newOrders:Array<Item>):void{
       state.items = newOrders
@@ -149,9 +172,16 @@ const storeData = {
     }
   }
 }
+
 class MylClass extends Store<object>{
   constructor(){
     super(storeData)
   }
 }
-export default MylClass
+const mylClass = new MylClass()
+mylClass.watch((state:any)=>{
+  return state.config.lang
+},(v,old)=>{
+  mylClass.dispatch('langSwitch', v)
+})
+export default mylClass

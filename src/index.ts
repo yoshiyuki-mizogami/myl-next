@@ -1,5 +1,6 @@
 import {join} from 'path'
 import {app, BrowserWindow} from 'electron'
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
 global['ROOTDIR'] = __dirname
 const isDev = process.execPath.includes('electron.exe')
@@ -14,9 +15,7 @@ app.on('ready', ()=>{
     icon:join(__dirname, 'imgs', 'icon.ico')
   })
   mainWindow.loadFile(join(__dirname, 'index.html'))
-  mainWindow.on('closed', ()=>{
-    app.quit()
-  })
+  mainWindow.on('closed', ()=>app.quit())
   if(isDev){
     BrowserWindow.addDevToolsExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
     mainWindow.webContents.openDevTools()

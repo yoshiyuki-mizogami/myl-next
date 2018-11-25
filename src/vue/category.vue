@@ -98,26 +98,27 @@ export default Vue.extend({
   }
 })
 function contextMenu(vm:any ,store:Store<any>, ev:MouseEvent, cate:Category){
+  const {state:{ui}} = store
   const menu = new Menu()
   const renameItem  = new MenuItem({
     id:'Rename', 
-    accelerator:'e',
+    accelerator:'r',
     type:'normal',
-    label:'Rename', 
+    label:ui.RENAME, 
     click(){
       vm.editMode = true
     }
   })
   const removeItem = new MenuItem({
-    id:'Remove',
-    accelerator:'r',
+    id:'Delete',
+    accelerator:'d',
     type:'normal',
-    label:'Remove',
+    label:ui.DELETE,
     click(){
       hub.$emit('show-dialog' ,{
         y:ev.clientY,
         x:ev.clientX,
-        message:'Remove ok?',
+        message:ui.CONFIRM_DELETE,
         onOk(){
           store.dispatch('removeCategory', cate)
         },

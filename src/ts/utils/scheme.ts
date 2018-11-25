@@ -23,6 +23,17 @@ export default class MylDB extends Dexie{
     this.items.mapToClass(Item)
     this.config.mapToClass(Config)
   }
+  async loadConfig(){
+    let conf = await this.config.toCollection().last()
+    if(!conf){
+      conf = new Config()
+      await this.config.add(conf)
+    }
+    return conf
+  }
+  async saveConfig(config:Config){
+    this.config.update(config.id, config)
+  }
   async getCategories(){
     const categories = await this.categories.toArray()
     categories.sort(sortFunc)
