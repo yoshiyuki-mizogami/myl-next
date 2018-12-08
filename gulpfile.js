@@ -48,7 +48,7 @@ g.task('build',['pack-production'],()=>{
         app:'app',
         output:'dist'
       },
-      copyright:'Copyright � 2018 Yoshiyuki Mizogami',
+      copyright:'Copyright 2018 Yoshiyuki Mizogami',
       win:{
         target:['nsis'],
         icon:'app/imgs/icon.ico'
