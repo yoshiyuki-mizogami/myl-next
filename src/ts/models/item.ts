@@ -1,6 +1,10 @@
 import {shell} from 'electron'
 import {spawn} from 'child_process'
+import {dirname} from 'path'
 import Sortable from './sortable'
+import {URL} from '../consts'
+import url from 'url'
+const EXPLORER = 'explorer'
 export default class Item implements Sortable{
   id:number
   cateId:number
@@ -24,9 +28,27 @@ export default class Item implements Sortable{
       process.on('close', console.log)
       return
     }
-    shell.openExternal(cmd)
+    explorer(cmd)
   }
   openParent(){
-    shell.showItemInFolder(this.path)
+    if(this.type === URL){
+      return shell.openExternal(getTopUrl(this.path))
+    }
+    let parent = dirname(this.path)
+    if(!parent){
+      parent = this.path
+    }
+    explorer(parent)
   }
+}
+
+function getTopUrl(urlstring:string){
+  const thisUrl = new url.URL(urlstring)
+  return `${thisUrl.protocol}//${thisUrl.host}/`
+}
+
+function explorer(path){
+  spawn(EXPLORER, [path], {
+    detached:true
+  })
 }

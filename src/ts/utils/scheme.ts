@@ -5,6 +5,7 @@ import {getIcon,RESIZE_OPT, ICON_OPT} from '../../ts/utils/get-file-info'
 import Config from '../models/config'
 import Sortable from '../models/sortable'
 import url from 'url'
+import {URL} from '../consts'
 function sortFunc(a:Sortable, b:Sortable){
   return a.sort - b.sort
 }
@@ -87,7 +88,7 @@ export default class MylDB extends Dexie{
       sort,
       cateId,
       path:urlString,
-      type:'url'
+      type:URL
     })
     await this.items.add(newItem)
     return newItem

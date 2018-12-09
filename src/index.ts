@@ -10,7 +10,6 @@ app.on('ready', ()=>{
     height:400,
     width:350,
     frame:false,
-    resizable:false,
     show:isDev,
     icon:join(__dirname, 'imgs', 'icon.ico')
   })

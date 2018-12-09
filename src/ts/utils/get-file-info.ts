@@ -3,7 +3,7 @@ import {shell, remote, FileIconOptions, ResizeOptions, nativeImage, NativeImage}
 import {basename, extname} from 'path'
 import {join} from 'path'
 import globals from '../globals'
-const {IMGDIR} =  globals
+import {FILE, DIR} from '../consts'
 const FILEICONSIZE = 32
 const LINKSUFF = '.lnk'
 
@@ -26,9 +26,9 @@ interface FileInfo {
 export default async function getFileInfo(filepath:string, trackLink:boolean):Promise<FileInfo>{
   const fileType:string = await new Promise<string>(resolve=>{
     stat(filepath,(err, stat:Stats)=>{
-      let type = 'file'
+      let type = FILE
       if(stat.isDirectory()){
-        type = 'dir'
+        type = DIR
       }
       console.log(type)
       resolve(type)
