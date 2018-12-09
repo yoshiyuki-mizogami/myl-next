@@ -11,10 +11,12 @@ app.on('ready', ()=>{
     width:350,
     frame:false,
     show:isDev,
+    fullscreenable:false,
+    maximizable:false,
     icon:join(__dirname, 'imgs', 'icon.ico')
   })
   mainWindow.loadFile(join(__dirname, 'index.html'))
-  mainWindow.on('closed', ()=>app.quit())
+  mainWindow.on('closed', app.quit.bind(app))
   if(isDev){
     BrowserWindow.addDevToolsExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
     mainWindow.webContents.openDevTools()

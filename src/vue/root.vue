@@ -8,6 +8,7 @@ html,body
   font-family 'メイリオ'
   overflow hidden
   background-color var(--base)
+  color var(--base-color)
 .layer-enter-active, .layer-leave-active
   transition opacity .3s ease
   opacity 1

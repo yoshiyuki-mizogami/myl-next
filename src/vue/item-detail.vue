@@ -8,7 +8,7 @@
     background-color rgba(0,0,0 .5)
   .item-detail
     position relative
-    width 90%
+    width 95%
     height 200px
     margin 20px auto
     background-color white
@@ -18,15 +18,21 @@
     .prop
       margin 1px
     .prop-title
-      font-size 13px
+      font-size 12px
       display inline-block
-      width 20%
+      width 25%
       text-align center
     .prop-text
       text-align left
       border-bottom solid 1px gray
       background-color transparent
-      width 80%
+      width 75%
+      &.with-text
+        width 60%
+    .with-select
+      font-size 10px
+      width 15%
+      vertical-align middle
 </style>
 <template>
   <div class="item-wrap" v-if="show">
@@ -40,16 +46,30 @@
         <span class="prop-title">{{ui.ITEM_PATH}}</span>
         <input type="text" class="prop-text" v-model.lazy="data.path">
       </div>
-      <div class="prop"></div>
+      <div class="prop">
+        <span class="prop-title">{{ui.BY}}</span>
+        <input type="text" class="prop-text with-text" readonly v-model.lazy="data.by"><input type="button" class="with-select" :value="ui.SELECT" @click="selectWith">
+      </div>
+      <div class="prop" v-if="isFile">
+        <span class="prop-title">{{ui.ARG}}</span>
+        <input type="text" class="prop-text" v-model.lazy="data.cmd">
+      </div>
+      <div class="prop">
+        <span class="prop-title">{{ui.SHORTCUT}}</span>
+
+      </div>
       <div class="prop"></div>
     </div>
   </div>
 </template>
 <script lang="ts">
+import {remote} from 'electron'
 import Vue from 'vue'
 import Item from '../ts/models/item'
 import LayerMixin from './layer'
 import EventHub from '../ts/event-hub'
+import {FILE} from '../ts/consts'
+const {dialog} = remote
 const DEF = {}
 Object.seal(DEF)
 export default Vue.extend({
@@ -63,8 +83,13 @@ export default Vue.extend({
   created(){
     EventHub.$on('show-item-detail', this.showMe)
     this.setShortcut({
-      'Escape':this.hideMe
+      Escape:this.hideMe
     })
+  },
+  computed:{
+    isFile(){
+      return this.data.type === FILE
+    }
   },
   methods:{
     showMe(item:Item){
@@ -76,6 +101,19 @@ export default Vue.extend({
       this.data = DEF
       this.show = false
       this.$store.dispatch('updateItem', data)
+    },
+    selectWith(){
+      const thisWindow = remote.getCurrentWindow()
+      const def = this.data.by || process.env.PROGRAMFILES
+      const files = dialog.showOpenDialog(thisWindow,{
+        title:this.ui.SELECT_WITH,
+        properties:['openFile'],
+        defaultPath:def
+      })
+      if(!files || !files.length){
+        return this.data.by = ''
+      }
+      Vue.set(this.data,'by', files[0])
     }
   }
 })

@@ -18,10 +18,14 @@
   "PLAIN":"Plain",
   "DARK":"Dark",
   "CLOUD":"Cloud",
+  "SELECT":"Select",
   "LIGHT":"Light",
   "POP":"Pop",
   "MONO":"Mono",
   "IMPORT":"Import",
   "EXPORT":"Export",
-  "LIST":"List"
+  "LIST":"List",
+  "BY":"Boot with",
+  "ARG":"Arguments",
+  "SELECT_WITH":"Select boot program"
 }

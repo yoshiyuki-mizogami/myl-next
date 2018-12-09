@@ -2,6 +2,7 @@
 .category
   min-height 20px
   background-color var(--cate-bg)
+  color var(--cate-color)
   width 100%
   cursor pointer
   transition background .3s ease
@@ -12,8 +13,10 @@
     padding inherit
   &:nth-child(even)
     background-color var(--cate-even-bg)
+    color var(--cate-even-color)
   &.selected
     background-color var(--selected-cate)
+    color var(--selected-cate-color)
   &:hover
     background-color var(--cate-hover)
   .category-name-editor

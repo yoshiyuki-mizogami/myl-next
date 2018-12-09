@@ -6,7 +6,7 @@ interface MylConfig{
 const DEF = {
   lang:'en',
   aot:false,
-  theme:'plain'
+  theme:'Basic'
 } as MylConfig
 export default class Config{
   id?:number

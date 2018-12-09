@@ -1,0 +1,24 @@
+*{
+  --base:white;
+  --base-color:black;
+  --dialog-base:white;
+  --header-color:#272727;
+  --layer-back:rgba(0,0,0,0.3);
+  --cate-bg:#7b7b7b;
+  --cate-color:white;
+  --cate-even-bg:#272727;
+  --cate-even-color:white;
+  --cate-hover:#AAAAAA;
+  --selected-cate:white;
+  --selected-cate-color:black;
+  --item-back:#cccccc;
+  --item-bg:#9b9b9b;
+  --item-even-bg:#7b7b7b;
+  --item-color:rgb(30,30,30);
+  --item-even-color:rgb(30,30,30);
+  --item-hover:white;
+  --dialog-back:rgb(255,255,255);
+  --notify-bg:rgb(255,255,255);
+  --unselect:rgb(100,100,100);
+  --select:rgb(250,180,180);
+}

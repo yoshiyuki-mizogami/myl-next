@@ -1,5 +1,5 @@
 import {shell} from 'electron'
-import {spawn} from 'child_process'
+import {spawn,exec} from 'child_process'
 import {dirname} from 'path'
 import Sortable from './sortable'
 import {URL} from '../consts'
@@ -8,27 +8,29 @@ const EXPLORER = 'explorer'
 export default class Item implements Sortable{
   id:number
   cateId:number
-  name:string
-  path:string
-  type:string
-  by:string
-  cmd:string
-  icon:string
-  sc:string
+  name:string = ''
+  path:string = ''
+  type:string = 'file'
+  by:string = ''
+  cmd:string = ''
+  icon:string = ''
+  sc:string = ''
   sort:number
-  cwd:string
+  cwd:string = ''
   constructor(obj){
     Object.assign(this,obj)
   }
   call(){
-    let cmd:string = this.path
     if(this.by){
-      cmd = this.by
-      const process = spawn(cmd, [this.path])
-      process.on('close', console.log)
+      spawn(this.by, [this.path], {detached:true})
       return
     }
-    explorer(cmd)
+    if(this.cmd){
+      return exec(`"${this.path}" ${this.cmd}`,{
+        windowsHide:true
+      },()=>{})
+    }
+    explorer(this.path)
   }
   openParent(){
     if(this.type === URL){

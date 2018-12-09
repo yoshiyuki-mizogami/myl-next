@@ -1,13 +1,11 @@
 *{
   --base:rgb(255,255,255);
-  --base-color:black;
   --dialog-base:rgb(255,255,255);
   --header-color:#2f3e7d;
   --layer-back:rgba(0,0,0,0.3);
   --cate-bg:#a99dc1;
-  --cate-color:rgb(30,30,30);
   --cate-even-bg:#dbcef4;
-  --cate-even-color:rgb(30,30,30);
+  --cate-color:rgb(30,30,30);
   --cate-hover:#a6ade2;
   --selected-cate:#5f68ad;
   --selected-cate-color:white;

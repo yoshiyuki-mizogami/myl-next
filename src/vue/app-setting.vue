@@ -14,17 +14,16 @@
           </li>
           <li>
             <div class="setting-name">{{ui.THEME}}</div>
-            <div class="setting-val"></div>
+            <div class="setting-val" style="text-align:center">
+              <div class="theme" :class="{selected:config.theme === k}"
+              @click="selectTheme(k)"
+               v-for="(t,k) in themes" :key="k">{{t}}</div>
+            </div>
           </li>
           <li>
             <div class="setting-item">
               <input type="button" :value="ui.IMPORT">
               <input type="button" :value="ui.EXPORT">
-            </div>
-          </li>
-          <li>
-            <div class="setting-item">
-              <input type="button" :value="ui.LIST">
             </div>
           </li>
         </ul>
@@ -45,6 +44,7 @@ export default Vue.extend({
     }
   },
   computed:mapState({
+    themes:'themes',
     config:'config',
     ui:'ui'
   }),
@@ -59,8 +59,9 @@ export default Vue.extend({
       exportJson:'exrpotJson',
       importJson:'importJson'
     }),
-    ...mapMutations({
-      langSwitch:'langSwitch'
+    ...mapActions({
+      langSwitch:'langSwitch',
+      selectTheme:'selectTheme'
     }),
     open(){
       this.show = true
@@ -77,7 +78,7 @@ export default Vue.extend({
     width 90%
     height 200px
     margin 20px auto
-    background-color white
+    background-color var(--dialog-base)
     box-shadow 0 0 5px rgba(0,0,0, .5)
     padding 5px 
     font-size 0
@@ -90,7 +91,7 @@ export default Vue.extend({
       margin 0
       font-size 14px
       li
-        height 30px
+        min-height 30px
         display flex
         border-bottom solid 1px rgb(150,150,150)
         input[type=button]
@@ -110,15 +111,24 @@ export default Vue.extend({
             transition background .3s ease
             cursor pointer
             padding 3px
-            background-color rgb(180,180,180)
+            background-color var(--unselect)
             width 80px
             display inline-block
             text-align center
             &.selected
-              background-color rgb(50, 100, 220)
+              background-color var(--select)
               color white
           input[type=radio]
             display none
+          .theme
+            display inline-block
+            width 50px
+            margin 2px 5px
+            text-align center
+            background-color var(--unselect)
+            &.selected
+              background-color var(--select)
+              color white
       
 </style>
 

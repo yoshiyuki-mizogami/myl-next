@@ -3,6 +3,7 @@
   padding 0
   width 100%
   background-color var(--item-bg)
+  color var(--item-color)
   font-size 13px
   word-wrap break-word
   transition background .3s ease
@@ -12,6 +13,7 @@
     vertical-align middle
   &:nth-child(even)
     background-color var(--item-even-bg)
+    color var(--item-even-color)
   .item-icon
     vertical-align middle
     margin 0

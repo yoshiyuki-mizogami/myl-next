@@ -8,35 +8,23 @@ import getFileInfo from './utils/get-file-info'
 import MylDB from './utils/scheme'
 import hub from './event-hub'
 import Vuex, {Store} from 'vuex'
-import langSwitch from './lang/lang-swicher'
+import langSwitch from './lib/lang-swicher'
+import switchTheme from './lib/switch-theme'
+import {Themes} from './consts'
+import Config from './models/config';
 Vue.use(Vuex)
 const thisWindow = remote.getCurrentWindow()
-export const Themes = {
-  PLAIN:'plain',
-  DARK:'dark',
-  CLOUD:'cloud',
-  LIGHT:'light',
-  POP:'pop',
-  MONO:'mono'
-}
+
 export enum Langs{
   EN = 'en',
   JA = 'ja'
 }
-interface IConfig{
-  lang:Langs,
-  theme:string,
-  aot:boolean
-}
-const config:IConfig = {
-  lang:Langs.EN,
-  theme:Themes.PLAIN,
-  aot:false
-}
+const config = new Config()
 const db = new MylDB()
 const isUrl = /^https?:\/\//
 const storeData = {
   state:{
+    themes:Themes,
     categories:[],
     items:[],
     showNewCategoryDialog:false,
@@ -62,9 +50,6 @@ const storeData = {
     },
     setDragItem(state, item:object){
       state.dragItem = item
-    },
-    langSwitch(state, lang:string){
-      state.config.lang = lang
     }
   },
   actions:{
@@ -94,8 +79,14 @@ const storeData = {
       db.saveConfig(state.configRaw)
     },
     async langSwitch(store, lang:string){
+      store.state.config.lang = lang
       store.state.ui = await langSwitch(lang)
       store.dispatch('saveConfig')
+    },
+    async selectTheme(store, theme:string){
+      store.state.config.theme = theme
+      store.dispatch('saveConfig')
+      switchTheme(theme)
     },
     updateItemsOrder({state}, newOrders:Array<Item>):void{
       state.items = newOrders
@@ -183,5 +174,10 @@ mylClass.watch((state:any)=>{
   return state.config.lang
 },(v,old)=>{
   mylClass.dispatch('langSwitch', v)
+})
+mylClass.watch((state:any)=>{
+  return state.config.theme
+}, (v,old)=>{
+  mylClass.dispatch('selectTheme', v)
 })
 export default mylClass
