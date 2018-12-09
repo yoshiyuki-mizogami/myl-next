@@ -11,10 +11,13 @@
     width 95%
     height 200px
     margin 20px auto
-    background-color white
+    background-color var(--base)
+    color var(--base-color)
     box-shadow 0 0 5px rgba(0,0,0, .5)
     padding 5px
     font-size 0
+    input
+      color var(--base-color)
     .prop
       margin 1px
     .prop-title

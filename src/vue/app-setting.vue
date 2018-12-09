@@ -79,6 +79,7 @@ export default Vue.extend({
     height 200px
     margin 20px auto
     background-color var(--dialog-base)
+    color var(--base-color)
     box-shadow 0 0 5px rgba(0,0,0, .5)
     padding 5px 
     font-size 0
