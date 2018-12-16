@@ -5,12 +5,25 @@ let mainWindow:BrowserWindow
 global['ROOTDIR'] = __dirname
 const isDev = process.execPath.includes('electron.exe')
 
+const lock = app.requestSingleInstanceLock()
+if(!lock){
+  app.quit()
+}else{
+  app.on('second-instance', (ev, cmdLine, workDir)=>{
+    if(mainWindow){
+      mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
+
 app.on('ready', ()=>{
   mainWindow = new BrowserWindow({
     height:400,
     width:350,
     frame:false,
     show:isDev,
+    resizable:false,
     fullscreenable:false,
     maximizable:false,
     icon:join(__dirname, 'imgs', 'icon.ico')

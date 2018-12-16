@@ -67,13 +67,12 @@ input[type=button],button
   .categories
     min-height 210px
     height 100%
-    width 150px
     display flexbox
     text-align center
-    flex-basis 35%
+    width 122px
   .items
     background-color var(--item-back)
-    flex-basis 65%
+    width 228px
 .loading
   position fixed
   top 0
@@ -236,7 +235,9 @@ export default Vue.extend({
     adjust(){
       const {app} = this.$refs
       const {clientHeight, clientWidth} = app
+      thisWindow.setResizable(true)
       thisWindow.setSize(clientWidth, clientHeight)
+      thisWindow.setResizable(false)
     },
     showWindow(){
       thisWindow.show()

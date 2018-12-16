@@ -8,7 +8,6 @@
   word-wrap break-word
   transition background .3s ease
   cursor pointer
-  word-wrap break-all
   >span
     vertical-align middle
   &:nth-child(even)
@@ -27,11 +26,13 @@
     background-size cover
   &:hover
     background-color var(--item-hover) !important
+  .item-content
+    display:inline-block;
+    width calc(100% - 23px)
 </style>
 <template>
   <div @contextmenu="showContentMenu" @dblclick="call" class="item" @dragstart="setDrag">
-    <div class="item-icon" :style="{'background-image':dataUrl}"></div>
-    <span class="item-content">{{item.name}}</span>
+    <div class="item-icon" :style="{'background-image':dataUrl}"></div><span class="item-content">{{item.name}}</span>
   </div>
 </template>
 <script lang="ts">
