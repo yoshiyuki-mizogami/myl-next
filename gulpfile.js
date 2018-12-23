@@ -1,7 +1,7 @@
-const g = require('gulp')
 const {spawn} = require('child_process')
+const {series} = require('gulp')
 const webpack = require('webpack')
-g.task('webpack', clbk=>{
+function doWebpack(clbk){
   let compiled = false
   const wpConfig = require('./webpack.config')
   const comp = webpack(wpConfig)
@@ -13,19 +13,17 @@ g.task('webpack', clbk=>{
     compiled = true
     clbk()
   })
-})
+}
+exports.webpack = doWebpack
+
 function bootElectron(){
   const c = spawn(require('electron'), ['app'], {stdio:'inherit'})
   c.on('close',bootElectron)
 }
-g.task('boot', ()=>{
-  bootElectron()
-})
-g.task('dev', ['webpack'], ()=>{
-  bootElectron()
-})
+exports.boot =  bootElectron
 
-g.task('pack-production', clbk=>{
+exports.dev = series(doWebpack, bootElectron)
+exports.parckProduction = function packProduction(clbk){
   const wpConfig = require('./webpack.config')
   process.env.NODE_ENV = 'production'
   wpConfig.forEach(c=>{
@@ -37,8 +35,9 @@ g.task('pack-production', clbk=>{
     console.log(stat.toString({colors:true}))
     clbk()
   })
-})
-g.task('build',['pack-production'],()=>{
+}
+ 
+exports.build = series(exports.packProduction,()=>{
   const builder = require('electron-builder')
   return builder.build({
     arch:'ia32',

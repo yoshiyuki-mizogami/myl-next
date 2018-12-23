@@ -26,6 +26,9 @@ app.on('ready', ()=>{
     resizable:false,
     fullscreenable:false,
     maximizable:false,
+    webPreferences:{
+      backgroundThrottling:true,
+    },
     icon:join(__dirname, 'imgs', 'icon.ico')
   })
   mainWindow.loadFile(join(__dirname, 'index.html'))
