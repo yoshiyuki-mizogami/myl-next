@@ -22,8 +22,8 @@
           </li>
           <li>
             <div class="setting-item">
-              <input type="button" :value="ui.IMPORT">
-              <input type="button" :value="ui.EXPORT">
+              <input type="button" @click="importJson" :value="ui.IMPORT">
+              <input type="button" @click="exportJson" :value="ui.EXPORT">
             </div>
           </li>
         </ul>
@@ -56,7 +56,7 @@ export default Vue.extend({
   },
   methods:{
     ...mapActions({
-      exportJson:'exrpotJson',
+      exportJson:'exportJson',
       importJson:'importJson'
     }),
     ...mapActions({

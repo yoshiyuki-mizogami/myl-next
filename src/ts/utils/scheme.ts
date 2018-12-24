@@ -9,6 +9,10 @@ import {URL} from '../consts'
 function sortFunc(a:Sortable, b:Sortable){
   return a.sort - b.sort
 }
+interface ExportForm {
+  category:Category,
+  items:Item[]
+}
 export default class MylDB extends Dexie{
   categories:Dexie.Table<Category, number>
   items:Dexie.Table<Item, number>
@@ -32,6 +36,32 @@ export default class MylDB extends Dexie{
     }
     return conf
   }
+  async exportAll(savePath:string){
+    const categories  = await this.categories.toArray()
+    const items = await this.items.toArray()
+    const categoriesMap = categories.reduce((b, c)=>{
+      b[c.id] = {
+        category:c,
+        items:[]
+      } as ExportForm
+      return b
+    },{})
+    items.forEach(i=>{
+      const cateId = i.cateId
+      i.cateId = 
+      i.id = void 0
+      categoriesMap[cateId].items.push(i)
+    })
+    const exportCategories = Object.keys(categoriesMap).reduce((ary,idx)=>{
+      const cursorItem = categoriesMap[idx]
+      ary.push(cursorItem)
+      return ary
+    },[])
+    return exportCategories
+  }
+  async importJson(obj){
+
+  }
   async saveConfig(config:Config){
     this.config.update(config.id, config)
   }
@@ -52,7 +82,6 @@ export default class MylDB extends Dexie{
     }, 0) + 1
     const newCategory = new Category(name, maxSort)
     await this.categories.add(newCategory)
-    console.log('add category done')
     return newCategory
   }
   async removeCategory(cate:Category){

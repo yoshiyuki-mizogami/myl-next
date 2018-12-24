@@ -1,7 +1,6 @@
 import Vue from 'vue'
-import {remote, nativeImage, FileIconOptions, ResizeOptions} from 'electron'
-import {basename} from 'path'
-import {stat, Stats} from 'fs'
+import {remote, nativeImage, FileIconOptions, ResizeOptions, app} from 'electron'
+import {join} from 'path'
 import Category from '../ts/models/category'
 import Item from '../ts/models/item'
 import getFileInfo from './utils/get-file-info'
@@ -12,6 +11,11 @@ import langSwitch from './lib/lang-swicher'
 import switchTheme from './lib/switch-theme'
 import {Themes} from './consts'
 import Config from './models/config';
+import globals from './globals'
+import {writeFile, existsSync, readFile} from 'fs';
+import eventHub from './event-hub';
+
+const {DEFAULT_JSON_NAME} = globals
 Vue.use(Vuex)
 const thisWindow = remote.getCurrentWindow()
 
@@ -155,11 +159,56 @@ const storeData = {
     updateItem(_, item){
       db.items.update(item.id, item)
     },
-    importJson(){
-
+    async importJson({state}){
+      const targetJsonFiles = remote.dialog.showOpenDialog(thisWindow, {
+        title:'Select Myl save data json.',
+        defaultPath:join(remote.app.getPath('desktop'), DEFAULT_JSON_NAME),
+        filters:[
+          {
+            name:'Json',
+            extensions:['json']
+          }
+        ]
+      })
+      if(!targetJsonFiles || targetJsonFiles.length === 0){
+        return
+      }
+      const [targetJson] = targetJsonFiles
+      if(!existsSync(targetJson)){
+        return eventHub.$emit('notify', state.ui.FILE_NOT_FOUND, 'warn')
+      }
+      try{
+        const jsonTxt = await new Promise<string>(r=>readFile(targetJson, 'utf8', (_e, d)=>r(d)))
+        const importData = JSON.parse(jsonTxt)
+        await importData.reduce(async (b,d)=>{
+          await b
+          const {category, items} = d
+          console.log(items)
+          const cate:Category = await db.addCategory(category.name)
+          await items.reduce(async (ib, i)=>{
+            await ib
+            i.cateId = cate.id
+            await db.addItem(i)
+          }, Promise.resolve())
+          state.categories.push(cate)
+        }, Promise.resolve())
+        eventHub.$emit('notify', state.ui.IMPORT_DONE)
+      }catch(e){
+        console.error(e)
+        eventHub.$emit('notify', state.ui.FILE_IS_INVALID, 'error')
+      }
     },
-    exportJson(){
-
+    async exportJson({state}){
+      const savePath = remote.dialog.showSaveDialog(thisWindow,{
+        title:'Select save filepath.',
+        defaultPath:join(remote.app.getPath('desktop'), DEFAULT_JSON_NAME)
+      })
+      if(!savePath || savePath.length === 0){
+        return
+      }
+      const exportData = await db.exportAll(savePath)
+      await new Promise(r=> writeFile(savePath, JSON.stringify(exportData), 'utf8' ,r))
+      eventHub.$emit('notify', state.ui.EXPORT_DONE)
     }
   }
 }
