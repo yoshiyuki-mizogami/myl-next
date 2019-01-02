@@ -1,17 +1,17 @@
 *{
   --base:rgb(255,255,255);
-  --dialog-base:rgb(255,255,255);
-  --header-color:#2f3e7d;
-  --layer-back:rgba(0,0,0,0.3);
-  --cate-bg:#a99dc1;
-  --cate-even-bg:#dbcef4;
+  --dialog-base:rgb(156, 253, 240);
+  --header-color:#dce3ff;
+  --layer-back:rgba(255, 163, 163, 0.979);
+  --cate-bg:#ffdf9a;
+  --cate-even-bg:#ffbda9;
   --cate-color:rgb(30,30,30);
-  --cate-hover:#a6ade2;
-  --selected-cate:#5f68ad;
-  --selected-cate-color:white;
-  --item-back:#DBCEF4;
-  --item-bg:#9096DF;
-  --item-even-bg:#5f68ad;
+  --cate-hover:#f9ffa7;
+  --selected-cate:#c9ff83;
+  --selected-cate-color:rgb(36, 36, 36);
+  --item-back:rgb(173, 245, 255);
+  --item-bg:rgb(187, 255, 210);
+  --item-even-bg:#90c9ff;
   --item-color:rgb(30,30,30);
   --item-hover:#a6ade2;
   --dialog-back:rgb(255,255,255);

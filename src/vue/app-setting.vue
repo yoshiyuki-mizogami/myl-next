@@ -3,7 +3,7 @@
     <div class="layer-back" v-if="show">
       <div class="setting-layer">
         <div class="icon-close close-btn" @click="close"/>
-        <div class="setting-title">Myl Setting</div>
+        <div class="setting-title">Myl <span v-once class="version">ver {{$store.state.version}}</span> Setting</div>
         <ul class="setting-items">
           <li>
             <div class="setting-name">{{ui.LANG}}</div>
@@ -25,6 +25,12 @@
               <input type="button" @click="importJson" :value="ui.IMPORT">
               <input type="button" @click="exportJson" :value="ui.EXPORT">
             </div>
+          </li>
+          <li>
+            <div class="setting-item">
+              <a href="#" @click.prevent="openHP">{{ui.CHECK_UPDATE}}</a>
+            </div>
+            
           </li>
         </ul>
       </div>
@@ -68,6 +74,9 @@ export default Vue.extend({
     },
     close(){
       this.show = false
+    },
+    openHP(){
+      this.$store.dispatch('openHP')
     }
   }
 })
@@ -83,6 +92,9 @@ export default Vue.extend({
     box-shadow 0 0 5px rgba(0,0,0, .5)
     padding 5px 
     font-size 0
+    .version
+      font-size smaller
+      opacity 0.8
     .setting-title
       font-size 16px
       text-align center

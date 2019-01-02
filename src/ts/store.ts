@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {remote, nativeImage, FileIconOptions, ResizeOptions, app} from 'electron'
+import {remote, nativeImage, FileIconOptions, ResizeOptions, app, shell} from 'electron'
 import {join} from 'path'
 import Category from '../ts/models/category'
 import Item from '../ts/models/item'
@@ -28,6 +28,7 @@ const db = new MylDB()
 const isUrl = /^https?:\/\//
 const storeData = {
   state:{
+    version:globals.VERSION,
     themes:Themes,
     categories:[],
     items:[],
@@ -128,6 +129,9 @@ const storeData = {
       const items = await db.getItems(cateId)
       state.items = items
       Vue.nextTick(()=>hub.$emit('adjust'))
+    },
+    openHP(){
+      shell.openExternal(globals.HP_URL)
     },
     async removeItem({state}, item:Item){
       await db.removeItem(item)
