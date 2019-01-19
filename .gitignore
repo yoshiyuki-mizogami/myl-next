@@ -1,5 +1,5 @@
 node_modules
-/app/bundle
+
 package-lock.json
 /dist
 /app/index.js

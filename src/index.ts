@@ -27,6 +27,7 @@ app.on('ready', ()=>{
     fullscreenable:false,
     maximizable:false,
     webPreferences:{
+      nodeIntegration:true,
       backgroundThrottling:true,
     },
     icon:join(__dirname, 'imgs', 'icon.ico')
