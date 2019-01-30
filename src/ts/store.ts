@@ -45,6 +45,7 @@ const storeData = {
       state.showNewCategoryDialog = tf
     },
     setLoading(state, tf:boolean){
+      console.log(tf)
       state.loading = tf
     },
     setSelectedCategory(state, c:Category){

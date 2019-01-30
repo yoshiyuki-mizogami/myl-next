@@ -16,7 +16,6 @@ if(!lock){
     }
   })
 }
-
 app.on('ready', ()=>{
   mainWindow = new BrowserWindow({
     height:400,
