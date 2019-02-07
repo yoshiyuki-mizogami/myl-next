@@ -1,5 +1,6 @@
 import {join} from 'path'
 import {app, BrowserWindow} from 'electron'
+app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
 global['ROOTDIR'] = __dirname
