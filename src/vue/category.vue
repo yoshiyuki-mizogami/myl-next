@@ -5,7 +5,6 @@
   color var(--cate-color)
   width 100%
   cursor pointer
-  transition background .3s ease
   font-size 13px
   word-wrap break-all
   input,textarea
@@ -52,6 +51,11 @@ export default Vue.extend({
     category:Object,
     selected:Boolean
   },
+  computed:{
+    ...mapState({
+      sortMode:'sortMode'
+    })
+  },
   watch:{
     editMode(v){
       if(v){
@@ -61,6 +65,11 @@ export default Vue.extend({
   },
   methods:{
     dragStartCategory(ev:DragEvent){
+      if(!this.sortMode){
+        ev.stopPropagation()
+        ev.preventDefault()
+        return
+      }
       ev.dataTransfer.setData('myl/category', '1')
     },
     showContextMenu(ev:MouseEvent){
@@ -86,8 +95,10 @@ export default Vue.extend({
       this.$store.dispatch('updateCategoryName', this.category)
     },
     dropToCategory(ev:DragEvent){
+      console.log(ev)
       const {dataTransfer:dt} = ev
       const fromCategory = dt.getData('myl/category')
+      console.log(fromCategory)
       if(fromCategory){
         return ev.stopPropagation()
       }

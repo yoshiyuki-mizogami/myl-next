@@ -4,7 +4,6 @@ import {dirname} from 'path'
 import Sortable from './sortable'
 import {URL} from '../consts'
 import url from 'url'
-const EXPLORER = 'explorer'
 export default class Item implements Sortable{
   id:number
   cateId:number
@@ -30,7 +29,7 @@ export default class Item implements Sortable{
         windowsHide:true
       },()=>{})
     }
-    explorer(this.path)
+    openItem(this.path)
   }
   openParent(){
     if(this.type === URL){
@@ -40,7 +39,7 @@ export default class Item implements Sortable{
     if(!parent){
       parent = this.path
     }
-    explorer(parent)
+    openItem(parent)
   }
 }
 
@@ -49,8 +48,8 @@ function getTopUrl(urlstring:string){
   return `${thisUrl.protocol}//${thisUrl.host}/`
 }
 
-function explorer(path){
-  spawn(EXPLORER, [path], {
-    detached:true
+function openItem(path){
+  shell.openExternal(path,{
+    activate:true
   })
 }

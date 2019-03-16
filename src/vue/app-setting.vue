@@ -1,41 +1,39 @@
 <template>
-  <transition name="layer">
-    <div class="layer-back" v-if="show">
-      <div class="setting-layer">
-        <div class="icon-close close-btn" @click="close"/>
-        <div class="setting-title">Myl <span v-once class="version">ver {{$store.state.version}}</span> Setting</div>
-        <ul class="setting-items">
-          <li>
-            <div class="setting-name">{{ui.LANG}}</div>
-            <div class="setting-val">
-              <label :class="{selected:config.lang === 'en'}" @click="langSwitch('en')">{{ui.EN}}</label><input :checked="config.lang === 'en'" type="radio" name="lang">
-              <label :class="{selected:config.lang === 'ja'}" @click="langSwitch('ja')">{{ui.JA}}</label><input :checked="config.lang === 'ja'" type="radio" name="lang">
-            </div>
-          </li>
-          <li>
-            <div class="setting-name">{{ui.THEME}}</div>
-            <div class="setting-val" style="text-align:center">
-              <div class="theme" :class="{selected:config.theme === k}"
-              @click="selectTheme(k)"
-               v-for="(t,k) in themes" :key="k">{{t}}</div>
-            </div>
-          </li>
-          <li>
-            <div class="setting-item">
-              <input type="button" @click="importJson" :value="ui.IMPORT">
-              <input type="button" @click="exportJson" :value="ui.EXPORT">
-            </div>
-          </li>
-          <li>
-            <div class="setting-item">
-              <a href="#" @click.prevent="openHP">{{ui.CHECK_UPDATE}}</a>
-            </div>
-            
-          </li>
-        </ul>
-      </div>
+  <div class="layer-back" v-if="show">
+    <div class="setting-layer">
+      <div class="icon-close close-btn" @click="close"/>
+      <div class="setting-title">Myl <span v-once class="version">ver {{$store.state.version}}</span> Setting</div>
+      <ul class="setting-items">
+        <li>
+          <div class="setting-name">{{ui.LANG}}</div>
+          <div class="setting-val">
+            <label :class="{selected:config.lang === 'en'}" @click="langSwitch('en')">{{ui.EN}}</label><input :checked="config.lang === 'en'" type="radio" name="lang">
+            <label :class="{selected:config.lang === 'ja'}" @click="langSwitch('ja')">{{ui.JA}}</label><input :checked="config.lang === 'ja'" type="radio" name="lang">
+          </div>
+        </li>
+        <li>
+          <div class="setting-name">{{ui.THEME}}</div>
+          <div class="setting-val" style="text-align:center">
+            <div class="theme" :class="{selected:config.theme === k}"
+            @click="selectTheme(k)"
+              v-for="(t,k) in themes" :key="k">{{t}}</div>
+          </div>
+        </li>
+        <li>
+          <div class="setting-item">
+            <input type="button" @click="importJson" :value="ui.IMPORT">
+            <input type="button" @click="exportJson" :value="ui.EXPORT">
+          </div>
+        </li>
+        <li>
+          <div class="setting-item">
+            <a href="#" @click.prevent="openHP">{{ui.CHECK_UPDATE}}</a>
+          </div>
+          
+        </li>
+      </ul>
     </div>
-  </transition>
+  </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import {remote, nativeImage, FileIconOptions, ResizeOptions, app, shell} from 'electron'
+import {remote, clipboard, shell} from 'electron'
 import {join} from 'path'
 import Category from '../ts/models/category'
 import Item from '../ts/models/item'
@@ -38,23 +38,27 @@ const storeData = {
     configRaw:null as any,
     loading:false,
     ui:{},
+    sortMode:false,
     dragItem:null as object | unknown
   },
   mutations:{
-    setNewCategoryDialog(state, tf:boolean){
+    switchSortMode(state:any){
+      state.sortMode = !state.sortMode
+      console.log(state.sortMode)
+    },
+    setNewCategoryDialog(state:any, tf:boolean){
       state.showNewCategoryDialog = tf
     },
-    setLoading(state, tf:boolean){
-      console.log(tf)
+    setLoading(state:any, tf:boolean){
       state.loading = tf
     },
-    setSelectedCategory(state, c:Category){
+    setSelectedCategory(state:any, c:Category){
       state.selectedCategory = c
     },
-    toggleAOT(state){
+    toggleAOT(state:any){
       state.config.aot = !state.config.aot
     },
-    setDragItem(state, item:object){
+    setDragItem(state:any, item:object){
       state.dragItem = item
     }
   },
@@ -69,7 +73,7 @@ const storeData = {
       Vue.delete(state.items, ind)
       await db.moveItem(dragItem, destCategory.id)
     },
-    async init(store){
+    async init(store:any){
       const {state} = store
       await store.dispatch('loadConfig')
       state.categories = await db.getCategories()
@@ -84,12 +88,12 @@ const storeData = {
     async saveConfig({state}){
       db.saveConfig(state.configRaw)
     },
-    async langSwitch(store, lang:string){
+    async langSwitch(store:any, lang:string){
       store.state.config.lang = lang
       store.state.ui = await langSwitch(lang)
       store.dispatch('saveConfig')
     },
-    async selectTheme(store, theme:string){
+    async selectTheme(store:any, theme:string){
       store.state.config.theme = theme
       store.dispatch('saveConfig')
       switchTheme(theme)
@@ -158,10 +162,13 @@ const storeData = {
       state.items.push(urlItem)
       Vue.nextTick(()=>hub.$emit('adjust'))
     },
-    async showItemDetail(_, item){
+    async copyItemPath(_:void, item:Item){
+      clipboard.writeText(item.path)
+    },
+    async showItemDetail(_:void, item:Item){
       hub.$emit('show-item-detail', item)
     },
-    updateItem(_, item){
+    updateItem(_:void, item:Item){
       db.items.update(item.id, item)
     },
     async importJson({state}){
@@ -185,12 +192,11 @@ const storeData = {
       try{
         const jsonTxt = await new Promise<string>(r=>readFile(targetJson, 'utf8', (_e, d)=>r(d)))
         const importData = JSON.parse(jsonTxt)
-        await importData.reduce(async (b,d)=>{
+        await importData.reduce(async (b:Promise<void>,d:any)=>{
           await b
           const {category, items} = d
-          console.log(items)
           const cate:Category = await db.addCategory(category.name)
-          await items.reduce(async (ib, i)=>{
+          await items.reduce(async (ib:Promise<void>, i:any)=>{
             await ib
             i.cateId = cate.id
             await db.addItem(i)
@@ -219,11 +225,11 @@ const storeData = {
 }
 
 class MylClass extends Store<object>{
-  constructor(){
+  constructor(storeData){
     super(storeData)
   }
 }
-const mylClass = new MylClass()
+const mylClass = new MylClass(storeData)
 mylClass.watch((state:any)=>{
   return state.config.lang
 },(v,old)=>{

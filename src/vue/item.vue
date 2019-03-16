@@ -6,7 +6,6 @@
   color var(--item-color)
   font-size 13px
   word-wrap break-word
-  transition background .3s ease
   cursor pointer
   >span
     vertical-align middle
@@ -39,13 +38,17 @@
 import Vue from 'vue'
 import hub from '../ts/event-hub'
 import Item from '../ts/models/item'
-import {remote} from 'electron'
+import {remote, ipcRenderer} from 'electron'
+import { mapState } from 'vuex';
 const {Menu, MenuItem} = remote
 export default Vue.extend({
   props:{
     item:Item
   }, 
   computed:{
+    ...mapState({
+      sortMode:'sortMode'
+    }),
     dataUrl(){
       return `url(${this.item.icon})`
     }
@@ -58,9 +61,15 @@ export default Vue.extend({
       contextMenu(this.$store, ev, this.item)
     },
     setDrag(ev:DragEvent){
-      this.$store.commit('setDragItem', this.item)
-      ev.dataTransfer.setData('myl/item', '1')
-      ev.dataTransfer.setData('text/plain', this.item.path)
+      if(this.sortMode){
+        this.$store.commit('setDragItem', this.item)
+        ev.dataTransfer.setData('myl/item', '1')
+        ev.dataTransfer.setData('text/plain', this.item.path)
+        return
+      }
+      ev.preventDefault()
+      ev.stopPropagation()
+      ipcRenderer.send('ondragstart', this.item.path)
     }
   }
 })
@@ -74,6 +83,15 @@ function contextMenu(store, ev:MouseEvent, item:Item){
     label:ui.OPEN_PARENT,
     click(){
       item.openParent()
+    }
+  })
+  const copyItemPath = new MenuItem({
+    id:'Copy',
+    accelerator:'c',
+    type:'normal',
+    label:ui.COPY,
+    click(){
+      store.dispatch('copyItemPath', item)
     }
   })
   const editItem  = new MenuItem({
@@ -103,6 +121,7 @@ function contextMenu(store, ev:MouseEvent, item:Item){
     }
   })
   menu.append(openParent)
+  menu.append(copyItemPath)
   menu.append(editItem)
   menu.append(removeItem)
   menu.popup({})

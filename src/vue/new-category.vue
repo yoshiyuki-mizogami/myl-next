@@ -19,7 +19,6 @@
       padding 5px
 </style>
 <template>
-  <transition name="layer">
   <div class="layer-back" v-if="show">
     <div class="new-category">
       <div class="icon-close close-btn" @click="close"></div>
@@ -28,7 +27,6 @@
              :placeholder="ui.INPUT_NEW_CATEGORY">
     </div>
   </div>
-  </transition>
 </template>
 <script lang="ts">
 import Vue from 'vue'

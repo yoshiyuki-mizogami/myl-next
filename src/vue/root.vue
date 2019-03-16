@@ -58,6 +58,12 @@ input[type=button],button
       color rgb(255, 100, 120)
     &.setting
       color rgb(200,200,100)
+    &.switch-sortmode
+      color rgb(100,100,100)
+      font-size 90%
+      vertical-align middle
+      &.sortMode
+        color rgb(100,255,10)
 
 .content
   height calc(100% - 20px)
@@ -80,8 +86,6 @@ input[type=button],button
   height 1000px
   width 100%
   background-color rgba(0,0,0,.5)
-.loading-enter-active,.loading-leave-active
-  transition opacity .3s ease 
 .loading-enter,.loading-leave-to
   opacity 0
 .close-btn
@@ -94,17 +98,15 @@ input[type=button],button
   text-align center
   color gray
   cursor pointer
-  transition color .2s ease
   &:hover
     color black
 </style>
 <template>
   <div class="whole" ref="app">
-    <transition name="loading">
-      <div class="loading" v-if="loading"/>
-    </transition>
+    <div class="loading" v-if="loading"/>
     <div class="header">
       <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory"></div>
+      <div class="icon-sort-amount-asc header-btn switch-sortmode" :class="{sortMode}" @click="switchSortMode"></div>
       <div class="icon-gear header-btn setting" @click="openSetting"></div>
       <div class="icon-clone header-btn aot-btn" :class="{aot}" @click="toggleAOT"></div>
       <div class="icon-sign-out header-btn close-app" @click="close"></div>
@@ -131,7 +133,7 @@ input[type=button],button
 <script lang="ts">
 import {remote} from 'electron'
 import Vue from 'vue'
-import {mapState} from 'vuex'
+import {mapState,mapMutations} from 'vuex'
 import Category from './category.vue'
 import Item from './item.vue'
 import NewCateDialog from './new-category.vue'
@@ -180,7 +182,8 @@ export default Vue.extend({
     },
     ...mapState({
       selectedCategory:'selectedCategory',
-      loading:'loading'
+      loading:'loading',
+      sortMode:'sortMode'
     })
   },
   mounted(){
@@ -198,6 +201,9 @@ export default Vue.extend({
     'notify':Notify
   },
   methods:{
+    ...mapMutations({
+      switchSortMode:'switchSortMode'
+    }),
     addNewCategory(){
       this.$store.commit('setNewCategoryDialog', true)
     },

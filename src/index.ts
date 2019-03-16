@@ -1,5 +1,6 @@
 import {join} from 'path'
-import {app, BrowserWindow} from 'electron'
+import {app, BrowserWindow, ipcMain} from 'electron'
+
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
@@ -38,4 +39,12 @@ app.on('ready', ()=>{
     BrowserWindow.addDevToolsExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
     mainWindow.webContents.openDevTools()
   }
+  const dragIcon = join(global['ROOTDIR'], 'imgs', 'drag.png')
+  ipcMain.on('ondragstart', (event, file)=>{
+    console.log(file)
+    event.sender.startDrag({
+      file,
+      icon:dragIcon
+    })
+  })
 })

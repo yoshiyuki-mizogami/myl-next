@@ -15,17 +15,15 @@
 
 </style>
 <template>
-  <transition name="layer">
-    <div class="layer-back" v-if="show">
-      <div class="dialog" :style="{top:y+'px', left:x+'px'}">
-        <div class="dialog-mess">{{message}}</div>
-        <div class="dialog-console">
-          <input @click="ok" type="button" value="OK">
-          <input v-if="cancelable" @click="cancel" type="button" value="Cancel">
-        </div>
+  <div class="layer-back" v-if="show">
+    <div class="dialog" :style="{top:y+'px', left:x+'px'}">
+      <div class="dialog-mess">{{message}}</div>
+      <div class="dialog-console">
+        <input @click="ok" type="button" value="OK">
+        <input v-if="cancelable" @click="cancel" type="button" value="Cancel">
       </div>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script lang="ts">
