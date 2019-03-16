@@ -1,6 +1,6 @@
 import {shell} from 'electron'
 import {spawn,exec} from 'child_process'
-import {dirname} from 'path'
+import {dirname, basename} from 'path'
 import Sortable from './sortable'
 import {URL} from '../consts'
 import url from 'url'
@@ -30,6 +30,9 @@ export default class Item implements Sortable{
       },()=>{})
     }
     openItem(this.path)
+    if(this.type === 'dir'){
+      activateExplorer(this)
+    }
   }
   openParent(){
     if(this.type === URL){
@@ -48,8 +51,12 @@ function getTopUrl(urlstring:string){
   return `${thisUrl.protocol}//${thisUrl.host}/`
 }
 
-function openItem(path){
+function openItem(path: string){
   shell.openExternal(path,{
     activate:true
   })
+}
+function activateExplorer(item:Item){
+  const base = basename(item.path)
+  spawn('powershell', ['-Command', `(new-object -comobject WScript.Shell).AppActivate("${base}")`])
 }
