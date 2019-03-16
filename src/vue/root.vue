@@ -118,7 +118,7 @@ input[type=button],button
         </draggable>
       </div>
       <div class="items">
-        <draggable v-model="items">
+        <draggable v-model="items" :move="checkMove">
           <an-item v-for="i in items" :item="i" :key="i.id"></an-item>
         </draggable>
       </div>
@@ -183,7 +183,8 @@ export default Vue.extend({
     ...mapState({
       selectedCategory:'selectedCategory',
       loading:'loading',
-      sortMode:'sortMode'
+      sortMode:'sortMode',
+      dragItem:'dragItem'
     })
   },
   mounted(){
@@ -204,6 +205,9 @@ export default Vue.extend({
     ...mapMutations({
       switchSortMode:'switchSortMode'
     }),
+    checkMove(){
+      return this.sortMode
+    },
     addNewCategory(){
       this.$store.commit('setNewCategoryDialog', true)
     },
@@ -217,18 +221,24 @@ export default Vue.extend({
     async dropAny(e:DragEvent):Promise<void>{
       const trackLink = e.ctrlKey
       const {dataTransfer:df} = e
-      const files = df.files
+      const fromThis = df.getData('myl/item')
+      if(fromThis){
+        return
+      }
+      let files = Array.from(df.files)
       if(!files.length){
         const dragString = df.getData('text/plain')
-        const fromThis = df.getData('myl/item')
-        if(fromThis){
-          return
-        }
         await this.$store.dispatch('addUrl', {url:dragString})
         return 
       }
+      files = files.filter(f=>{
+        return (!this.dragItem) || f.path !== this.dragItem.path
+      })
+      if(!files.length){
+        return
+      }
       this.$store.commit('setLoading', true)
-      await Array.from(files).reduce((b, f)=>{
+      await files.reduce((b, f)=>{
         return b.then(async ()=>{
           await this.$store.dispatch('addFile', {filepath:f.path, trackLink})
         })

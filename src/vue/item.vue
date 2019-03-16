@@ -61,19 +61,20 @@ export default Vue.extend({
       contextMenu(this.$store, ev, this.item)
     },
     setDrag(ev:DragEvent){
+      this.$store.commit('setDragItem', this.item)
       if(this.sortMode){
-        this.$store.commit('setDragItem', this.item)
-        ev.dataTransfer.setData('myl/item', '1')
         ev.dataTransfer.setData('text/plain', this.item.path)
+        ev.dataTransfer.setData('myl/item', '1')
         return
       }
-      ev.stopPropagation()
       if(this.item.type === 'url'){
-        ev.dataTransfer.setData('myl/item', '1')
         ev.dataTransfer.setData('text/uri-list', this.item.path)
+        ev.dataTransfer.setData('myl/item', '1')
         return
       }
       ev.preventDefault()
+      ev.stopPropagation()
+      ev.dataTransfer.setData('myl/item', '1')
       ipcRenderer.send('ondragstart', this.item.path)
     }
   }
