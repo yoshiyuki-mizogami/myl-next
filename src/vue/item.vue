@@ -67,8 +67,13 @@ export default Vue.extend({
         ev.dataTransfer.setData('text/plain', this.item.path)
         return
       }
-      ev.preventDefault()
       ev.stopPropagation()
+      if(this.item.type === 'url'){
+        ev.dataTransfer.setData('myl/item', '1')
+        ev.dataTransfer.setData('text/uri-list', this.item.path)
+        return
+      }
+      ev.preventDefault()
       ipcRenderer.send('ondragstart', this.item.path)
     }
   }

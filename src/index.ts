@@ -40,8 +40,7 @@ app.on('ready', ()=>{
     mainWindow.webContents.openDevTools()
   }
   const dragIcon = join(global['ROOTDIR'], 'imgs', 'drag.png')
-  ipcMain.on('ondragstart', (event, file)=>{
-    console.log(file)
+  ipcMain.on('ondragstart', (event:any, file:string)=>{
     event.sender.startDrag({
       file,
       icon:dragIcon
