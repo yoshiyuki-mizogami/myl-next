@@ -36,7 +36,7 @@ export default class MylDB extends Dexie{
     }
     return conf
   }
-  async exportAll(savePath:string){
+  async exportAll(_:string){
     const categories  = await this.categories.toArray()
     const items = await this.items.toArray()
     const categoriesMap = categories.reduce((b, c)=>{
@@ -59,7 +59,7 @@ export default class MylDB extends Dexie{
     },[])
     return exportCategories
   }
-  async importJson(obj){
+  async importJson(_:any){
 
   }
   async saveConfig(config:Config){

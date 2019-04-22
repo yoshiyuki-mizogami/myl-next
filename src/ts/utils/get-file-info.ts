@@ -23,9 +23,9 @@ interface FileInfo {
   name:string
   icon:string
 }
-export default async function getFileInfo(filepath:string, trackLink:boolean):Promise<FileInfo>{
+export default async function getFileInfo(filepath:string):Promise<FileInfo>{
   const fileType:string = await new Promise<string>(resolve=>{
-    stat(filepath,(err, stat:Stats)=>{
+    stat(filepath,(_, stat:Stats)=>{
       let type = FILE
       if(stat.isDirectory()){
         type = DIR

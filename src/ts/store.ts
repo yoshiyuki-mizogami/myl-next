@@ -112,7 +112,7 @@ const storeData = {
         db.categories.update(o.id, {'sort':o.sort})
       })
     },
-    updateCategoryName({state}, cate){
+    updateCategoryName({state}, cate:Category){
       db.categories.update(cate.id, {name:cate.name})
     },
     async addNewCategory({state}, categoryName:string){
@@ -140,14 +140,14 @@ const storeData = {
     },
     async removeItem({state}, item:Item){
       await db.removeItem(item)
-      const removeIndex = state.items.findIndex(i=> i === item)
+      const removeIndex = state.items.findIndex((i:any)=> i === item)
       Vue.delete(state.items, removeIndex)
       Vue.nextTick(()=>hub.$emit('adjust'))
     },
-    async addFile({state}, {filepath, trackLink}){
+    async addFile({state}, {filepath}){
       const cateId = state.selectedCategory.id
       const items = state.items
-      const fileInfo = await getFileInfo(filepath, trackLink)
+      const fileInfo = await getFileInfo(filepath)
       fileInfo.cateId = cateId
       const fileItem = await db.addItem(fileInfo)
       items.push(fileItem)
@@ -190,7 +190,7 @@ const storeData = {
         return eventHub.$emit('notify', state.ui.FILE_NOT_FOUND, 'warn')
       }
       try{
-        const jsonTxt = await new Promise<string>(r=>readFile(targetJson, 'utf8', (_e, d)=>r(d)))
+        const jsonTxt = await new Promise<string>(r=>readFile(targetJson, 'utf8', (_e:Error, d:any)=>r(d)))
         const importData = JSON.parse(jsonTxt)
         await importData.reduce(async (b:Promise<void>,d:any)=>{
           await b

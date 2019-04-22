@@ -1,4 +1,3 @@
-import Vue from "vue";
 import Hub from '../ts/event-hub'
 import { mapState } from "vuex";
 export default {

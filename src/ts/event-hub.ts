@@ -4,7 +4,7 @@ export default new Vue({
     layers:[] as Vue[]
   },
   methods:{
-    pushLayer(l){
+    pushLayer(l:Vue){
       this.layers.push(l)
     },
     popLayer(){
