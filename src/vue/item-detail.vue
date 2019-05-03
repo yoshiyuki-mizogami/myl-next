@@ -105,10 +105,10 @@ export default Vue.extend({
       this.show = false
       this.$store.dispatch('updateItem', data)
     },
-    selectWith(){
+    async selectWith(){
       const thisWindow = remote.getCurrentWindow()
       const def = this.data.by || process.env.PROGRAMFILES
-      const files = dialog.showOpenDialog(thisWindow,{
+      const files = await dialog.showOpenDialog(thisWindow,{
         title:this.ui.SELECT_WITH,
         properties:['openFile'],
         defaultPath:def

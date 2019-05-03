@@ -172,7 +172,7 @@ const storeData = {
       db.items.update(item.id, item)
     },
     async importJson({state}){
-      const targetJsonFiles = remote.dialog.showOpenDialog(thisWindow, {
+      const targetJsonFiles = await remote.dialog.showOpenDialog(thisWindow, {
         title:'Select Myl save data json.',
         defaultPath:join(remote.app.getPath('desktop'), DEFAULT_JSON_NAME),
         filters:[
@@ -210,7 +210,7 @@ const storeData = {
       }
     },
     async exportJson({state}){
-      const savePath = remote.dialog.showSaveDialog(thisWindow,{
+      const savePath = await remote.dialog.showSaveDialog(thisWindow,{
         title:'Select save filepath.',
         defaultPath:join(remote.app.getPath('desktop'), DEFAULT_JSON_NAME)
       })
