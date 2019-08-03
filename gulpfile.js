@@ -38,7 +38,7 @@ exports.packProduction = function packProduction(clbk){
   })
 }
 
-exports.build = series(exports.packProduction,()=>{
+exports.build = series(exports.packProduction,clearDist, async ()=>{
   const builder = require('electron-builder')
   return builder.build({
     config:{
@@ -61,3 +61,10 @@ exports.build = series(exports.packProduction,()=>{
     }
   })
 })
+
+const del = require('del')
+async function clearDist(){
+  return del(['dist/**'],{force:true})
+}
+
+exports.clearDist = clearDist
