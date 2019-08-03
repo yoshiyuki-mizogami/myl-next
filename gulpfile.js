@@ -41,7 +41,6 @@ exports.packProduction = function packProduction(clbk){
 exports.build = series(exports.packProduction,()=>{
   const builder = require('electron-builder')
   return builder.build({
-    arch:'ia32',
     config:{
       productName:'MylNext',
       directories:{
