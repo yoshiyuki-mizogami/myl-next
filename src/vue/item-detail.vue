@@ -113,10 +113,11 @@ export default Vue.extend({
         properties:['openFile'],
         defaultPath:def
       })
-      if(!files || !files.length){
+      if(!files.filePaths.length){
         return this.data.by = ''
       }
-      Vue.set(this.data,'by', files[0])
+      const [filepath] = files.filePaths
+      Vue.set(this.data,'by', filepath)
     }
   }
 })

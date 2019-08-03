@@ -182,10 +182,10 @@ const storeData = {
           }
         ]
       })
-      if(!targetJsonFiles || targetJsonFiles.length === 0){
+      if(targetJsonFiles.filePaths.length === 0){
         return
       }
-      const [targetJson] = targetJsonFiles
+      const [targetJson] = targetJsonFiles.filePaths
       if(!existsSync(targetJson)){
         return eventHub.$emit('notify', state.ui.FILE_NOT_FOUND, 'warn')
       }
@@ -214,11 +214,11 @@ const storeData = {
         title:'Select save filepath.',
         defaultPath:join(remote.app.getPath('desktop'), DEFAULT_JSON_NAME)
       })
-      if(!savePath || savePath.length === 0){
+      if(!savePath.filePath){
         return
       }
-      const exportData = await db.exportAll(savePath)
-      await new Promise(r=> writeFile(savePath, JSON.stringify(exportData), 'utf8' ,r))
+      const exportData = await db.exportAll(savePath.filePath)
+      await new Promise(r=> writeFile(savePath.filePath, JSON.stringify(exportData), 'utf8' ,r))
       eventHub.$emit('notify', state.ui.EXPORT_DONE)
     }
   }

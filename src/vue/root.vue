@@ -251,9 +251,9 @@ export default Vue.extend({
     adjust(){
       const {app} = this.$refs
       const {clientHeight, clientWidth} = app
-      thisWindow.setResizable(true)
+      thisWindow['resizable'] = true
       thisWindow.setSize(clientWidth, clientHeight)
-      thisWindow.setResizable(false)
+      thisWindow['resizable'] = false
     },
     showWindow(){
       thisWindow.show()
