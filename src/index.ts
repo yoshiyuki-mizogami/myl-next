@@ -5,7 +5,7 @@ app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
 global['ROOTDIR'] = __dirname
-const isDev = process.execPath.includes('electron.exe')
+const isDev = false //process.execPath.includes('electron.exe')
 
 const lock = app.requestSingleInstanceLock()
 if(!lock){
