@@ -16,7 +16,7 @@ export default class Item implements Sortable{
   sc:string = ''
   sort:number
   cwd:string = ''
-  constructor(obj){
+  constructor(obj: any){
     Object.assign(this,obj)
   }
   call(){
@@ -29,10 +29,7 @@ export default class Item implements Sortable{
         windowsHide:true
       },()=>{})
     }
-    openItem(this.path)
-    if(this.type === 'dir'){
-      activateExplorer(this)
-    }
+    this.openItem(this.path)
   }
   openParent(){
     if(this.type === URL){
@@ -42,21 +39,15 @@ export default class Item implements Sortable{
     if(!parent){
       parent = this.path
     }
-    openItem(parent)
+    this.openItem(parent)
+  }
+  openItem(path: string){
+    console.log(path)
+    shell.openPath(path)
   }
 }
 
 function getTopUrl(urlstring:string){
   const thisUrl = new url.URL(urlstring)
   return `${thisUrl.protocol}//${thisUrl.host}/`
-}
-
-function openItem(path: string){
-  shell.openExternal(path,{
-    activate:true
-  })
-}
-function activateExplorer(item:Item){
-  const base = basename(item.path)
-  spawn('powershell', ['-Command', `(new-object -comobject WScript.Shell).AppActivate("${base}")`])
 }
