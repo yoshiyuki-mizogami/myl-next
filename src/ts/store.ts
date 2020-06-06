@@ -44,7 +44,6 @@ const storeData = {
   mutations:{
     switchSortMode(state:any){
       state.sortMode = !state.sortMode
-      console.log(state.sortMode)
     },
     setNewCategoryDialog(state:any, tf:boolean){
       state.showNewCategoryDialog = tf

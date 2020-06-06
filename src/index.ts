@@ -29,6 +29,7 @@ app.on('ready', ()=>{
     maximizable:false,
     webPreferences:{
       nodeIntegration:true,
+      enableRemoteModule:true,
       backgroundThrottling:true,
     },
     icon:join(__dirname, 'imgs', 'icon.ico')
@@ -36,7 +37,8 @@ app.on('ready', ()=>{
   mainWindow.loadFile(join(__dirname, 'index.html'))
   mainWindow.on('closed', app.quit.bind(app))
   if(isDev){
-    BrowserWindow.addDevToolsExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
+    const ses = mainWindow.webContents.session
+    ses.loadExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
     mainWindow.webContents.openDevTools()
   }
   const dragIcon = join(global['ROOTDIR'], 'imgs', 'drag.png')
