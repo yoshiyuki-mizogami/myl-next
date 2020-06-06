@@ -32,7 +32,7 @@ app.on('ready', ()=>{
       enableRemoteModule:true,
       backgroundThrottling:true,
     },
-    icon:join(__dirname, 'imgs', 'icon.ico')
+    icon:join(__dirname, 'imgs', 'icon.png')
   })
   mainWindow.loadFile(join(__dirname, 'index.html'))
   mainWindow.on('closed', app.quit.bind(app))
