@@ -1,6 +1,14 @@
-const {spawn} = require('child_process')
+const {spawn, execSync} = require('child_process')
 const {series} = require('gulp')
+const dotenv = require('dotenv')
+
 const webpack = require('webpack')
+
+
+
+dotenv.config()
+
+console.log('github access token %s....', process.env.GH_TOKEN.substr(0,5))
 
 exports.webpack = function doWebpack(clbk){
   let compiled = false
@@ -44,6 +52,11 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
     config:{
       appId:'yoshiyuki.mizogami.mylnext',
       productName:'MylNext',
+      publish:[
+        {
+          provider:'github'
+        }
+      ],
       directories:{
         app:'app',
         output:'dist'
@@ -59,6 +72,7 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
         title:'MylNext',
       },
       win:{
+        publish:'github',
         target:['nsis'],
         icon:'app/imgs/icon.ico'
       },
@@ -71,6 +85,13 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
     }
   })
 })
+
+exports.publish = async function publish(done){
+  const ghToken = process.env.GH_TOKEN
+  execSync(`set GH_TOKEN=${ghToken} `)
+  const cp = spawn('node_modules\\.bin\\electron-builder.cmd',['--win', '--publish', 'always'], {stdio:'inherit'})
+  cp.on('close', ()=>done())
+}
 
 const del = require('del')
 async function clearDist(){
