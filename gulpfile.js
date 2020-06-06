@@ -89,7 +89,7 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
 exports.publish = async function publish(done){
   const ghToken = process.env.GH_TOKEN
   execSync(`set GH_TOKEN=${ghToken} `)
-  const cp = spawn('node_modules\\.bin\\electron-builder.cmd',['--win', '--publish', 'always'], {stdio:'inherit'})
+  const cp = spawn('electron-builder',['--mac', '--win', '--publish', 'always'], {stdio:'inherit'})
   cp.on('close', ()=>done())
 }
 
