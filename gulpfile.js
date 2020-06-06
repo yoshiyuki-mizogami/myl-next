@@ -42,12 +42,22 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
   const builder = require('electron-builder')
   return builder.build({
     config:{
+      appId:'yoshiyuki.mizogami.mylnext',
       productName:'MylNext',
       directories:{
         app:'app',
         output:'dist'
       },
       copyright:'Copyright 2018 Yoshiyuki Mizogami',
+      mac:{
+        category:'public.app-category.eveloper-tools',
+        target:['dmg'],
+        icon:'app/imgs/icon.icns'
+      },
+      dmg:{
+        icon:'app/imgs/icon.icns',
+        title:'MylNext',
+      },
       win:{
         target:['nsis'],
         icon:'app/imgs/icon.ico'
