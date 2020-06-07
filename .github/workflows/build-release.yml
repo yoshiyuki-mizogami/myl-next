@@ -39,21 +39,23 @@ jobs:
         draft: false
         prerelease: false
     - name: Upload exe
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/MylNext Setup ${{env.APP_VERSION}}.exe
-          asset_name: MylNext Setup ${{env.APP_VERSION}}.exe
-          asset_content_type: application/octet-stream
+      id: upload_exe
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/MylNext Setup ${{env.APP_VERSION}}.exe
+        asset_name: MylNext Setup ${{env.APP_VERSION}}.exe
+        asset_content_type: application/octet-stream
     - name: Upload dmg
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/MylNext-${{ env.APP_VERSION }}.dmg
-          asset_name: MylNext-${{ env.APP_VERSION }}.dmg
-          asset_content_type: application/octet-stream
+      id: upload_dmg
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/MylNext-${{ env.APP_VERSION }}.dmg
+        asset_name: MylNext-${{ env.APP_VERSION }}.dmg
+        asset_content_type: application/octet-stream
 
