@@ -45,6 +45,7 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
     config:{
       appId:'yoshiyuki.mizogami.mylnext',
       productName:'MylNext',
+      publish:null,
       directories:{
         app:'app',
         output:'dist'
