@@ -2,9 +2,6 @@ const {spawn, execSync} = require('child_process')
 const {series} = require('gulp')
 const webpack = require('webpack')
 
-
-console.log('github access token %s....', process.env.GH_TOKEN.substr(0,5))
-
 exports.webpack = function doWebpack(clbk){
   let compiled = false
   const wpConfig = require('./webpack.config')
