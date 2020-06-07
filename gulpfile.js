@@ -44,11 +44,6 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
     config:{
       appId:'yoshiyuki.mizogami.mylnext',
       productName:'MylNext',
-      publish:[
-        {
-          provider:'github'
-        }
-      ],
       directories:{
         app:'app',
         output:'dist'
@@ -64,7 +59,6 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
         title:'MylNext',
       },
       win:{
-        publish:'github',
         target:['nsis'],
         icon:'app/imgs/icon.ico'
       },
