@@ -41,41 +41,6 @@ exports.packProduction = function packProduction(clbk){
   })
 }
 
-exports.build = series(exports.packProduction,clearDist, async ()=>{
-  const builder = require('electron-builder')
-  return builder.build({
-    config:{
-      appId:'yoshiyuki.mizogami.mylnext',
-      productName:'MylNext',
-      publish:null,
-      directories:{
-        app:'app',
-        output:'dist'
-      },
-      copyright:'Copyright 2018 Yoshiyuki Mizogami',
-      mac:{
-        category:'public.app-category.developer-tools',
-        target:['dmg'],
-        icon:'app/imgs/icon.icns'
-      },
-      dmg:{
-        icon:'app/imgs/icon.icns',
-        title:'MylNext',
-      },
-      win:{
-        target:['nsis'],
-        icon:'app/imgs/icon.ico'
-      },
-      nsis:{
-        oneClick:true,
-        shortcutName:'MylNext',
-        installerIcon:'app/imgs/icon.ico',
-        uninstallerIcon:'app/imgs/icon.ico'
-      }
-    }
-  })
-})
-
 const del = require('del')
 async function clearDist(){
   return del(['dist/**'],{force:true})
