@@ -6,7 +6,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "dev": "gulp dev",
-    "build": "electron-builder -mw"
+    "build": "gulp packProduction && electron-builder -mw"
   },
   "author": "yoshiyuki mizogami",
   "license": "MIT",
