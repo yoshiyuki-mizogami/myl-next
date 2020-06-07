@@ -26,7 +26,7 @@ jobs:
       run: |
         npm ci
         npm run build
-    - Create Release
+    - name: Create Release
       id: create_release
       uses: actions/crate-release@v1
       env:
