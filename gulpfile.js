@@ -1,12 +1,7 @@
 const {spawn, execSync} = require('child_process')
 const {series} = require('gulp')
-const dotenv = require('dotenv')
-
 const webpack = require('webpack')
 
-
-
-dotenv.config()
 
 console.log('github access token %s....', process.env.GH_TOKEN.substr(0,5))
 
@@ -85,13 +80,6 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
     }
   })
 })
-
-exports.publish = async function publish(done){
-  const ghToken = process.env.GH_TOKEN
-  execSync(`set GH_TOKEN=${ghToken} `)
-  const cp = spawn('electron-builder',['--mac', '--win', '--publish', 'always'], {stdio:'inherit'})
-  cp.on('close', ()=>done())
-}
 
 const del = require('del')
 async function clearDist(){

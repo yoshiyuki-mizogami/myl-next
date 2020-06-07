@@ -6,8 +6,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "dev": "gulp dev",
-    "build": "gulp build",
-    "publish":"gulp publish"
+    "build": "gulp build"
   },
   "author": "yoshiyuki mizogami",
   "license": "MIT",
@@ -40,11 +39,6 @@
   "build":{
     "appId":"yoshiyuki.mizogami.mylnext",
     "productName":"MylNext",
-    "publish":[
-      {
-        "provider":"github"
-      }
-    ],
     "directories":{
       "app":"app",
       "output":"dist"
