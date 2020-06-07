@@ -1,7 +1,9 @@
-const {spawn, execSync} = require('child_process')
+const {spawn} = require('child_process')
 const {series} = require('gulp')
 const webpack = require('webpack')
-process.env.GH_TOKEN = 'dummy'
+
+const {version} = require('./app/package.json')
+console.log(`::set-env name=APP_VERSION::${version}`)
 
 exports.webpack = function doWebpack(clbk){
   let compiled = false
