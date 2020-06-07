@@ -45,7 +45,7 @@
     },
     "copyright":"Copyright 2018 Yoshiyuki Mizogami",
     "mac":{
-      "category":"public.app-category.eveloper-tools",
+      "category":"public.app-category.developer-tools",
       "target":["dmg"],
       "icon":"app/imgs/icon.icns"
     },
