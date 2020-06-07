@@ -34,37 +34,5 @@
   "dependencies": {
     "dexie": "^3.0.1",
     "vuedraggable": "^2.23.2"
-  },
-  "build": {
-    "appId": "yoshiyuki.mizogami.mylnext",
-    "productName": "MylNext",
-    "directories": {
-      "app": "app",
-      "output": "dist"
-    },
-    "copyright": "Copyright 2018 Yoshiyuki Mizogami",
-    "mac": {
-      "category": "public.app-category.developer-tools",
-      "target": [
-        "dmg"
-      ],
-      "icon": "app/imgs/icon.icns"
-    },
-    "dmg": {
-      "icon": "app/imgs/icon.icns",
-      "title": "MylNext"
-    },
-    "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "app/imgs/icon.ico"
-    },
-    "nsis": {
-      "oneClick": true,
-      "shortcutName": "MylNext",
-      "installerIcon": "app/imgs/icon.ico",
-      "uninstallerIcon": "app/imgs/icon.ico"
-    }
   }
 }

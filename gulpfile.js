@@ -1,6 +1,7 @@
 const {spawn, execSync} = require('child_process')
 const {series} = require('gulp')
 const webpack = require('webpack')
+process.env.GH_TOKEN = 'dummy'
 
 exports.webpack = function doWebpack(clbk){
   let compiled = false
@@ -50,7 +51,7 @@ exports.build = series(exports.packProduction,clearDist, async ()=>{
       },
       copyright:'Copyright 2018 Yoshiyuki Mizogami',
       mac:{
-        category:'public.app-category.eveloper-tools',
+        category:'public.app-category.developer-tools',
         target:['dmg'],
         icon:'app/imgs/icon.icns'
       },
