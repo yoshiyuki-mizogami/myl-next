@@ -6,7 +6,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "dev": "gulp dev",
-    "build": "gulp build"
+    "build": "gulp packProduction && electron-builder -mw"
   },
   "author": "yoshiyuki mizogami",
   "license": "MIT",
@@ -34,5 +34,34 @@
   "dependencies": {
     "dexie": "^3.0.2",
     "vuedraggable": "^2.24.1"
+  },
+  "build":{
+    "appId":"yoshiyuki.mizogami.mylnext",
+    "productName":"MylNext",
+    "publish":null,
+    "directories":{
+      "app":"app",
+      "output":"dist"
+    },
+    "copyright":"Copyright 2018 Yoshiyuki Mizogami",
+    "mac":{
+      "category":"public.app-category.developer-tools",
+      "target":["dmg"],
+      "icon":"app/imgs/icon.icns"
+    },
+    "dmg":{
+      "icon":"app/imgs/icon.icns",
+      "title":"MylNext"
+    },
+    "win":{
+      "target":["nsis"],
+      "icon":"app/imgs/icon.ico"
+    },
+    "nsis":{
+      "oneClick":true,
+      "shortcutName":"MylNext",
+      "installerIcon":"app/imgs/icon.ico",
+      "uninstallerIcon":"app/imgs/icon.ico"
+    }
   }
 }
