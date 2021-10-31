@@ -66,7 +66,7 @@
   </div>
 </template>
 <script lang="ts">
-import {remote} from 'electron'
+import remote from '@electron/remote'
 import Vue from 'vue'
 import Item from '../ts/models/item'
 import LayerMixin from './layer'

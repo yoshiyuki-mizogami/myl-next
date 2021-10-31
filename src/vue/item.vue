@@ -38,9 +38,9 @@
 import Vue from 'vue'
 import hub from '../ts/event-hub'
 import Item from '../ts/models/item'
-import {remote, ipcRenderer} from 'electron'
+import { ipcRenderer} from 'electron'
 import { mapState } from 'vuex';
-const {Menu, MenuItem} = remote
+import {Menu, MenuItem} from 'electron'
 export default Vue.extend({
   props:{
     item:Item

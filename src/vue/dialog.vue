@@ -30,7 +30,6 @@
 import Vue from 'vue'
 import globals from '../ts/globals'
 import hub from '../ts/event-hub'
-import {mapState} from 'vuex'
 const {mainWindow} = globals
 const NOOP = function(){}
 const defOpt = {
@@ -59,7 +58,8 @@ export default Vue.extend({
       this.calcPos()
     },
     calcPos(){
-      const [ww, wh] = mainWindow.getSize()
+      const wh = mainWindow.outerHeight
+      const ww = mainWindow.outerWidth
       let {y, x} = this
       if(typeof y !== NUMBER){
         y = wh - wh / 2

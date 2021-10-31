@@ -1,5 +1,6 @@
 import Vue from 'vue'
-import {remote, clipboard, shell} from 'electron'
+import remote from '@electron/remote'
+import {clipboard, shell} from 'electron'
 import {join} from 'path'
 import Category from '../ts/models/category'
 import Item from '../ts/models/item'

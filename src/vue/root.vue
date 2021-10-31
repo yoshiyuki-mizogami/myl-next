@@ -131,7 +131,7 @@ input[type=button],button
   </div>
 </template>
 <script lang="ts">
-import {remote} from 'electron'
+import remote from '@electron/remote'
 import Vue from 'vue'
 import {mapState,mapMutations} from 'vuex'
 import Category from './category.vue'

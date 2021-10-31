@@ -41,7 +41,7 @@ module.exports = [{
   plugins:[
     new VueLoaderPlugin(),
     new MiniCSSExtractPlugin({
-      filenam:'[name].css'
+      chunkFilename:'[name].css'
     })
   ],
   devtool:'inline-source-map'

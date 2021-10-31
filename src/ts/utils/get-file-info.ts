@@ -1,8 +1,7 @@
 import {stat, Stats} from 'fs'
-import {shell, remote, FileIconOptions, ResizeOptions, nativeImage, NativeImage} from 'electron'
+import remote from '@electron/remote'
+import {shell, FileIconOptions, ResizeOptions, nativeImage, NativeImage} from 'electron'
 import {basename, extname} from 'path'
-import {join} from 'path'
-import globals from '../globals'
 import {FILE, DIR} from '../consts'
 const FILEICONSIZE = 32
 const LINKSUFF = '.lnk'

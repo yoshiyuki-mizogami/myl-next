@@ -33,13 +33,10 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import {remote, PopupOptions} from 'electron'
 import {mapState, Store} from 'vuex'
-import Vuex from 'vuex'
 import Category from '../ts/models/category'
-import globals from '../ts/globals'
 import hub from '../ts/event-hub'
-const {Menu, MenuItem} = remote
+import {Menu, MenuItem} from 'electron'
 export default Vue.extend({
   data(){
     return {

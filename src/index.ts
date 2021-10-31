@@ -1,10 +1,16 @@
 import {join} from 'path'
+import * as remote from '@electron/remote/main'
 import {app, BrowserWindow, ipcMain} from 'electron'
+remote.initialize()
+
+const ROOTDIR = __dirname
+ipcMain.handle('getrootdir', ()=>ROOTDIR)
+
+ipcMain.handle('getversion', ()=> app.getVersion())
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
-global['ROOTDIR'] = __dirname
 const isDev = false //process.execPath.includes('electron.exe')
 
 const lock = app.requestSingleInstanceLock()
@@ -23,18 +29,20 @@ app.on('ready', ()=>{
     height:400,
     width:350,
     frame:false,
-    show:isDev,
+    show:isDev || true,
     resizable:false,
     fullscreenable:false,
     maximizable:false,
     webPreferences:{
+      contextIsolation: false,
       nodeIntegration:true,
-      enableRemoteModule:true,
-      backgroundThrottling:true,
+      backgroundThrottling:true
     },
     icon:join(__dirname, 'imgs', 'icon.png')
   })
   mainWindow.loadFile(join(__dirname, 'index.html'))
+  remote.enable(mainWindow.webContents)
+
   mainWindow.on('closed', app.quit.bind(app))
   if(isDev){
     const ses = mainWindow.webContents.session
