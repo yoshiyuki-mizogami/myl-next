@@ -12,7 +12,6 @@ specifiers:
   gulp: ^4.0.2
   mini-css-extract-plugin: ^2.4.6
   mitt: ^3.0.0
-  pinia: ^2.0.9
   stylus: ^0.56.0
   stylus-loader: ^6.2.0
   ts-loader: ^9.2.6
@@ -29,7 +28,6 @@ specifiers:
 dependencies:
   dexie: 3.2.0
   mitt: 3.0.0
-  pinia: 2.0.9_typescript@4.5.4+vue@3.2.26
   vuedraggable: 4.1.0_vue@3.2.26
 
 devDependencies:
@@ -316,10 +314,6 @@ packages:
       '@vue/compiler-dom': 3.2.26
       '@vue/shared': 3.2.26
     dev: true
-
-  /@vue/devtools-api/6.0.0-beta.21.1:
-    resolution: {integrity: sha512-FqC4s3pm35qGVeXRGOjTsRzlkJjrBLriDS9YXbflHLsfA9FrcKzIyWnLXoNm+/7930E8rRakXuAc2QkC50swAw==}
-    dev: false
 
   /@vue/reactivity-transform/3.2.26:
     resolution: {integrity: sha512-XKMyuCmzNA7nvFlYhdKwD78rcnmPb7q46uoR00zkX6yZrUmcCQ5OikiwUEVbvNhL5hBJuvbSO95jB5zkUon+eQ==}
@@ -3866,24 +3860,6 @@ packages:
     dev: true
     optional: true
 
-  /pinia/2.0.9_typescript@4.5.4+vue@3.2.26:
-    resolution: {integrity: sha512-iuYdxLJKQ07YPyOHYH05wNG9eKWqkP/4y4GE8+RqEYtz5fwHgPA5kr6zQbg/DoEJGnR2XCm1w1vdt6ppzL9ATg==}
-    peerDependencies:
-      '@vue/composition-api': ^1.4.0
-      typescript: '>=4.4.4'
-      vue: ^2.6.14 || ^3.2.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-      typescript:
-        optional: true
-    dependencies:
-      '@vue/devtools-api': 6.0.0-beta.21.1
-      typescript: 4.5.4
-      vue: 3.2.26
-      vue-demi: 0.12.1_vue@3.2.26
-    dev: false
-
   /pinkie-promise/2.0.1:
     resolution: {integrity: sha1-ITXW36ejWMBprJsXh3YogihFD/o=}
     engines: {node: '>=0.10.0'}
@@ -5152,21 +5128,6 @@ packages:
       remove-trailing-separator: 1.1.0
       replace-ext: 1.0.1
     dev: true
-
-  /vue-demi/0.12.1_vue@3.2.26:
-    resolution: {integrity: sha512-QL3ny+wX8c6Xm1/EZylbgzdoDolye+VpCXRhI2hug9dJTP3OUJ3lmiKN3CsVV3mOJKwFi0nsstbgob0vG7aoIw==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      vue: 3.2.26
-    dev: false
 
   /vue-devtools/5.1.4:
     resolution: {integrity: sha512-EBAEXvAHUinsPzoSiElps0JgtLXUnJXKIJbP6nfdz/R63VdKBMfJ34/rFip+4iT7iMbVS5lA4W6N1jq4Hj4LCg==}

@@ -1,11 +1,19 @@
 import {join} from 'path'
-import {app, BrowserWindow, ipcMain} from 'electron'
+import {app, dialog, BrowserWindow, ipcMain} from 'electron'
 
 const ROOTDIR = __dirname
 
 ipcMain.handle('getrootdir', ()=>ROOTDIR)
 
 ipcMain.handle('getversion', ()=> app.getVersion())
+
+ipcMain.on('showWindow', ()=>mainWindow.show())
+
+ipcMain.handle('getDesktopPath', ()=>app.getPath('desktop'))
+
+ipcMain.handle('showOpenDialog', (_ev,args:any)=>dialog.showOpenDialog(args))
+
+ipcMain.handle('showSaveDialog', (_ev,args:any)=>dialog.showSaveDialog(args))
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
@@ -28,7 +36,7 @@ app.on('ready', ()=>{
     height:400,
     width:350,
     frame:false,
-    show:isDev || true,
+    show:false,
     resizable:false,
     fullscreenable:false,
     maximizable:false,

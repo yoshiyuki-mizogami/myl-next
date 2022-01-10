@@ -1,4 +1,4 @@
-import {clipboard, shell} from 'electron'
+import {clipboard, shell, ipcRenderer} from 'electron'
 import {join} from 'path'
 import Category from '../ts/models/category'
 import Item from '../ts/models/item'
@@ -11,7 +11,6 @@ import Config from './models/config';
 import globals from './globals'
 import {writeFile, existsSync, readFile} from 'fs';
 import eventHub from './event-hub';
-import {defineStore} from 'pinia'
 import { reactive, nextTick, watch } from 'vue'
 
 const {DEFAULT_JSON_NAME} = globals
@@ -72,11 +71,13 @@ export async function init(){
   state.categories = await db.getCategories()
   state.selectedCategory = state.categories[0]
   state.ui = await langSwitchFn(state.config.lang)
-  windowShow()
+  ipcCommunicate('showWindow')
 }
-//TODO
-function windowShow(){
-
+function ipcCommunicate(channel:string, data:any = undefined){
+  ipcRenderer.send(channel, data)
+}
+async function ipcHandleCommunicate(channel:string, data:any = undefined){
+  return await ipcRenderer.invoke(channel, data)
 }
 
 export async function loadConfig(){
@@ -170,15 +171,12 @@ export async function updateItem(item:Item){
   db.items.update(item.id, item)
 }
 //TODO
-function showOpenDialog(d:any):any{
-
-}
-//TODO
 function getDesktopPath(){
   return ''
 }
 export async function importJson(){
-  const targetJsonFiles = await showOpenDialog({
+  const desktopPath = await ipcHandleCommunicate('getDesktopPath')
+  const targetJsonFiles = await ipcHandleCommunicate('showOpenDialog', {
     title:'Select Myl save data json.',
     defaultPath:join(getDesktopPath(), DEFAULT_JSON_NAME),
     filters:[
@@ -215,12 +213,9 @@ export async function importJson(){
     eventHub.emit('notify', (state.ui as any).FILE_IS_INVALID)
   }
 }
-function showSaveDialog(arg:any):any{
-
-}
 
 export async function exportJson(){
-  const savePath = await showSaveDialog({
+  const savePath = await ipcHandleCommunicate('showSaveDialog',{
     title:'Select save filepath.',
     defaultPath:join(getDesktopPath(), DEFAULT_JSON_NAME)
   })
