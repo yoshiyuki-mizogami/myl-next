@@ -28,6 +28,7 @@ ipcMain.on('setAlwaysOnTop', (_ev,tf:boolean, ui:any)=>{
 
 ipcMain.on('show-category-menu', (ev:Electron.IpcMainEvent, ui:any)=>{
   const menu = new Menu()
+  let selected = false
   const renameItem  = new MenuItem({
     id:'Rename', 
     accelerator:'r',
@@ -49,7 +50,6 @@ ipcMain.on('show-category-menu', (ev:Electron.IpcMainEvent, ui:any)=>{
   menu.append(renameItem)
   menu.append(removeItem)
   menu.popup({})
-  menu.addListener('menu-will-close', ()=>ev.sender.send('select-category-menu-item', 'none'))
 })
 
 

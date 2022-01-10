@@ -97,7 +97,6 @@ export default defineComponent({
       console.log(ev)
       const dt = ev.dataTransfer as DataTransfer
       const fromCategory = dt.getData('myl/category')
-      console.log(fromCategory)
       if(fromCategory){
         return ev.stopPropagation()
       }
