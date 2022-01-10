@@ -8,10 +8,10 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, toRaw } from 'vue'
 import Category from '../ts/models/category'
 import hub from '../ts/event-hub'
-import {Menu, MenuItem} from 'electron'
+import {ipcRenderer, Menu, MenuItem} from 'electron'
 import { moveItem, removeCategory, state } from '../ts/store'
 import { nextTick } from 'process'
 export default defineComponent({
@@ -49,7 +49,30 @@ export default defineComponent({
       dataTransfer.setData('myl/category', '1')
     },
     showContextMenu(this:any, ev:MouseEvent){
-      contextMenu(ev,this.category)
+      ipcRenderer.once('select-category-menu-item', (e, select:string)=>{
+        switch(select){
+          case 'rename':{
+            this.editMode = true
+            break;
+          }
+          case 'delete':{
+            hub.emit('show-dialog' ,{
+              y:ev.clientY,
+              x:ev.clientX,
+              message:state.ui.CONFIRM_DELETE,
+              onOk:()=>{
+                removeCategory(this.category)
+              },
+              cancelable:true
+            })
+            break;
+          }
+          default:{
+
+          }
+        }
+      })
+      ipcRenderer.send('show-category-menu', toRaw(state.ui))
     },
     enterEdit(this:any){
       this.saveName = this.category.name
@@ -87,39 +110,6 @@ export default defineComponent({
     }
   }
 })
-function contextMenu(ev:MouseEvent, cate:Category){
-  const ui = state.ui
-  const menu = new Menu()
-  const renameItem  = new MenuItem({
-    id:'Rename', 
-    accelerator:'r',
-    type:'normal',
-    label:ui.RENAME, 
-    click(){
-      // vm.editMode = true
-    }
-  })
-  const removeItem = new MenuItem({
-    id:'Delete',
-    accelerator:'d',
-    type:'normal',
-    label:ui.DELETE,
-    click(){
-      hub.emit('show-dialog' ,{
-        y:ev.clientY,
-        x:ev.clientX,
-        message:ui.CONFIRM_DELETE,
-        onOk(){
-          removeCategory(cate)
-        },
-        cancelable:true
-      })
-    }
-  })
-  menu.append(renameItem)
-  menu.append(removeItem)
-  menu.popup({})
-}
 </script>
 <style lang="stylus">
 .category
