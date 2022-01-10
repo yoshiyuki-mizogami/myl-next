@@ -27,7 +27,7 @@ const isUrl = /^https?:\/\//
 export const state = reactive({
     version:globals.VERSION,
     themes:Themes,
-    categories:[] as any[],
+    categories:[] as Category[],
     items:[] as any[],
     showNewCategoryDialog:false,
     selectedCategory:null as null|Category,
