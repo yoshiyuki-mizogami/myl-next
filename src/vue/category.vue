@@ -2,7 +2,7 @@
   <div @contextmenu="showContextMenu" :class="{selected}"
     @drop="dropToCategory"
     @dragstart="dragStartCategory"
-    click="selectCategory(category)" class="category">
+    @click="$emit('select-category', category)" class="category">
     <span v-if="!editMode">{{category.name}}</span>
     <span v-else><input ref="editor" @focusout="updateName" type="text" class="category-name-editor" v-model="category.name"></span>
   </div>
