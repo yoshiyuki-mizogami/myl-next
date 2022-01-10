@@ -52,8 +52,11 @@ import {
   addUrl,
   setLoading,
   addFile,
-  setSelectedCategory } 
+  setSelectedCategory,
+  setSize
+  } 
 from '../ts/store'
+import { nextTick } from 'process'
 export default defineComponent({ 
   async created(){
     pushLayer(this)
@@ -86,8 +89,7 @@ export default defineComponent({
     dragItem(){return state.dragItem}
   },
   mounted(){
-    this.adjust()
-    this.showWindow()
+    setTimeout(()=>this.adjust(), 100)
   },
   components:{
     'new-cate-dialog':NewCateDialog,
@@ -145,14 +147,11 @@ export default defineComponent({
       setSelectedCategory(c)
     },
     adjust(){
-      const {app} = this.$refs
-      const {clientHeight, clientWidth} = app as {clientHeight:number, clientWidth:number}
-      // thisWindow['resizable'] = true
-      // thisWindow.setSize(clientWidth, clientHeight)
-      // thisWindow['resizable'] = false
-    },
-    showWindow(){
-      // thisWindow.show()
+      nextTick(()=>{
+        const {app} = this.$refs
+        const {clientHeight, clientWidth} = app as {clientHeight:number, clientWidth:number}
+        setSize(clientHeight, clientWidth)
+      })
     },
     openSetting(){
       eventHub.emit('open-setting')

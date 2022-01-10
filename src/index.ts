@@ -15,6 +15,13 @@ ipcMain.handle('showOpenDialog', (_ev,args:any)=>dialog.showOpenDialog(args))
 
 ipcMain.handle('showSaveDialog', (_ev,args:any)=>dialog.showSaveDialog(args))
 
+type hw = [number, number]
+ipcMain.on('setSize', (_ev,[h, w]:hw)=>{
+  mainWindow.resizable = true
+  mainWindow.setSize(h, w)
+  mainWindow.resizable = false
+})
+
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
