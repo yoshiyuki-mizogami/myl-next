@@ -49,6 +49,7 @@ ipcMain.on('show-category-menu', (ev:Electron.IpcMainEvent, ui:any)=>{
   menu.append(renameItem)
   menu.append(removeItem)
   menu.popup({})
+  menu.addListener('menu-will-close', ()=>ev.sender.send('select-category-menu-item', 'none'))
 })
 
 
