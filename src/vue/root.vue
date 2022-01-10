@@ -53,7 +53,8 @@ import {
   setLoading,
   addFile,
   setSelectedCategory,
-  setSize
+  setSize,
+  setAlwaysOnTop
   } 
 from '../ts/store'
 import { nextTick } from 'process'
@@ -114,7 +115,7 @@ export default defineComponent({
     },
     toggleAOT(){
       toggleAOT()
-      // setAlwaysOnTop(this.aot)
+      setAlwaysOnTop(this.aot)
     },
     async dropAny(e:DragEvent):Promise<void>{
       const trackLink = e.ctrlKey

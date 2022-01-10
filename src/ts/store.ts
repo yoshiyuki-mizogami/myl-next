@@ -217,6 +217,9 @@ export async function importJson(){
 export function setSize(h:number, w:number){
   ipcCommunicate('setSize', [h, w])
 }
+export function setAlwaysOnTop(tf:boolean){
+  ipcCommunicate('setAlwaysOnTop', tf)
+}
 
 export async function exportJson(){
   const savePath = await ipcHandleCommunicate('showSaveDialog',{

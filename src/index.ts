@@ -22,6 +22,10 @@ ipcMain.on('setSize', (_ev,[h, w]:hw)=>{
   mainWindow.resizable = false
 })
 
+ipcMain.on('setAlwaysOnTop', (_ev,tf:boolean)=>{
+  mainWindow.setAlwaysOnTop(tf)
+})
+
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
