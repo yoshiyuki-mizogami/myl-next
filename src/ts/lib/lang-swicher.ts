@@ -1,13 +1,14 @@
-import {readFile} from 'fs'
-import {promisify} from 'util'
-import {join} from 'path'
+import ja from '../../lang/ja.json'
+import en from '../../lang/en.json'
 import globals from '../globals'
 const {ROOTDIR} = globals
 const LANG = 'lang'
 const JSONSUFF = '.json'
 const UTF8 = 'utf8'
-const readFileP = promisify(readFile)
-export default function langSwitch(type:string):Promise<object>{
-    return readFileP(join(ROOTDIR, LANG,  type + JSONSUFF),UTF8)
-      .then(JSON.parse)
+type Langs = 'en'|'ja'
+const langs = {
+  ja,en
+}
+export default function langSwitch(type:Langs):Promise<object>{
+    return (langs as any)[type]
 }

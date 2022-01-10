@@ -14,9 +14,9 @@ interface ExportForm {
   items:Item[]
 }
 export default class MylDB extends Dexie{
-  categories:Dexie.Table<Category, number>
-  items:Dexie.Table<Item, number>
-  config:Dexie.Table<Config, number>
+  categories!:Dexie.Table<Category, number>
+  items!:Dexie.Table<Item, number>
+  config!:Dexie.Table<Config, number>
   constructor(){
     super('myl-db')
     this.version(1).stores({
@@ -39,20 +39,19 @@ export default class MylDB extends Dexie{
   async exportAll(_:string){
     const categories  = await this.categories.toArray()
     const items = await this.items.toArray()
-    const categoriesMap = categories.reduce((b, c)=>{
+    const categoriesMap = categories.reduce((b, c:any)=>{
       b[c.id] = {
         category:c,
         items:[]
       } as ExportForm
       return b
-    },{})
-    items.forEach(i=>{
+    },{} as {[key:string]:any})
+    items.forEach((i:any)=>{
       const cateId = i.cateId
-      i.cateId = 
-      i.id = void 0
+      i.cateId = i.id = void 0
       categoriesMap[cateId].items.push(i)
     })
-    const exportCategories = Object.keys(categoriesMap).reduce((ary,idx)=>{
+    const exportCategories = Object.keys(categoriesMap).reduce((ary:any,idx)=>{
       const cursorItem = categoriesMap[idx]
       ary.push(cursorItem)
       return ary
@@ -63,7 +62,7 @@ export default class MylDB extends Dexie{
 
   }
   async saveConfig(config:Config){
-    this.config.update(config.id, config)
+    this.config.update(config.id as any, config)
   }
   async getCategories(){
     const categories = await this.categories.toArray()
@@ -86,7 +85,7 @@ export default class MylDB extends Dexie{
   }
   async removeCategory(cate:Category){
     await this.transaction('rw', this.categories, this.items,async ()=>{
-      await this.categories.delete(cate.id)
+      await this.categories.delete(cate.id as any)
       await this.items.where({cateId:cate.id}).delete()
     })
   }

@@ -1,6 +1,6 @@
 const path = require('path')
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const {VueLoaderPlugin} = require('vue-loader')
 
 module.exports = [{
   target:'electron-renderer',

@@ -1,3 +1,52 @@
+<template>
+  <div class="layer-back" v-if="show">
+    <div class="new-category">
+      <div class="icon-close close-btn" @click="close"></div>
+      Input new category name
+      <input ref="input" type="text" class="new-category-input" @keydown.enter="addNewCategory"
+             :placeholder="ui.INPUT_NEW_CATEGORY">
+    </div>
+  </div>
+</template>
+<script lang="ts">
+import { addNewCategory, setNewCategoryDialog, state } from '../ts/store'
+import { defineComponent } from 'vue'
+import layerMixin from './layer'
+export default defineComponent({
+  mixins:[layerMixin],
+  computed:{
+    ui(){return state.ui},
+    show(){return state.showNewCategoryDialog}
+  },
+  created(){
+    this.setShortcut({
+      'Escape':this.close
+    })
+  },
+  watch:{
+    show(this:any, v){
+      if(!v){
+        return
+      }
+      this.$nextTick(()=>this.$refs.input.focus())
+    }
+  },
+  methods:{
+    addNewCategory(ev:any){
+      const name = ev.target.value.trim() as string
+      if(!name){
+        return
+      }
+      addNewCategory(name)
+      this.close()
+    },
+    close(){
+      setNewCategoryDialog(false)
+    }
+  }
+})
+</script>
+
 <style lang="stylus">
 .layer-back
   background-color var(--layer-back)
@@ -18,52 +67,3 @@
     input
       padding 5px
 </style>
-<template>
-  <div class="layer-back" v-if="show">
-    <div class="new-category">
-      <div class="icon-close close-btn" @click="close"></div>
-      Input new category name
-      <input ref="input" type="text" class="new-category-input" @keydown.enter="addNewCategory"
-             :placeholder="ui.INPUT_NEW_CATEGORY">
-    </div>
-  </div>
-</template>
-<script lang="ts">
-import Vue from 'vue'
-import {mapState} from 'vuex'
-import layerMixin from './layer'
-export default Vue.extend({
-  mixins:[layerMixin],
-  computed:mapState({
-    ui:'ui',
-    show:'showNewCategoryDialog'
-  }),
-  created(){
-    this.setShortcut({
-      'Escape':this.close
-    })
-  },
-  watch:{
-    show(v){
-      if(!v){
-        return
-      }
-      this.$nextTick(()=>this.$refs.input.focus())
-    }
-  },
-  methods:{
-    addNewCategory(ev){
-      const name = ev.target.value.trim()
-      if(!name){
-        return
-      }
-      this.$store.dispatch('addNewCategory', name)
-      this.close()
-    },
-    close(){
-      this.$store.commit('setNewCategoryDialog', false)
-    }
-  }
-})
-</script>
-

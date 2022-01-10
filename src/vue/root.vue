@@ -113,13 +113,17 @@ input[type=button],button
     </div>
     <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
       <div class="categories">
-        <draggable v-model="categories">
-          <a-category v-for="c in categories" :selected="selectedCategory === c" :category="c" :key="c.id"/>
+        <draggable v-model="state.categories" item-key="id">
+          <template #item="{element}">
+            <a-category :selected="selectedCategory === element" :category="element"/>
+          </template>
         </draggable>
       </div>
       <div class="items">
-        <draggable v-model="items" :move="checkMove">
-          <an-item v-for="i in items" :item="i" :key="i.id"></an-item>
+        <draggable v-model="state.items" :move="checkMove" item-key="id">
+          <template #item="{element}">
+            <an-item :item="element"/>
+          </template>
         </draggable>
       </div>
     </div>
@@ -131,61 +135,58 @@ input[type=button],button
   </div>
 </template>
 <script lang="ts">
-import remote from '@electron/remote'
-import Vue from 'vue'
-import {mapState,mapMutations} from 'vuex'
+import { defineComponent } from 'vue'
 import Category from './category.vue'
 import Item from './item.vue'
 import NewCateDialog from './new-category.vue'
 import Dialog from './dialog.vue'
 import Notify from './notify.vue'
-import hub from '../ts/event-hub'
+import eventHub, {pushLayer, popLayer, keydown} from '../ts/event-hub'
 import ItemDetail from './item-detail.vue'
 import AppSetting from './app-setting.vue'
-declare var require:(moduleId:string) => any
-const draggable = require('vuedraggable')
-const thisWindow = remote.getCurrentWindow()
-export default Vue.extend({ 
+import draggable from 'vuedraggable'
+import {
+  switchSortMode,
+  state,
+  init,
+  getItems,
+  setNewCategoryDialog,
+  toggleAOT,
+  addUrl,
+  setLoading,
+  addFile,
+  setSelectedCategory } 
+from '../ts/store'
+export default defineComponent({ 
   async created(){
-    hub.pushLayer(this)
-    await this.$store.dispatch('init')
-    hub.$on('adjust', this.adjust)
-    document.documentElement.addEventListener('keydown', hub.keydown)
+    pushLayer(this)
+    await init()
+    eventHub.on('adjust', this.adjust)
+    document.documentElement.addEventListener('keydown', keydown)
+  },
+  data(){
+    return {
+      state:state
+    }
   },
   watch:{
     async selectedCategory(v){
-      await this.$store.dispatch('getItems', v.id)
+      await getItems(v.id)
     }
   },
   computed:{
-    items:{
-      get(){
-        return this.$store.state.items
-      },
-      set(v){
-        this.$store.dispatch('updateItemsOrder', v)
-      }
-    },
-    categories:{
-      get(){
-        return this.$store.state.categories
-      },
-      set(v){
-        this.$store.dispatch('updateCategoriesOrder', v)
-      }
-    },
     aot(){
-      return this.$store.state.config.aot
+      return state.config.aot
     },
     config(){
-      return this.$store.state.config
+      return state.config
     },
-    ...mapState({
-      selectedCategory:'selectedCategory',
-      loading:'loading',
-      sortMode:'sortMode',
-      dragItem:'dragItem'
-    })
+    selectedCategory(){
+      return state.selectedCategory
+    },
+    loading(){return state.loading},
+    sortMode(){return state.sortMode},
+    dragItem(){return state.dragItem}
   },
   mounted(){
     this.adjust()
@@ -202,64 +203,62 @@ export default Vue.extend({
     'notify':Notify
   },
   methods:{
-    ...mapMutations({
-      switchSortMode:'switchSortMode'
-    }),
+    switchSortMode,
     checkMove(){
-      return this.sortMode
+      return state.sortMode
     },
     addNewCategory(){
-      this.$store.commit('setNewCategoryDialog', true)
+      setNewCategoryDialog(true)
     },
     close(){
-      thisWindow.close()
+      close()
     },
     toggleAOT(){
-      this.$store.commit('toggleAOT')
-      thisWindow.setAlwaysOnTop(this.aot)
+      toggleAOT()
+      // setAlwaysOnTop(this.aot)
     },
     async dropAny(e:DragEvent):Promise<void>{
       const trackLink = e.ctrlKey
-      const {dataTransfer:df} = e
-      const fromThis = df.getData('myl/item')
+      const {dataTransfer} = e as {dataTransfer:DataTransfer}
+      const fromThis = dataTransfer.getData('myl/item')
       if(fromThis){
         return
       }
-      let files = Array.from(df.files)
+      let files = Array.from(dataTransfer.files)
       if(!files.length){
-        const dragString = df.getData('text/plain')
-        await this.$store.dispatch('addUrl', {url:dragString})
+        const dragString = dataTransfer.getData('text/plain')
+        await addUrl({url:dragString})
         return 
       }
       files = files.filter(f=>{
-        return (!this.dragItem) || f.path !== this.dragItem.path
+        return (!this.dragItem) || f.path !== (this.dragItem as any).path
       })
       if(!files.length){
         return
       }
-      this.$store.commit('setLoading', true)
+      setLoading(true)
       await files.reduce((b, f)=>{
         return b.then(async ()=>{
-          await this.$store.dispatch('addFile', {filepath:f.path, trackLink})
+          await addFile({filepath:f.path})
         })
       }, Promise.resolve())
-      this.$store.commit('setLoading', false)
+      setLoading(false)
     },
-    selectCategory(c){
-      this.$store.commit('setSelectedCategory', c)
+    selectCategory(c:any){
+      setSelectedCategory(c)
     },
     adjust(){
       const {app} = this.$refs
-      const {clientHeight, clientWidth} = app
-      thisWindow['resizable'] = true
-      thisWindow.setSize(clientWidth, clientHeight)
-      thisWindow['resizable'] = false
+      const {clientHeight, clientWidth} = app as {clientHeight:number, clientWidth:number}
+      // thisWindow['resizable'] = true
+      // thisWindow.setSize(clientWidth, clientHeight)
+      // thisWindow['resizable'] = false
     },
     showWindow(){
-      thisWindow.show()
+      // thisWindow.show()
     },
     openSetting(){
-      hub.$emit('open-setting')
+      eventHub.emit('open-setting')
     }
   }
 })

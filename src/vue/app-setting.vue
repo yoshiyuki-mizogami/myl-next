@@ -2,7 +2,7 @@
   <div class="layer-back" v-if="show">
     <div class="setting-layer">
       <div class="icon-close close-btn" @click="close"/>
-      <div class="setting-title">Myl <span v-once class="version">ver {{$store.state.version}}</span> Setting</div>
+      <div class="setting-title">Myl <span v-once class="version">ver {{version}}</span> Setting</div>
       <ul class="setting-items">
         <li>
           <div class="setting-name">{{ui.LANG}}</div>
@@ -36,45 +36,48 @@
   </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import Vue, { defineComponent } from 'vue'
 import layer from './layer'
 import Hub from '../ts/event-hub'
-import {mapState,mapActions, mapMutations} from 'vuex'
-export default Vue.extend({
+import {
+  state,
+  exportJson,
+  importJson,
+  langSwitch,
+  selectTheme, 
+  openHP} from '../ts/store'
+export default defineComponent({
   mixins:[layer],
   data(){
     return {
       show:false
     }
   },
-  computed:mapState({
-    themes:'themes',
-    config:'config',
-    ui:'ui'
-  }),
+  computed:{
+    themes(){return state.themes},
+    config(){ return state.config},
+    ui(){return state.ui},
+    version(){return state.version}
+  },
   created(){
-    Hub.$on('open-setting', this.open)
-    this.setShortcut({
-      Escape:this.close
+    Hub.on('open-setting', (this as any).open);
+    (this as any).setShortcut({
+      Escape:(this as any).close
     })
   },
   methods:{
-    ...mapActions({
-      exportJson:'exportJson',
-      importJson:'importJson'
-    }),
-    ...mapActions({
-      langSwitch:'langSwitch',
-      selectTheme:'selectTheme'
-    }),
-    open(){
+    exportJson,
+    importJson,
+    langSwitch,
+    selectTheme,
+    open(this:any){
       this.show = true
     },
-    close(){
+    close(this:any){
       this.show = false
     },
     openHP(){
-      this.$store.dispatch('openHP')
+      openHP()
     }
   }
 })

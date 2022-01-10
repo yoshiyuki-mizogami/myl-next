@@ -1,3 +1,126 @@
+<template>
+  <div @contextmenu="showContextMenu" :class="{selected}"
+    @drop="dropToCategory"
+    @dragstart="dragStartCategory"
+    click="selectCategory(category)" class="category">
+    <span v-if="!editMode">{{category.name}}</span>
+    <span v-else><input ref="editor" @focusout="updateName" type="text" class="category-name-editor" v-model="category.name"></span>
+  </div>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Category from '../ts/models/category'
+import hub from '../ts/event-hub'
+import {Menu, MenuItem} from 'electron'
+import { moveItem, removeCategory, state } from '../ts/store'
+import { nextTick } from 'process'
+export default defineComponent({
+  data(){
+    return {
+      editMode:false,
+      saveName:''
+    }
+  },
+  props:{
+    category:{
+      type:Object,
+      required:true
+    },
+    selected:Boolean
+  },
+  computed:{
+    sortMode(){return state.sortMode}
+  },
+  watch:{
+    editMode(v:boolean){
+      if(v){
+        this.enterEdit()
+      }
+    }
+  } as any,
+  methods:{
+    dragStartCategory(this:any, ev:DragEvent){
+      if(!this.sortMode){
+        ev.stopPropagation()
+        ev.preventDefault()
+        return
+      }
+      const dataTransfer = ev.dataTransfer as DataTransfer
+      dataTransfer.setData('myl/category', '1')
+    },
+    showContextMenu(this:any, ev:MouseEvent){
+      contextMenu(ev,this.category)
+    },
+    enterEdit(this:any){
+      this.saveName = this.category.name
+      nextTick(()=>this.$refs.editor.select())
+    },
+    updateName(this:any){
+      const {saveName} = this
+      this.editMode = false
+      this.saveName = ''
+      if(!this.category.name.trim()){
+        this.category.name = saveName
+        hub.emit('notify', state.ui.REQUIRE_NAME)
+        return 
+      }
+      if(this.category.name === saveName){
+        return
+      }
+      hub.emit('notify', state.ui.NAME_UPDATED)
+      this.$store.dispatch('updateCategoryName', this.category)
+    },
+    dropToCategory(this:any, ev:DragEvent){
+      console.log(ev)
+      const dt = ev.dataTransfer as DataTransfer
+      const fromCategory = dt.getData('myl/category')
+      console.log(fromCategory)
+      if(fromCategory){
+        return ev.stopPropagation()
+      }
+      const fromThis = dt.getData('myl/item')
+      if(!fromThis){
+        return
+      }
+      ev.stopPropagation()
+      return moveItem(this.category)
+    }
+  }
+})
+function contextMenu(ev:MouseEvent, cate:Category){
+  const ui = state.ui
+  const menu = new Menu()
+  const renameItem  = new MenuItem({
+    id:'Rename', 
+    accelerator:'r',
+    type:'normal',
+    label:ui.RENAME, 
+    click(){
+      // vm.editMode = true
+    }
+  })
+  const removeItem = new MenuItem({
+    id:'Delete',
+    accelerator:'d',
+    type:'normal',
+    label:ui.DELETE,
+    click(){
+      hub.emit('show-dialog' ,{
+        y:ev.clientY,
+        x:ev.clientX,
+        message:ui.CONFIRM_DELETE,
+        onOk(){
+          removeCategory(cate)
+        },
+        cancelable:true
+      })
+    }
+  })
+  menu.append(renameItem)
+  menu.append(removeItem)
+  menu.popup({})
+}
+</script>
 <style lang="stylus">
 .category
   min-height 20px
@@ -21,124 +144,3 @@
   .category-name-editor
     width 100%
 </style>
-
-<template>
-  <div @contextmenu="showContextMenu" :class="{selected}"
-    @drop="dropToCategory"
-    @dragstart="dragStartCategory"
-    @click="$parent.$parent.selectCategory(category)" class="category">
-    <span v-if="!editMode">{{category.name}}</span>
-    <span v-else><input ref="editor" @focusout="updateName" type="text" class="category-name-editor" v-model="category.name"></span>
-  </div>
-</template>
-<script lang="ts">
-import Vue from 'vue'
-import {mapState, Store} from 'vuex'
-import Category from '../ts/models/category'
-import hub from '../ts/event-hub'
-import {Menu, MenuItem} from 'electron'
-export default Vue.extend({
-  data(){
-    return {
-      editMode:false,
-      saveName:''
-    }
-  },
-  props:{
-    category:Object,
-    selected:Boolean
-  },
-  computed:{
-    ...mapState({
-      sortMode:'sortMode'
-    })
-  },
-  watch:{
-    editMode(v){
-      if(v){
-        this.enterEdit()
-      }
-    }
-  },
-  methods:{
-    dragStartCategory(ev:DragEvent){
-      if(!this.sortMode){
-        ev.stopPropagation()
-        ev.preventDefault()
-        return
-      }
-      ev.dataTransfer.setData('myl/category', '1')
-    },
-    showContextMenu(ev:MouseEvent){
-      contextMenu(this,this.$store,ev,this.category)
-    },
-    enterEdit(){
-      this.saveName = this.category.name
-      this.$nextTick(()=>this.$refs.editor.select())
-    },
-    updateName(){
-      const {saveName} = this
-      this.editMode = false
-      this.saveName = ''
-      if(!this.category.name.trim()){
-        this.category.name = saveName
-        hub.$emit('notify', this.$store.state.ui.REQUIRE_NAME)
-        return 
-      }
-      if(this.category.name === saveName){
-        return
-      }
-      hub.$emit('notify', this.$store.state.ui.NAME_UPDATED)
-      this.$store.dispatch('updateCategoryName', this.category)
-    },
-    dropToCategory(ev:DragEvent){
-      console.log(ev)
-      const {dataTransfer:dt} = ev
-      const fromCategory = dt.getData('myl/category')
-      console.log(fromCategory)
-      if(fromCategory){
-        return ev.stopPropagation()
-      }
-      const fromThis = dt.getData('myl/item')
-      if(!fromThis){
-        return
-      }
-      ev.stopPropagation()
-      return this.$store.dispatch('moveItem', this.category)
-    }
-  }
-})
-function contextMenu(vm:any ,store:Store<any>, ev:MouseEvent, cate:Category){
-  const {state:{ui}} = store
-  const menu = new Menu()
-  const renameItem  = new MenuItem({
-    id:'Rename', 
-    accelerator:'r',
-    type:'normal',
-    label:ui.RENAME, 
-    click(){
-      vm.editMode = true
-    }
-  })
-  const removeItem = new MenuItem({
-    id:'Delete',
-    accelerator:'d',
-    type:'normal',
-    label:ui.DELETE,
-    click(){
-      hub.$emit('show-dialog' ,{
-        y:ev.clientY,
-        x:ev.clientX,
-        message:ui.CONFIRM_DELETE,
-        onOk(){
-          store.dispatch('removeCategory', cate)
-        },
-        cancelable:true
-      })
-    }
-  })
-  menu.append(renameItem)
-  menu.append(removeItem)
-  menu.popup({})
-}
-</script>

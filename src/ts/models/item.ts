@@ -1,12 +1,12 @@
 import {shell} from 'electron'
 import {spawn,exec} from 'child_process'
-import {dirname, basename} from 'path'
+import {dirname} from 'path'
 import Sortable from './sortable'
 import {URL} from '../consts'
 import url from 'url'
 export default class Item implements Sortable{
-  id:number
-  cateId:number
+  id!:number
+  cateId!:number
   name:string = ''
   path:string = ''
   type:string = 'file'
@@ -14,7 +14,7 @@ export default class Item implements Sortable{
   cmd:string = ''
   icon:string = ''
   sc:string = ''
-  sort:number
+  sort!:number
   cwd:string = ''
   constructor(obj: any){
     Object.assign(this,obj)

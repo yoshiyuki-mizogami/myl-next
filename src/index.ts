@@ -1,9 +1,8 @@
 import {join} from 'path'
-import * as remote from '@electron/remote/main'
 import {app, BrowserWindow, ipcMain} from 'electron'
-remote.initialize()
 
 const ROOTDIR = __dirname
+
 ipcMain.handle('getrootdir', ()=>ROOTDIR)
 
 ipcMain.handle('getversion', ()=> app.getVersion())
@@ -40,16 +39,10 @@ app.on('ready', ()=>{
     },
     icon:join(__dirname, 'imgs', 'icon.png')
   })
-  mainWindow.loadFile(join(__dirname, 'index.html'))
-  remote.enable(mainWindow.webContents)
+  mainWindow.loadFile(join('.', 'index.html'))
 
   mainWindow.on('closed', app.quit.bind(app))
-  if(isDev){
-    const ses = mainWindow.webContents.session
-    ses.loadExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
-    mainWindow.webContents.openDevTools()
-  }
-  const dragIcon = join(global['ROOTDIR'], 'imgs', 'drag.png')
+  const dragIcon = join('.', 'imgs', 'drag.png')
   ipcMain.on('ondragstart', (event:any, file:string)=>{
     event.sender.startDrag({
       file,
