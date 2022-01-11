@@ -5,10 +5,12 @@ const {ROOTDIR} = globals
 const LANG = 'lang'
 const JSONSUFF = '.json'
 const UTF8 = 'utf8'
-type Langs = 'en'|'ja'
+
 const langs = {
   ja,en
 }
-export default function langSwitch(type:Langs):Promise<object>{
-    return (langs as any)[type]
+type Langs = keyof typeof langs
+export type LangUI = typeof ja
+export default function langSwitch(type:Langs):LangUI{
+    return langs[type]
 }

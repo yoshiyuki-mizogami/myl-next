@@ -54,7 +54,9 @@ import {
   addFile,
   setSelectedCategory,
   setSize,
-  setAlwaysOnTop
+  setAlwaysOnTop,
+updateItemsOrder,
+updateCategoriesOrder
   } 
 from '../ts/store'
 import { nextTick } from 'process'
@@ -73,7 +75,13 @@ export default defineComponent({
   watch:{
     async selectedCategory(v){
       await getItems(v.id)
-    }
+    },
+    'state.items'(to,from){
+      updateItemsOrder(to)
+    },
+    'state.categories'(to, from){
+      updateCategoriesOrder(to)
+    },
   },
   computed:{
     aot(){
@@ -131,7 +139,7 @@ export default defineComponent({
         return 
       }
       files = files.filter(f=>{
-        return (!this.dragItem) || f.path !== (this.dragItem as any).path
+        return (!this.dragItem) || f.path !== this.dragItem.path
       })
       if(!files.length){
         return

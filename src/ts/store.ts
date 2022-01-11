@@ -4,7 +4,7 @@ import Category from '../ts/models/category'
 import Item from '../ts/models/item'
 import getFileInfo from './utils/get-file-info'
 import MylDB from './utils/scheme'
-import langSwitchFn from './lib/lang-swicher'
+import langSwitchFn, {LangUI} from './lib/lang-swicher'
 import switchTheme from './lib/switch-theme'
 import {Themes} from './consts'
 import Config from './models/config';
@@ -33,7 +33,7 @@ export const state = reactive({
     config,
     configRaw:null as any,
     loading:false,
-    ui:{} as any,
+    ui:{} as LangUI,
     sortMode:false,
     dragItem:null as object | unknown
   }
@@ -89,7 +89,7 @@ export async function saveConfig(){
 }
 export async function langSwitch(lang:string){
   state.config.lang = lang as any
-  state.ui = await langSwitchFn(lang as any)
+  state.ui = langSwitchFn(lang as any)
   saveConfig()
 }
 export async function selectTheme(theme:string){
@@ -154,7 +154,7 @@ export async function addFile({filepath} :{filepath:string}){
 }
 export async function addUrl({url}:{url:string}){
   if(!isUrl.test(url)){
-    eventHub.emit('notify', (state.ui as any).INVALID_URL)
+    eventHub.emit('notify', state.ui.INVALID_URL)
     return
   }
   const urlItem = await db.addUrlItem(url, state.selectedCategory?.id as any)

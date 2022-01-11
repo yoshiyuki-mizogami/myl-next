@@ -29,6 +29,14 @@ module.exports = [{
         loader:'vue-loader'
       },
       {
+        test:/\.ts$/,
+        loader: 'esbuild-loader',
+        options:{
+          loader:'ts',
+          target:'esnext'
+        }
+      },
+      {
         test:/\.stylus$/,
         use:[
           MiniCSSExtractPlugin.loader,

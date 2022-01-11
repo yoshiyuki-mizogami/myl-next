@@ -85,10 +85,9 @@ app.on('ready', ()=>{
     },
     icon:join(__dirname, 'imgs', 'icon.png')
   })
-  mainWindow.loadFile(join('.', 'index.html'))
-
+  mainWindow.loadFile(join(__dirname, 'index.html'))
   mainWindow.on('closed', app.quit.bind(app))
-  const dragIcon = join('.', 'imgs', 'drag.png')
+  const dragIcon = join(__dirname, 'imgs', 'drag.png')
   ipcMain.on('ondragstart', (event:any, file:string)=>{
     event.sender.startDrag({
       file,

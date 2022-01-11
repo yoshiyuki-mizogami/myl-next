@@ -1,7 +1,7 @@
 import {shell} from 'electron'
 import {spawn,exec} from 'child_process'
 import {dirname} from 'path'
-import Sortable from './sortable'
+import {Sortable} from './sortable'
 import {URL} from '../consts'
 import url from 'url'
 export default class Item implements Sortable{
