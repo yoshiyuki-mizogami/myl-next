@@ -15,6 +15,10 @@ export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
   ipcMain.on('showWindow', ()=>mainWindow.show())
   
   ipcMain.handle('getDesktopPath', ()=>app.getPath('desktop'))
+
+  ipcMain.handle('getTmpDir',()=>{
+    return app.getPath('temp')
+  })
   
   ipcMain.handle('showOpenDialog', (_ev,args:any)=>dialog.showOpenDialog(args))
   

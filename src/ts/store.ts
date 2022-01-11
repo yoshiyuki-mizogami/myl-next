@@ -22,7 +22,7 @@ export enum Langs{
 }
 const config = new Config()
 const db = new MylDB()
-const isUrl = /^https?:\/\//
+export const isUrl = /^https?:\/\//
 export const state = reactive({
     version:globals.VERSION,
     themes:Themes,
@@ -152,12 +152,12 @@ export async function addFile({filepath} :{filepath:string}){
   items.push(fileItem)
   nextTick(()=>eventHub.emit('adjust'))
 }
-export async function addUrl({url}:{url:string}){
+export async function addUrl({url, name}:{url:string, name:string}){
   if(!isUrl.test(url)){
     eventHub.emit('notify', state.ui.INVALID_URL)
     return
   }
-  const urlItem = await db.addUrlItem(url, state.selectedCategory?.id as any)
+  const urlItem = await db.addUrlItem(name, url, state.selectedCategory?.id as any)
   state.items.push(urlItem)
   nextTick(()=>eventHub.emit('adjust'))
 }

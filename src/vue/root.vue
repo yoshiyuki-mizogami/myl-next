@@ -55,10 +55,10 @@ import {
   setSelectedCategory,
   setSize,
   setAlwaysOnTop,
-updateItemsOrder,
-updateCategoriesOrder
-  } 
-from '../ts/store'
+  updateItemsOrder,
+  updateCategoriesOrder,
+  isUrl
+} from '../ts/store'
 import { nextTick } from 'process'
 export default defineComponent({ 
   async created(){
@@ -133,10 +133,14 @@ export default defineComponent({
         return
       }
       let files = Array.from(dataTransfer.files)
-      if(!files.length){
-        const dragString = dataTransfer.getData('text/plain')
-        await addUrl({url:dragString})
-        return 
+      const url = dataTransfer.getData('text/plain')
+      const thisIsUrl = isUrl.test(url)
+      if(thisIsUrl){
+        console.log(files[0])
+        const name  = (()=>{
+          return files.length > 0 ? files[0].name : ''
+        })()
+        return await addUrl({url, name})
       }
       files = files.filter(f=>{
         return (!this.dragItem) || f.path !== this.dragItem.path
@@ -146,9 +150,7 @@ export default defineComponent({
       }
       setLoading(true)
       await files.reduce((b, f)=>{
-        return b.then(async ()=>{
-          await addFile({filepath:f.path})
-        })
+        return b.then(async ()=>await addFile({filepath:f.path}))
       }, Promise.resolve())
       setLoading(false)
     },
