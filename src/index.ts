@@ -1,57 +1,8 @@
 import {join} from 'path'
 import {app, dialog, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron'
+import { setIpcFunc } from './setIpcFunc'
 
 const ROOTDIR = __dirname
-
-ipcMain.handle('getrootdir', ()=>ROOTDIR)
-
-ipcMain.handle('getversion', ()=> app.getVersion())
-
-ipcMain.on('showWindow', ()=>mainWindow.show())
-
-ipcMain.handle('getDesktopPath', ()=>app.getPath('desktop'))
-
-ipcMain.handle('showOpenDialog', (_ev,args:any)=>dialog.showOpenDialog(args))
-
-ipcMain.handle('showSaveDialog', (_ev,args:any)=>dialog.showSaveDialog(args))
-
-type hw = [number, number]
-ipcMain.on('setSize', (_ev,[h, w]:hw)=>{
-  mainWindow.resizable = true
-  mainWindow.setSize(w, h)
-  mainWindow.resizable = false
-})
-
-ipcMain.on('setAlwaysOnTop', (_ev,tf:boolean, ui:any)=>{
-  mainWindow.setAlwaysOnTop(tf)
-})
-
-ipcMain.on('show-category-menu', (ev:Electron.IpcMainEvent, ui:any)=>{
-  const menu = new Menu()
-  let selected = false
-  const renameItem  = new MenuItem({
-    id:'Rename', 
-    accelerator:'r',
-    type:'normal',
-    label:ui.RENAME, 
-    click(){
-      ev.sender.send('select-category-menu-item', 'rename')
-    }
-  })
-  const removeItem = new MenuItem({
-    id:'Delete',
-    accelerator:'d',
-    type:'normal',
-    label:ui.DELETE,
-    click(){
-      ev.sender.send('select-category-menu-item', 'delete')
-    }
-  })
-  menu.append(renameItem)
-  menu.append(removeItem)
-  menu.popup({})
-})
-
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
@@ -85,6 +36,7 @@ app.on('ready', ()=>{
     },
     icon:join(__dirname, 'imgs', 'icon.png')
   })
+  setIpcFunc(app, mainWindow)
   mainWindow.loadFile(join(__dirname, 'index.html'))
   mainWindow.on('closed', app.quit.bind(app))
   const dragIcon = join(__dirname, 'imgs', 'drag.png')

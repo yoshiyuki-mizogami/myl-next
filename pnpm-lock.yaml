@@ -16,7 +16,6 @@ specifiers:
   mitt: ^3.0.0
   stylus: ^0.56.0
   stylus-loader: ^6.2.0
-  ts-loader: ^9.2.6
   typescript: ^4.4.3
   vue: ^3.2.26
   vue-devtools: ^5.1.4
@@ -46,7 +45,6 @@ devDependencies:
   mini-css-extract-plugin: 2.4.6_webpack@5.65.0
   stylus: 0.56.0
   stylus-loader: 6.2.0_stylus@0.56.0+webpack@5.65.0
-  ts-loader: 9.2.6_typescript@4.5.4+webpack@5.65.0
   typescript: 4.5.4
   vue: 3.2.26
   vue-devtools: 5.1.4
@@ -5055,21 +5053,6 @@ packages:
     resolution: {integrity: sha1-QFkjkJWS1W94pYGENLC3hInKXys=}
     dependencies:
       utf8-byte-length: 1.0.4
-    dev: true
-
-  /ts-loader/9.2.6_typescript@4.5.4+webpack@5.65.0:
-    resolution: {integrity: sha512-QMTC4UFzHmu9wU2VHZEmWWE9cUajjfcdcws+Gh7FhiO+Dy0RnR1bNz0YCHqhI0yRowCE9arVnNxYHqELOy9Hjw==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      typescript: '*'
-      webpack: ^5.0.0
-    dependencies:
-      chalk: 4.1.2
-      enhanced-resolve: 5.8.3
-      micromatch: 4.0.4
-      semver: 7.3.5
-      typescript: 4.5.4
-      webpack: 5.65.0_1f87fc823f8224154c39eba6a361cda2
     dev: true
 
   /tunnel/0.0.6:

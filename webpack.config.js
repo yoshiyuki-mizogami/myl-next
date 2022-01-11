@@ -18,23 +18,16 @@ module.exports = [{
   module:{
     rules:[
       {
-        loader:'ts-loader',
-        test:/\.ts$/,
-        options:{
-          appendTsSuffixTo:[/\.vue$/]
-        }
-      },
-      {
-        test:/\.vue$/,
-        loader:'vue-loader'
-      },
-      {
         test:/\.ts$/,
         loader: 'esbuild-loader',
         options:{
           loader:'ts',
           target:'esnext'
         }
+      },
+      {
+        test:/\.vue$/,
+        loader:'vue-loader'
       },
       {
         test:/\.stylus$/,
@@ -64,15 +57,22 @@ module.exports = [{
     path:path.resolve(__dirname, 'app/'),
     filename:'[name].js'
   },
+  resolve: {
+    extensions: ['.ts', '.vue', '.js']
+  },
   node:{
     __dirname:false
   },
   module:{
     rules:[
       {
-        loader:'ts-loader',
-        test:/\.ts$/
-      }
+        test:/\.ts$/,
+        loader: 'esbuild-loader',
+        options:{
+          loader:'ts',
+          target:'esnext'
+        }
+      },
     ]
   },
   devtool:'inline-source-map'
