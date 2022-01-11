@@ -3,11 +3,12 @@ import {
   MenuItem,
   dialog,
   ipcMain,
-  BrowserWindow
+  BrowserWindow,
+  FileIconOptions
 } from 'electron'
 
 export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
-  ipcMain.handle('getrootdir', ()=>'')
+  ipcMain.handle('getrootdir', ()=>__dirname)
 
   ipcMain.handle('getversion', ()=> app.getVersion())
   
@@ -25,14 +26,18 @@ export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
     mainWindow.setSize(w, h)
     mainWindow.resizable = false
   })
-  
-  ipcMain.on('setAlwaysOnTop', (_ev,tf:boolean, ui:any)=>{
+
+  ipcMain.on('setAlwaysOnTop', (_ev,tf:boolean)=>{
     mainWindow.setAlwaysOnTop(tf)
   })
-  
+  const ICON_OPT:FileIconOptions = {
+    size:'normal'
+  }  
+  ipcMain.handle('getFileIcon', (_ev, filepath:string)=>{
+    return app.getFileIcon(filepath, ICON_OPT)
+  })
   ipcMain.on('show-category-menu', (ev:Electron.IpcMainEvent, ui:any)=>{
     const menu = new Menu()
-    let selected = false
     const renameItem  = new MenuItem({
       id:'Rename', 
       accelerator:'r',
@@ -55,4 +60,53 @@ export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
     menu.append(removeItem)
     menu.popup({})
   })
+  
+  const ITEM_REPONSE_EVENT = 'select-item-menu'
+  ipcMain.on('show-item-menu', (ev:Electron.IpcMainEvent, ui:any)=>{
+    const menu = new Menu()
+
+    const openParent = new MenuItem({
+      id:'OpenParent',
+      accelerator:'o',
+      type:'normal',
+      label:ui.OPEN_PARENT,
+      click(){
+        ev.sender.send(ITEM_REPONSE_EVENT, 'openParent')
+      }
+    })
+    const thisCopyItemPath = new MenuItem({
+      id:'Copy',
+      accelerator:'c',
+      type:'normal',
+      label:ui.COPY,
+      click(){
+        ev.sender.send(ITEM_REPONSE_EVENT, 'copy')
+      }
+    })
+    const editItem  = new MenuItem({
+      id:'Edit', 
+      accelerator:'e',
+      type:'normal',
+      label:ui.EDIT, 
+      click(){
+        ev.sender.send(ITEM_REPONSE_EVENT, 'edit')
+      }
+    })
+    const thisRemoveItem = new MenuItem({
+      id:'Remove',
+      accelerator:'r',
+      type:'normal',
+      label:ui.REMOVE,
+      click(){
+        ev.sender.send(ITEM_REPONSE_EVENT, 'remove')
+      }
+    })
+    menu.append(openParent)
+    menu.append(thisCopyItemPath)
+    menu.append(editItem)
+    menu.append(thisRemoveItem)
+    menu.popup({})
+  })
+
+
 }

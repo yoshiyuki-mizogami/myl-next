@@ -4,7 +4,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, toRaw } from 'vue'
 import hub from '../ts/event-hub'
 import Item from '../ts/models/item'
 import { ipcRenderer} from 'electron'
@@ -53,57 +53,37 @@ export default defineComponent({
   }
 })
 function contextMenu(ev:MouseEvent, item:Item){
-  const ui = state.ui
-  const menu = new Menu()
-  const openParent = new MenuItem({
-    id:'OpenParent',
-    accelerator:'o',
-    type:'normal',
-    label:ui.OPEN_PARENT,
-    click(){
-      item.openParent()
+  const SEND_EVENT_NAME = 'show-item-menu'
+  const RESPONSE_EVENT_NAME = 'select-item-menu'
+  ipcRenderer.once(RESPONSE_EVENT_NAME, (_ev, type)=>{
+    switch(type){
+      case 'openParent':{
+        item.openParent()
+        break
+      }
+      case 'copy':{
+        copyItemPath(item)
+        break
+      }
+      case 'edit':{
+        showItemDetail(item)
+        break
+      }
+      case 'remove':{
+        hub.emit('show-dialog' ,{
+          y:ev.clientY,
+          x:ev.clientX,
+          message:'Remove ok?',
+          onOk(){
+            removeItem(item)
+          },
+          cancelable:true
+        })
+        break
+      }
     }
   })
-  const thisCopyItemPath = new MenuItem({
-    id:'Copy',
-    accelerator:'c',
-    type:'normal',
-    label:ui.COPY,
-    click(){
-      copyItemPath(item)
-    }
-  })
-  const editItem  = new MenuItem({
-    id:'Edit', 
-    accelerator:'e',
-    type:'normal',
-    label:ui.EDIT, 
-    click(){
-      showItemDetail(item)
-    }
-  })
-  const thisRemoveItem = new MenuItem({
-    id:'Remove',
-    accelerator:'r',
-    type:'normal',
-    label:ui.REMOVE,
-    click(){
-      hub.emit('show-dialog' ,{
-        y:ev.clientY,
-        x:ev.clientX,
-        message:'Remove ok?',
-        onOk(){
-          removeItem(item)
-        },
-        cancelable:true
-      })
-    }
-  })
-  menu.append(openParent)
-  menu.append(thisCopyItemPath)
-  menu.append(editItem)
-  menu.append(thisRemoveItem)
-  menu.popup({})
+  ipcRenderer.send(SEND_EVENT_NAME, toRaw(state.ui))
 }
 </script>
 

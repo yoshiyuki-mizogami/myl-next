@@ -2,8 +2,6 @@ import {join} from 'path'
 import {app, dialog, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron'
 import { setIpcFunc } from './setIpcFunc'
 
-const ROOTDIR = __dirname
-
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
 let mainWindow:BrowserWindow
