@@ -1,12 +1,6 @@
 import {join} from 'path'
-import * as remote from '@electron/remote/main'
-import {app, BrowserWindow, ipcMain} from 'electron'
-remote.initialize()
-
-const ROOTDIR = __dirname
-ipcMain.handle('getrootdir', ()=>ROOTDIR)
-
-ipcMain.handle('getversion', ()=> app.getVersion())
+import {app, dialog, BrowserWindow, ipcMain, Menu, MenuItem} from 'electron'
+import { setIpcFunc } from './setIpcFunc'
 
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1'
@@ -29,7 +23,7 @@ app.on('ready', ()=>{
     height:400,
     width:350,
     frame:false,
-    show:isDev || true,
+    show:false,
     resizable:false,
     fullscreenable:false,
     maximizable:false,
@@ -40,16 +34,10 @@ app.on('ready', ()=>{
     },
     icon:join(__dirname, 'imgs', 'icon.png')
   })
+  setIpcFunc(app, mainWindow)
   mainWindow.loadFile(join(__dirname, 'index.html'))
-  remote.enable(mainWindow.webContents)
-
   mainWindow.on('closed', app.quit.bind(app))
-  if(isDev){
-    const ses = mainWindow.webContents.session
-    ses.loadExtension(join(__dirname, '..', 'node_modules', 'vue-devtools', 'vender'))
-    mainWindow.webContents.openDevTools()
-  }
-  const dragIcon = join(global['ROOTDIR'], 'imgs', 'drag.png')
+  const dragIcon = join(__dirname, 'imgs', 'drag.png')
   ipcMain.on('ondragstart', (event:any, file:string)=>{
     event.sender.startDrag({
       file,

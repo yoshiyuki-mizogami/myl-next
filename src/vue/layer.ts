@@ -1,30 +1,33 @@
-import Hub from '../ts/event-hub'
-import { mapState } from "vuex";
-export default {
+import { defineComponent } from 'vue'
+import {popLayer, pushLayer} from '../ts/event-hub'
+import {state} from '../ts/store'
+export default defineComponent({
   watch:{
-    show(v){
+    show(v:any){
       if(v){
-        return Hub.pushLayer(this)
+        return pushLayer(this)
       }
-      Hub.popLayer()
+      popLayer()
     }
   },
-  computed:mapState({
-    ui:'ui'
-  }),
+  computed:{
+    ui(){
+      return state.ui
+    }
+  },
   created(){
-    this.$on('keydown',ev=>{
+  },
+  methods:{
+    keydown(this:any, ev:KeyboardEvent){
       const {key} = ev
       const func = this.shortCuts[key]
       if(!func){
         return
       }
       func()
-    })
-  },
-  methods:{
-    setShortcut(shortcuts:object){
+    },
+    setShortcut(this:any, shortcuts:object){
       this.shortCuts = shortcuts
     }
   }
-}
+})

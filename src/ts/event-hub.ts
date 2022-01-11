@@ -1,22 +1,17 @@
-import Vue from 'vue'
-export default new Vue({
-  data:{
-    layers:[] as Vue[]
-  },
-  methods:{
-    pushLayer(l:Vue){
-      this.layers.push(l)
-    },
-    popLayer(){
-      this.layers.pop()
-    },
-    keydown(ev){
-      const {layers} = this
-      const topLayer = layers[layers.length -1]
-      if(!topLayer){
-        return
-      }
-      topLayer.$emit('keydown',ev)
-    }
+import mitt from 'mitt'
+const emitter = mitt()
+export default emitter
+const layers: any[] = []
+export function pushLayer(l:any){
+  layers.push(l)
+}
+export function popLayer(){
+  layers.pop()
+}
+export function keydown(ev:any){
+  const topLayer = layers.at(-1)
+  if(topLayer === undefined){
+    return
   }
-})
+  topLayer.$emit('keydown', ev)
+}

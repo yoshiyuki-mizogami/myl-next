@@ -1,5 +1,6 @@
+type Langs = 'en'|'ja'
 interface MylConfig{
-  lang:string
+  lang:Langs
   aot:boolean
   theme:string
 }
@@ -8,10 +9,13 @@ const DEF = {
   aot:false,
   theme:'Basic'
 } as MylConfig
-export default class Config{
+
+export default class Config implements MylConfig{
   id?:number
-  config:MylConfig = DEF
+  lang!:Langs
+  aot!:boolean
+  theme!:string
   constructor(def:MylConfig = DEF){
-    Object.assign(this.config, def)
+    Object.assign(this, def)
   }
 }

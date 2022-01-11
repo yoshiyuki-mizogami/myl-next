@@ -1,3 +1,176 @@
+<template>
+  <div class="whole" ref="app">
+    <div class="loading" v-if="loading"/>
+    <div class="header">
+      <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory"></div>
+      <div class="icon-sort-amount-asc header-btn switch-sortmode" :class="{sortMode}" @click="switchSortMode"></div>
+      <div class="icon-gear header-btn setting" @click="openSetting"></div>
+      <div class="icon-clone header-btn aot-btn" :class="{aot}" @click="toggleAOT"></div>
+      <div class="icon-sign-out header-btn close-app" @click="close"></div>
+    </div>
+    <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
+      <div class="categories">
+        <draggable v-model="state.categories" item-key="id">
+          <template #item="{element}">
+            <a-category :selected="selectedCategory === element" @select-category="selectCategory" :category="element"/>
+          </template>
+        </draggable>
+      </div>
+      <div class="items">
+        <draggable v-model="state.items" :move="checkMove" item-key="id">
+          <template #item="{element}">
+            <an-item :item="element"/>
+          </template>
+        </draggable>
+      </div>
+    </div>
+    <new-cate-dialog/>
+    <app-setting/>
+    <item-detail/>
+    <app-dialog/>
+    <notify/>
+  </div>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import Category from './category.vue'
+import Item from './item.vue'
+import NewCateDialog from './new-category.vue'
+import Dialog from './dialog.vue'
+import Notify from './notify.vue'
+import eventHub, {pushLayer, popLayer, keydown} from '../ts/event-hub'
+import ItemDetail from './item-detail.vue'
+import AppSetting from './app-setting.vue'
+import draggable from 'vuedraggable'
+import {
+  switchSortMode,
+  state,
+  init,
+  getItems,
+  setNewCategoryDialog,
+  toggleAOT,
+  addUrl,
+  setLoading,
+  addFile,
+  setSelectedCategory,
+  setSize,
+  setAlwaysOnTop,
+  updateItemsOrder,
+  updateCategoriesOrder,
+  isUrl
+} from '../ts/store'
+import { nextTick } from 'process'
+export default defineComponent({ 
+  async created(){
+    pushLayer(this)
+    await init()
+    eventHub.on('adjust', this.adjust)
+    document.documentElement.addEventListener('keydown', keydown)
+  },
+  data(){
+    return {
+      state:state
+    }
+  },
+  watch:{
+    async selectedCategory(v){
+      await getItems(v.id)
+    },
+    'state.items'(to,from){
+      updateItemsOrder(to)
+    },
+    'state.categories'(to, from){
+      updateCategoriesOrder(to)
+    },
+  },
+  computed:{
+    aot(){
+      return state.config.aot
+    },
+    config(){
+      return state.config
+    },
+    selectedCategory(){
+      return state.selectedCategory
+    },
+    loading(){return state.loading},
+    sortMode(){return state.sortMode},
+    dragItem(){return state.dragItem}
+  },
+  mounted(){
+    setTimeout(()=>this.adjust(), 100)
+  },
+  components:{
+    'new-cate-dialog':NewCateDialog,
+    'a-category':Category,
+    'an-item':Item,
+    'app-dialog':Dialog,
+    AppSetting,
+    ItemDetail,
+    draggable,
+    'notify':Notify
+  },
+  methods:{
+    switchSortMode,
+    checkMove(){
+      return state.sortMode
+    },
+    addNewCategory(){
+      setNewCategoryDialog(true)
+    },
+    close(){
+      close()
+    },
+    toggleAOT(){
+      toggleAOT()
+      setAlwaysOnTop(this.aot)
+    },
+    async dropAny(e:DragEvent):Promise<void>{
+      const trackLink = e.ctrlKey
+      const {dataTransfer} = e as {dataTransfer:DataTransfer}
+      const fromThis = dataTransfer.getData('myl/item')
+      if(fromThis){
+        return
+      }
+      let files = Array.from(dataTransfer.files)
+      const url = dataTransfer.getData('text/plain')
+      const thisIsUrl = isUrl.test(url)
+      if(thisIsUrl){
+        console.log(files[0])
+        const name  = (()=>{
+          return files.length > 0 ? files[0].name : ''
+        })()
+        return await addUrl({url, name})
+      }
+      files = files.filter(f=>{
+        return (!this.dragItem) || f.path !== this.dragItem.path
+      })
+      if(!files.length){
+        return
+      }
+      setLoading(true)
+      await files.reduce((b, f)=>{
+        return b.then(async ()=>await addFile({filepath:f.path}))
+      }, Promise.resolve())
+      setLoading(false)
+    },
+    selectCategory(c:any){
+      setSelectedCategory(c)
+    },
+    adjust(){
+      nextTick(()=>{
+        const {app} = this.$refs
+        const {clientHeight, clientWidth} = app as {clientHeight:number, clientWidth:number}
+        setSize(clientHeight, clientWidth)
+      })
+    },
+    openSetting(){
+      eventHub.emit('open-setting')
+    }
+  }
+})
+</script>
+
 <style lang="stylus">
 html,body
   height 100%
@@ -101,167 +274,3 @@ input[type=button],button
   &:hover
     color black
 </style>
-<template>
-  <div class="whole" ref="app">
-    <div class="loading" v-if="loading"/>
-    <div class="header">
-      <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory"></div>
-      <div class="icon-sort-amount-asc header-btn switch-sortmode" :class="{sortMode}" @click="switchSortMode"></div>
-      <div class="icon-gear header-btn setting" @click="openSetting"></div>
-      <div class="icon-clone header-btn aot-btn" :class="{aot}" @click="toggleAOT"></div>
-      <div class="icon-sign-out header-btn close-app" @click="close"></div>
-    </div>
-    <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
-      <div class="categories">
-        <draggable v-model="categories">
-          <a-category v-for="c in categories" :selected="selectedCategory === c" :category="c" :key="c.id"/>
-        </draggable>
-      </div>
-      <div class="items">
-        <draggable v-model="items" :move="checkMove">
-          <an-item v-for="i in items" :item="i" :key="i.id"></an-item>
-        </draggable>
-      </div>
-    </div>
-    <new-cate-dialog/>
-    <app-setting/>
-    <item-detail/>
-    <app-dialog/>
-    <notify/>
-  </div>
-</template>
-<script lang="ts">
-import remote from '@electron/remote'
-import Vue from 'vue'
-import {mapState,mapMutations} from 'vuex'
-import Category from './category.vue'
-import Item from './item.vue'
-import NewCateDialog from './new-category.vue'
-import Dialog from './dialog.vue'
-import Notify from './notify.vue'
-import hub from '../ts/event-hub'
-import ItemDetail from './item-detail.vue'
-import AppSetting from './app-setting.vue'
-declare var require:(moduleId:string) => any
-const draggable = require('vuedraggable')
-const thisWindow = remote.getCurrentWindow()
-export default Vue.extend({ 
-  async created(){
-    hub.pushLayer(this)
-    await this.$store.dispatch('init')
-    hub.$on('adjust', this.adjust)
-    document.documentElement.addEventListener('keydown', hub.keydown)
-  },
-  watch:{
-    async selectedCategory(v){
-      await this.$store.dispatch('getItems', v.id)
-    }
-  },
-  computed:{
-    items:{
-      get(){
-        return this.$store.state.items
-      },
-      set(v){
-        this.$store.dispatch('updateItemsOrder', v)
-      }
-    },
-    categories:{
-      get(){
-        return this.$store.state.categories
-      },
-      set(v){
-        this.$store.dispatch('updateCategoriesOrder', v)
-      }
-    },
-    aot(){
-      return this.$store.state.config.aot
-    },
-    config(){
-      return this.$store.state.config
-    },
-    ...mapState({
-      selectedCategory:'selectedCategory',
-      loading:'loading',
-      sortMode:'sortMode',
-      dragItem:'dragItem'
-    })
-  },
-  mounted(){
-    this.adjust()
-    this.showWindow()
-  },
-  components:{
-    'new-cate-dialog':NewCateDialog,
-    'a-category':Category,
-    'an-item':Item,
-    'app-dialog':Dialog,
-    AppSetting,
-    ItemDetail,
-    draggable,
-    'notify':Notify
-  },
-  methods:{
-    ...mapMutations({
-      switchSortMode:'switchSortMode'
-    }),
-    checkMove(){
-      return this.sortMode
-    },
-    addNewCategory(){
-      this.$store.commit('setNewCategoryDialog', true)
-    },
-    close(){
-      thisWindow.close()
-    },
-    toggleAOT(){
-      this.$store.commit('toggleAOT')
-      thisWindow.setAlwaysOnTop(this.aot)
-    },
-    async dropAny(e:DragEvent):Promise<void>{
-      const trackLink = e.ctrlKey
-      const {dataTransfer:df} = e
-      const fromThis = df.getData('myl/item')
-      if(fromThis){
-        return
-      }
-      let files = Array.from(df.files)
-      if(!files.length){
-        const dragString = df.getData('text/plain')
-        await this.$store.dispatch('addUrl', {url:dragString})
-        return 
-      }
-      files = files.filter(f=>{
-        return (!this.dragItem) || f.path !== this.dragItem.path
-      })
-      if(!files.length){
-        return
-      }
-      this.$store.commit('setLoading', true)
-      await files.reduce((b, f)=>{
-        return b.then(async ()=>{
-          await this.$store.dispatch('addFile', {filepath:f.path, trackLink})
-        })
-      }, Promise.resolve())
-      this.$store.commit('setLoading', false)
-    },
-    selectCategory(c){
-      this.$store.commit('setSelectedCategory', c)
-    },
-    adjust(){
-      const {app} = this.$refs
-      const {clientHeight, clientWidth} = app
-      thisWindow['resizable'] = true
-      thisWindow.setSize(clientWidth, clientHeight)
-      thisWindow['resizable'] = false
-    },
-    showWindow(){
-      thisWindow.show()
-    },
-    openSetting(){
-      hub.$emit('open-setting')
-    }
-  }
-})
-</script>
-

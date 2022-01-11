@@ -1,3 +1,38 @@
+<template>
+  <transition name="notify">
+    <div class="notify" v-if="show">{{m}}</div>
+  </transition>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import NOTIFY from '../enum/notify'
+import hub from '../ts/event-hub'
+const NOTIFY_TIMEOUT = 4000
+export default defineComponent({
+  data(){
+    return {
+      show:false,
+      ev:0,
+      m:''
+    }
+  },
+  created(){
+    hub.on('notify', this.showNotify as any)
+  },
+  methods:{
+    showNotify(message:string){
+      this.show = true
+      this.m = message
+      this.setHideTimer()
+    },
+    setHideTimer(){
+      clearTimeout(this.ev)
+      this.ev = setTimeout(()=>this.show = false, NOTIFY_TIMEOUT) as any
+    }
+  }
+})
+</script>
+
 <style lang="stylus">
 .notify
   position fixed
@@ -12,39 +47,3 @@
 .notify-enter, .notify-leave-to
   transform translateX(100px)
 </style>
-
-<template>
-  <transition name="notify">
-    <div class="notify" v-if="show">{{m}}</div>
-  </transition>
-</template>
-<script lang="ts">
-import Vue from 'vue'
-import NOTIFY from '../enum/notify'
-import hub from '../ts/event-hub'
-const NOTIFY_TIMEOUT = 4000
-export default Vue.extend({
-  data(){
-    return {
-      show:false,
-      ev:null,
-      m:''
-    }
-  },
-  created(){
-    hub.$on('notify', this.showNotify)
-  },
-  methods:{
-    showNotify(message, level = NOTIFY.INFO){
-      this.show = true
-      this.m = message
-      this.setHideTimer()
-    },
-    setHideTimer(){
-      clearTimeout(this.ev)
-      this.ev = setTimeout(()=>this.show = false, NOTIFY_TIMEOUT)
-    }
-  }
-})
-</script>
-

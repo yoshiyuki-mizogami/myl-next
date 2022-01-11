@@ -1,19 +1,3 @@
-<style lang="stylus">
-.dialog
-  width 200px
-  height 60px
-  background-color var(--dialog-back)
-  padding 5px
-  border-radius 2px
-  text-align center
-  position fixed
-  top 0
-  left 0
-  .dialog-console
-    >input
-      padding 2px 10px
-
-</style>
 <template>
   <div class="layer-back" v-if="show">
     <div class="dialog" :style="{top:y+'px', left:x+'px'}">
@@ -27,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import { defineComponent } from 'vue'
 import globals from '../ts/globals'
 import hub from '../ts/event-hub'
 const {mainWindow} = globals
@@ -43,15 +27,15 @@ const defOpt = {
 }
 const H = 60, W = 200
 const NUMBER = 'number'
-export default Vue.extend({
+export default defineComponent({
   data(){
     return Object.assign({}, defOpt)
   },
   created(){
-    hub.$on('show-dialog', this.showDialog)
+    hub.on('show-dialog', this.showDialog)
   },
   methods:{
-    showDialog(opts){
+    showDialog(opts:any){
       this.show = true
       opts.cancelable = (!opts.onCancel) || !!opts.cancelable
       Object.assign(this, opts)
@@ -90,3 +74,19 @@ export default Vue.extend({
   }
 })
 </script>
+<style lang="stylus">
+.dialog
+  width 200px
+  height 60px
+  background-color var(--dialog-back)
+  padding 5px
+  border-radius 2px
+  text-align center
+  position fixed
+  top 0
+  left 0
+  .dialog-console
+    >input
+      padding 2px 10px
+
+</style>

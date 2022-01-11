@@ -20,7 +20,7 @@ exports.webpack = function doWebpack(clbk){
 }
 
 function bootElectron(){
-  const c = spawn(require('electron'), ['app'], {stdio:'inherit'})
+  const c = spawn(require('electron'), ['app', '--trace-warnings'], {stdio:'inherit'})
   c.on('close',bootElectron)
 }
 exports.boot = bootElectron

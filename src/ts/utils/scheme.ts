@@ -3,9 +3,11 @@ import Category from '../models/category'
 import Item from '../models/item'
 import {getIcon,RESIZE_OPT, ICON_OPT} from '../../ts/utils/get-file-info'
 import Config from '../models/config'
-import Sortable from '../models/sortable'
-import url from 'url'
-import {URL} from '../consts'
+import {Sortable} from '../models/sortable'
+import { URL } from '../consts'
+import { ipcRenderer, nativeImage, NativeImage } from 'electron'
+import { join } from 'path'
+import { unlink, writeFile } from 'fs/promises'
 function sortFunc(a:Sortable, b:Sortable){
   return a.sort - b.sort
 }
@@ -14,9 +16,9 @@ interface ExportForm {
   items:Item[]
 }
 export default class MylDB extends Dexie{
-  categories:Dexie.Table<Category, number>
-  items:Dexie.Table<Item, number>
-  config:Dexie.Table<Config, number>
+  categories!:Dexie.Table<Category, number>
+  items!:Dexie.Table<Item, number>
+  config!:Dexie.Table<Config, number>
   constructor(){
     super('myl-db')
     this.version(1).stores({
@@ -39,20 +41,19 @@ export default class MylDB extends Dexie{
   async exportAll(_:string){
     const categories  = await this.categories.toArray()
     const items = await this.items.toArray()
-    const categoriesMap = categories.reduce((b, c)=>{
+    const categoriesMap = categories.reduce((b, c:any)=>{
       b[c.id] = {
         category:c,
         items:[]
       } as ExportForm
       return b
-    },{})
-    items.forEach(i=>{
+    },{} as {[key:string]:any})
+    items.forEach((i:any)=>{
       const cateId = i.cateId
-      i.cateId = 
-      i.id = void 0
+      i.cateId = i.id = void 0
       categoriesMap[cateId].items.push(i)
     })
-    const exportCategories = Object.keys(categoriesMap).reduce((ary,idx)=>{
+    const exportCategories = Object.keys(categoriesMap).reduce((ary:any,idx)=>{
       const cursorItem = categoriesMap[idx]
       ary.push(cursorItem)
       return ary
@@ -63,7 +64,7 @@ export default class MylDB extends Dexie{
 
   }
   async saveConfig(config:Config){
-    this.config.update(config.id, config)
+    this.config.update(config.id as any, config)
   }
   async getCategories(){
     const categories = await this.categories.toArray()
@@ -86,7 +87,7 @@ export default class MylDB extends Dexie{
   }
   async removeCategory(cate:Category){
     await this.transaction('rw', this.categories, this.items,async ()=>{
-      await this.categories.delete(cate.id)
+      await this.categories.delete(cate.id as any)
       await this.items.where({cateId:cate.id}).delete()
     })
   }
@@ -105,14 +106,17 @@ export default class MylDB extends Dexie{
     await this.items.add(newItem)
     return newItem
   }
-  async addUrlItem(urlString:string, cateId:number):Promise<Item>{
-    const webIcon = await getIcon(location.href)
-    const {host} = url.parse(urlString)
-    const resizedIcon = webIcon.resize(RESIZE_OPT)
+  async addUrlItem(name:string, urlString:string, cateId:number):Promise<Item>{
+    const {origin,host} = new window.URL(urlString)
+    let icon = await getFavicon(origin)
+    if(icon === undefined){
+      icon = await getIcon(location.href)
+    }
+    const resizedIcon = icon.resize(RESIZE_OPT)
     const dateUrl = resizedIcon.toDataURL()
     const sort = await this.getMaxId(cateId)
     const newItem = new Item({
-      name:host,
+      name:name || host,
       icon:dateUrl,
       sort,
       cateId,
@@ -131,4 +135,27 @@ export default class MylDB extends Dexie{
   async removeItem(item:Item):Promise<void>{
     return this.items.delete(item.id)
   }
+}
+
+
+async function getFavicon(origin:string):Promise<NativeImage|undefined>{
+  const faviconUrl = `${origin}/favicon.ico`
+  const res = await fetch(faviconUrl)
+    .then(r=>r.arrayBuffer())
+    .catch(e=>{
+      return undefined
+    }) as undefined|ArrayBuffer
+  if(res === undefined){
+    return undefined
+  }
+  const tmpDir = await ipcRenderer.invoke('getTmpDir')
+  const iconname = `_myl_icon_${Date.now()}.ico`
+  const tmpIconFilepath = join(tmpDir, iconname)
+  await writeFile(tmpIconFilepath, Buffer.from(res))
+  const icon = await nativeImage.createFromPath(tmpIconFilepath)
+  unlink(tmpIconFilepath)
+  if(icon.isEmpty()){
+    return undefined
+  }
+  return icon
 }

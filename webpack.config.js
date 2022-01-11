@@ -1,6 +1,6 @@
 const path = require('path')
 const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const {VueLoaderPlugin} = require('vue-loader')
 
 module.exports = [{
   target:'electron-renderer',
@@ -18,10 +18,11 @@ module.exports = [{
   module:{
     rules:[
       {
-        loader:'ts-loader',
         test:/\.ts$/,
+        loader: 'esbuild-loader',
         options:{
-          appendTsSuffixTo:[/\.vue$/]
+          loader:'ts',
+          target:'esnext'
         }
       },
       {
@@ -56,15 +57,22 @@ module.exports = [{
     path:path.resolve(__dirname, 'app/'),
     filename:'[name].js'
   },
+  resolve: {
+    extensions: ['.ts', '.vue', '.js']
+  },
   node:{
     __dirname:false
   },
   module:{
     rules:[
       {
-        loader:'ts-loader',
-        test:/\.ts$/
-      }
+        test:/\.ts$/,
+        loader: 'esbuild-loader',
+        options:{
+          loader:'ts',
+          target:'esnext'
+        }
+      },
     ]
   },
   devtool:'inline-source-map'

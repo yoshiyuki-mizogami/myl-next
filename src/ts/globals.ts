@@ -1,7 +1,13 @@
 import {join} from 'path'
-const ROOTDIR = window['ROOTDIR']
+function getRootDir(){
+  return ''
+}
+function getVersion(){
+  return ''
+}
+const ROOTDIR = getRootDir()
 const IMGDIR = join(ROOTDIR, 'imgs')
-const VERSION = window['VERSOIN']
+const VERSION = getVersion()
 const mainWindow = window
 const DEFAULT_JSON_NAME = 'myl-data.json'
 const HP_URL = 'https://github.com/yoshiyuki-mizogami/myl-next/releases'
