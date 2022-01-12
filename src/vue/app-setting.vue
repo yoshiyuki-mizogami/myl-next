@@ -2,7 +2,7 @@
   <div class="layer-back" v-if="show">
     <div class="setting-layer">
       <div class="icon-close close-btn" @click="close"/>
-      <div class="setting-title">Myl <span v-once class="version">ver {{version}}</span> Setting</div>
+      <div class="setting-title">Myl <span v-once class="version">ver {{state.version}}</span> Setting</div>
       <ul class="setting-items">
         <li>
           <div class="setting-name">{{ui.LANG}}</div>
@@ -36,7 +36,7 @@
   </div>
 </template>
 <script lang="ts">
-import Vue, { defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import layer from './layer'
 import Hub from '../ts/event-hub'
 import {
@@ -46,24 +46,26 @@ import {
   langSwitch,
   selectTheme, 
   openHP} from '../ts/store'
+import { ipcRenderer } from 'electron'
 export default defineComponent({
   mixins:[layer],
   data(){
     return {
-      show:false
+      show:false, 
+      state
     }
   },
   computed:{
     themes(){return state.themes},
     config(){ return state.config},
-    ui(){return state.ui},
-    version(){return state.version}
+    ui(){return state.ui}
   },
-  created(){
+  async created(){
     Hub.on('open-setting', (this as any).open);
     (this as any).setShortcut({
       Escape:(this as any).close
     })
+    this.version = await ipcRenderer.invoke('getVersion')
   },
   methods:{
     exportJson,

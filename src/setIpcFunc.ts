@@ -10,7 +10,7 @@ import {
 export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
   ipcMain.handle('getrootdir', ()=>__dirname)
 
-  ipcMain.handle('getversion', ()=> app.getVersion())
+  ipcMain.handle('getVersion', ()=> app.getVersion())
   
   ipcMain.on('showWindow', ()=>mainWindow.show())
   

@@ -24,7 +24,7 @@ const config = new Config()
 const db = new MylDB()
 export const isUrl = /^https?:\/\//
 export const state = reactive({
-    version:globals.VERSION,
+    version:'',
     themes:Themes,
     categories:[] as Category[],
     items:[] as any[],
@@ -68,6 +68,7 @@ export async function moveItem(destCategory:any){
 }
 export async function init(){
   loadConfig()
+  state.version = await ipcRenderer.invoke('getVersion')
   state.categories = await db.getCategories()
   state.selectedCategory = state.categories[0]
   state.ui = await langSwitchFn(state.config.lang)
