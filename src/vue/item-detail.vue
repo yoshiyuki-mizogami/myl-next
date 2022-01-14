@@ -2,22 +2,51 @@
 <template>
   <OverlayLayer v-if="show">
     <div class="item-detail">
-      <div class="close-btn icon-close" @click="hideMe"></div>
+      <div
+        class="close-btn icon-close"
+        @click="hideMe"
+      />
       <div class="prop">
-        <span class="prop-title">{{ui.ITEM_NAME}}</span>
-        <input type="text" class="prop-text" v-model.lazy="data.name">
+        <span class="prop-title">{{ state.ui.ITEM_NAME }}</span>
+        <input
+          v-model.lazy="data.name"
+          type="text"
+          class="prop-text"
+        >
       </div>
       <div class="prop">
-        <span class="prop-title">{{ui.ITEM_PATH}}</span>
-        <input type="text" class="prop-text" v-model.lazy="data.path">
+        <span class="prop-title">{{ state.ui.ITEM_PATH }}</span>
+        <input
+          v-model.lazy="data.path"
+          type="text"
+          class="prop-text"
+        >
       </div>
       <div class="prop">
-        <span class="prop-title">{{ui.BY}}</span>
-        <input type="text" class="prop-text with-text" readonly v-model.lazy="data.by"><input type="button" class="with-select" :value="ui.SELECT" @click="selectWith">
+        <span class="prop-title">{{ state.ui.BY }}</span>
+        <input
+          v-model.lazy="data.by"
+          type="text"
+          class="prop-text with-text"
+          readonly
+        >
+        <input
+          type="button"
+          class="with-select"
+          :value="state.ui.SELECT"
+          @click="selectWith"
+        >
       </div>
-      <div class="prop" v-if="isFile">
-        <span class="prop-title">{{ui.ARG}}</span>
-        <input type="text" class="prop-text" v-model.lazy="data.cmd">
+      <div 
+        v-if="isFile"
+        class="prop"
+      >
+        <span class="prop-title">{{ state.ui.ARG }}</span>
+        <input
+          v-model.lazy="data.cmd"
+          type="text"
+          class="prop-text"
+        >
       </div>
     </div>
   </OverlayLayer>
@@ -25,54 +54,54 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import Item from '../ts/models/item'
-import LayerMixin from './layer'
 import EventHub from '../ts/event-hub'
 import {FILE} from '../ts/consts'
 import { updateItem } from '../ts/store'
 import OverlayLayer from './overlay-layer.vue'
+import { ipcRenderer } from 'electron'
+import { state } from '../ts/store'
 const DEF = {}
 Object.seal(DEF)
 export default defineComponent({
-    data() {
-        return {
-            show: false,
-            data: DEF as Item | any,
-            by: ""
-        };
+  components: { OverlayLayer },
+  data() {
+    return {
+      state,
+      show: false,
+      data: DEF as Item,
+      by: ''
+    }
+  },
+  computed: {
+    isFile() {
+      return this.data.type === FILE
+    }
+  },
+  created() {
+    EventHub.on('show-item-detail', this.showMe)
+  },
+  methods: {
+    showMe(item: Item) {
+      this.show = true
+      this.data = item
     },
-    mixins: [LayerMixin],
-    created() {
-        (EventHub as any).on("show-item-detail", this.showMe);
-        this.setShortcut({
-            Escape: this.hideMe
-        });
+    hideMe() {
+      const { data } = this
+      this.data = DEF
+      this.show = false
+      updateItem(data)
     },
-    computed: {
-        isFile() {
-            return this.data.type === FILE;
-        }
-    },
-    methods: {
-        showMe(item: Item) {
-            this.show = true;
-            this.data = item;
-        },
-        hideMe() {
-            const { data } = this;
-            this.data = DEF;
-            this.show = false;
-            updateItem(data);
-        },
-        async selectWith() {
-            const files = {} as any;
-            if (!files.filePaths.length) {
-                return this.data.by = "";
-            }
-            const [filepath] = files.filePaths;
-            this.by = filepath;
-        }
-    },
-    components: { OverlayLayer }
+    async selectWith() {
+      const files = await ipcRenderer.invoke('showOpenDialog', {
+        title:state.ui.SELECT_BOOT_BY,
+      })
+      if (!files.filePaths.length) {
+        return this.data.by = ''
+      }
+      const [filepath] = files.filePaths
+      this.by = filepath
+    }
+  }
 })
 </script>
 

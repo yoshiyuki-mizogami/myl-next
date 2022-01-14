@@ -1,6 +1,15 @@
 <template>
-  <div @contextmenu="showContentMenu" @dblclick="call" class="item" @dragstart="setDrag">
-    <div class="item-icon" :style="{'background-image':dataUrl}"></div><span class="item-content">{{item.name}}</span>
+  <div
+    class="item"
+    @contextmenu="showContentMenu"
+    @dblclick="call"
+    @dragstart="setDrag"
+  >
+    <div
+      class="item-icon"
+      :style="{'background-image':dataUrl}"
+    />
+    <span class="item-content">{{ item.name }}</span>
   </div>
 </template>
 <script lang="ts">
@@ -8,7 +17,6 @@ import { defineComponent, toRaw } from 'vue'
 import hub from '../ts/event-hub'
 import Item from '../ts/models/item'
 import { ipcRenderer} from 'electron'
-import {Menu, MenuItem} from 'electron'
 import { copyItemPath, removeItem, setDragItem, showItemDetail, state } from '../ts/store'
 export default defineComponent({
   props:{
@@ -57,30 +65,35 @@ function contextMenu(ev:MouseEvent, item:Item){
   const RESPONSE_EVENT_NAME = 'select-item-menu'
   ipcRenderer.once(RESPONSE_EVENT_NAME, (_ev, type)=>{
     switch(type){
-      case 'openParent':{
-        item.openParent()
-        break
+    case 'openParent':{
+      item.openParent()
+      break
+    }
+    case 'copy':{
+      copyItemPath(item)
+      break
+    }
+    case 'edit':{
+      showItemDetail(item)
+      break
+    }
+    case 'remove':{
+      let itemName = item.name
+      if(itemName.length > 8){
+        itemName = itemName.substring(0,8) + '...'
       }
-      case 'copy':{
-        copyItemPath(item)
-        break
-      }
-      case 'edit':{
-        showItemDetail(item)
-        break
-      }
-      case 'remove':{
-        hub.emit('show-dialog' ,{
-          y:ev.clientY,
-          x:ev.clientX,
-          message:'Remove ok?',
-          onOk(){
-            removeItem(item)
-          },
-          cancelable:true
-        })
-        break
-      }
+      hub.emit('show-dialog' ,{
+        y:ev.clientY,
+        x:ev.clientX,
+        message:`${itemName}
+${state.ui.CONFIRM_REMOVE}`,
+        onOk(){
+          removeItem(item)
+        },
+        cancelable:true
+      })
+      break
+    }
     }
   })
   ipcRenderer.send(SEND_EVENT_NAME, toRaw(state.ui))

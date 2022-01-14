@@ -1,50 +1,55 @@
 <template>
   <OverlayLayer v-if="state.show">
-  <div class="color-setting">
-    <div>
-      R:
-      <input 
-        v-model="state.color.r"
-        type="range"
-        min="0"
-        max="255"
+    <div class="color-setting">
+      <div>
+        <span style="color:red">R</span>:
+        <input 
+          v-model="state.color.r"
+          type="range"
+          min="0"
+          max="255"
+        >
+      </div>
+      <div>
+        <span style="color:green">G</span>:
+        <input 
+          v-model="state.color.g"
+          type="range"
+          min="0"
+          max="255"
+        >
+      </div>
+      <div>
+        <span style="color:blue">B</span>:
+        <input 
+          v-model="state.color.b"
+          type="range"
+          min="0"
+          max="255"
+        >
+      </div>
+      <div
+        class="example"
+        :style="{backgroundColor:toColorValue}"
+      >
+        {{ state.category?.name }}
+      </div>
+      <input
+        type="button"
+        value="Set"
+        @click="submit"
+      >
+      <input
+        type="button"
+        value="Clear"
+        @click="clear"
+      >
+      <input
+        type="button"
+        value="Cancel"
+        @click="close"
       >
     </div>
-    <div>
-      G:
-      <input 
-        v-model="state.color.g"
-        type="range"
-        min="0"
-        max="255"
-      >
-    </div>
-    <div>
-      B:
-      <input 
-        v-model="state.color.b"
-        type="range"
-        min="0"
-        max="255"
-      >
-    </div>
-    <div class="example" :style="{backgroundColor:toColorValue}">{{state.category?.name}}</div>
-    <input
-      type="button"
-      value="Set"
-      @click="submit"
-    >
-    <input
-      type="button"
-      value="Clear"
-      @click="clear"
-    >
-    <input
-      type="button"
-      value="Cancel"
-      @click="close"
-    >
-  </div>
   </OverlayLayer>
 </template>
 
@@ -93,9 +98,9 @@ function close(){
 eventHub.on('openColorSetter', (c:Category)=>{
   state.category = c
   if(state.category.color){
-    state.color = Object.create(toRaw(state.category.color))
+    state.color = Object.assign({},toRaw(state.category.color))
   }else{
-    state.color = Object.create(DEFAULT_COLOR)
+    state.color = Object.assign({}, DEFAULT_COLOR)
   }
   state.show = true
 })

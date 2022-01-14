@@ -1,11 +1,15 @@
 <template>
   <transition name="notify">
-    <div class="notify" v-if="show">{{m}}</div>
+    <div 
+      v-if="show"
+      class="notify"
+    >
+      {{ m }}
+    </div>
   </transition>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import NOTIFY from '../enum/notify'
 import hub from '../ts/event-hub'
 const NOTIFY_TIMEOUT = 4000
 export default defineComponent({
@@ -17,7 +21,7 @@ export default defineComponent({
     }
   },
   created(){
-    hub.on('notify', this.showNotify as any)
+    hub.on('notify', this.showNotify)
   },
   methods:{
     showNotify(message:string){
@@ -27,7 +31,7 @@ export default defineComponent({
     },
     setHideTimer(){
       clearTimeout(this.ev)
-      this.ev = setTimeout(()=>this.show = false, NOTIFY_TIMEOUT) as any
+      this.ev = setTimeout(()=>this.show = false, NOTIFY_TIMEOUT)
     }
   }
 })

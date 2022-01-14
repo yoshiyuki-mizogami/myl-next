@@ -30,9 +30,11 @@
   "PLAIN":"Plain",
   "POP":"Pop",
   "REMOVE":"Remove",
+  "CONFIRM_REMOVE":"Remove ok?",
   "RENAME":"Rename",
   "REQUIRE_NAME":"Require name",
   "SELECT_WITH":"Select boot program",
   "SELECT":"Select",
+  "SELECT_BOOT_BY":"Boot by",
   "THEME":"Theme"
 }

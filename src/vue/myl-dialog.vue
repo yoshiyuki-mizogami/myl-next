@@ -1,10 +1,27 @@
 <template>
-  <div class="layer-back" v-if="show">
-    <div class="dialog" :style="{top:y+'px', left:x+'px'}">
-      <div class="dialog-mess">{{message}}</div>
+  <div
+    v-if="show"
+    class="layer-back"
+  >
+    <div
+      class="dialog"
+      :style="{top:y+'px', left:x+'px'}"
+    >
+      <div class="dialog-mess">
+        {{ message }}
+      </div>
       <div class="dialog-console">
-        <input @click="ok" type="button" value="OK">
-        <input v-if="cancelable" @click="cancel" type="button" value="Cancel">
+        <input
+          type="button"
+          value="OK"
+          @click="ok"
+        >
+        <input
+          v-if="cancelable"
+          type="button"
+          value="Cancel"
+          @click="cancel"
+        >
       </div>
     </div>
   </div>
@@ -12,10 +29,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import globals from '../ts/globals'
 import hub from '../ts/event-hub'
-const {mainWindow} = globals
-const NOOP = function(){}
+const NOOP = ()=>{/**noop */}
 const defOpt = {
   show:false,
   message:'',
@@ -35,15 +50,15 @@ export default defineComponent({
     hub.on('show-dialog', this.showDialog)
   },
   methods:{
-    showDialog(opts:any){
+    showDialog(opts){
       this.show = true
       opts.cancelable = (!opts.onCancel) || !!opts.cancelable
       Object.assign(this, opts)
       this.calcPos()
     },
     calcPos(){
-      const wh = mainWindow.outerHeight
-      const ww = mainWindow.outerWidth
+      const wh = window.outerHeight
+      const ww = window.outerWidth
       let {y, x} = this
       if(typeof y !== NUMBER){
         y = wh - wh / 2
@@ -76,8 +91,9 @@ export default defineComponent({
 </script>
 <style lang="stylus">
 .dialog
+  white-space pre-wrap
   width 200px
-  height 60px
+  min-height 60px
   background-color var(--dialog-back)
   padding 5px
   border-radius 2px

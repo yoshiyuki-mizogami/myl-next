@@ -1,35 +1,80 @@
 <template>
   <OverlayLayer v-if="show">
     <div class="setting-layer">
-      <div class="icon-close close-btn" @click="close"/>
-      <div class="setting-title">Myl <span v-once class="version">ver {{state.version}}</span> Setting</div>
+      <div
+        class="icon-close close-btn"
+        @click="close"
+      />
+      <div class="setting-title">
+        Myl <span
+          v-once
+          class="version"
+        >ver {{ state.version }}</span> Setting
+      </div>
       <ul class="setting-items">
         <li>
-          <div class="setting-name">{{ui.LANG}}</div>
+          <div class="setting-name">
+            {{ ui.LANG }}
+          </div>
           <div class="setting-val">
-            <label :class="{selected:config.lang === 'en'}" @click="langSwitch('en')">{{ui.EN}}</label><input :checked="config.lang === 'en'" type="radio" name="lang">
-            <label :class="{selected:config.lang === 'ja'}" @click="langSwitch('ja')">{{ui.JA}}</label><input :checked="config.lang === 'ja'" type="radio" name="lang">
+            <label
+              :class="{selected:config.lang === 'en'}"
+              @click="langSwitch('en')"
+            >{{ state.ui.EN }}</label><input
+              :checked="config.lang === 'en'"
+              type="radio"
+              name="lang"
+            ><label
+              :class="{selected:config.lang === 'ja'}"
+              @click="langSwitch('ja')"
+            >{{ ui.JA }}</label>
+            <input
+              :checked="config.lang === 'ja'"
+              type="radio"
+              name="lang"
+            >
           </div>
         </li>
         <li>
-          <div class="setting-name">{{ui.THEME}}</div>
-          <div class="setting-val" style="text-align:center">
-            <div class="theme" :class="{selected:config.theme === k}"
-            @click="selectTheme(k)"
-              v-for="(t,k) in themes" :key="k">{{t}}</div>
+          <div class="setting-name">
+            {{ state.ui.THEME }}
+          </div>
+          <div
+            class="setting-val"
+            style="text-align:center"
+          >
+            <div
+              v-for="(t,k) in themes"
+              :key="k"
+              class="theme"
+              :class="{selected:config.theme === k}"
+              @click="selectTheme(k)"
+            >
+              {{ t }}
+            </div>
           </div>
         </li>
         <li>
           <div class="setting-item">
-            <input type="button" @click="importJson" :value="ui.IMPORT">
-            <input type="button" @click="exportJson" :value="ui.EXPORT">
+            <input
+              type="button"
+              :value="ui.IMPORT"
+              @click="importJson"
+            >
+            <input 
+              type="button"
+              :value="ui.EXPORT"
+              @click="exportJson"
+            >
           </div>
         </li>
         <li>
           <div class="setting-item">
-            <a href="#" @click.prevent="openHP">{{ui.CHECK_UPDATE}}</a>
+            <a
+              href="#"
+              @click.prevent="openHP"
+            >{{ ui.CHECK_UPDATE }}</a>
           </div>
-          
         </li>
       </ul>
     </div>
@@ -37,7 +82,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import layer from './layer'
 import Hub from '../ts/event-hub'
 import {
   state,
@@ -49,41 +93,37 @@ import {
 import { ipcRenderer } from 'electron'
 import OverlayLayer from './overlay-layer.vue'
 export default defineComponent({
-    mixins: [layer],
-    data() {
-        return {
-            show: false,
-            state
-        };
+  components: { OverlayLayer },
+  data() {
+    return {
+      show: false,
+      state
+    }
+  },
+  computed: {
+    themes() { return state.themes },
+    config() { return state.config },
+    ui() { return state.ui }
+  },
+  async created() {
+    Hub.on('open-setting', this.open)
+    this.version = await ipcRenderer.invoke('getVersion')
+  },
+  methods: {
+    exportJson,
+    importJson,
+    langSwitch,
+    selectTheme,
+    open() {
+      this.show = true
     },
-    computed: {
-        themes() { return state.themes; },
-        config() { return state.config; },
-        ui() { return state.ui; }
+    close() {
+      this.show = false
     },
-    async created() {
-        Hub.on("open-setting", (this as any).open);
-        (this as any).setShortcut({
-            Escape: (this as any).close
-        });
-        this.version = await ipcRenderer.invoke("getVersion");
-    },
-    methods: {
-        exportJson,
-        importJson,
-        langSwitch,
-        selectTheme,
-        open(this: any) {
-            this.show = true;
-        },
-        close(this: any) {
-            this.show = false;
-        },
-        openHP() {
-            openHP();
-        }
-    },
-    components: { OverlayLayer }
+    openHP() {
+      openHP()
+    }
+  }
 })
 </script>
 <style lang="stylus">

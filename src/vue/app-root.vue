@@ -1,45 +1,84 @@
 <template>
-  <div class="whole" ref="app">
-    <div class="loading" v-if="loading"/>
+  <div
+    ref="app"
+    class="whole"
+  >
+    <div
+      v-if="loading"
+      class="loading"
+    />
     <div class="header">
-      <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory"></div>
-      <div class="icon-sort-amount-asc header-btn switch-sortmode" :class="{sortMode}" @click="switchSortMode"></div>
-      <div class="icon-gear header-btn setting" @click="openSetting"></div>
-      <div class="icon-clone header-btn aot-btn" :class="{aot}" @click="toggleAOT"></div>
-      <div class="icon-sign-out header-btn close-app" @click="close"></div>
+      <div
+        class="icon-plus header-btn new-cate-btn"
+        @click="addNewCategory"
+      />
+      <div
+        class="icon-sort-amount-asc header-btn switch-sortmode"
+        :class="{sortMode}"
+        @click="switchSortMode"
+      />
+      <div
+        class="icon-gear header-btn setting"
+        @click="openSetting"
+      />
+      <div
+        class="icon-clone header-btn aot-btn"
+        :class="{aot}"
+        @click="toggleAOT"
+      />
+      <div
+        class="icon-sign-out header-btn close-app"
+        @click="close"
+      />
     </div>
-    <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
+    <div
+      class="content"
+      @drop.prevent="dropAny"
+      @dragenter.prevent
+      @dragover.prevent
+    >
       <div class="categories">
-        <draggable v-model="state.categories" item-key="id">
+        <draggable
+          v-model="state.categories"
+          item-key="id"
+        >
           <template #item="{element}">
-            <a-category :selected="selectedCategory === element" @select-category="selectCategory" :category="element"/>
+            <myl-category
+              :selected="selectedCategory === element"
+              :category="element"
+              @select-category="selectCategory"
+            />
           </template>
         </draggable>
       </div>
       <div class="items">
-        <draggable v-model="state.items" :move="checkMove" item-key="id">
+        <draggable
+          v-model="state.items"
+          :move="checkMove"
+          item-key="id"
+        >
           <template #item="{element}">
-            <an-item :item="element"/>
+            <myl-item :item="element" />
           </template>
         </draggable>
       </div>
     </div>
-    <new-cate-dialog/>
-    <app-setting/>
-    <item-detail/>
-    <app-dialog/>
-    <notify/>
-    <set-color/>
+    <new-cate-dialog />
+    <app-setting />
+    <item-detail />
+    <myl-dialog />
+    <myl-notify />
+    <set-color />
   </div>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Category from './category.vue'
-import Item from './item.vue'
+import MylCategory from './myl-category.vue'
+import MylItem from './myl-item.vue'
 import NewCateDialog from './new-category.vue'
-import Dialog from './dialog.vue'
-import Notify from './notify.vue'
-import eventHub, {pushLayer, popLayer, keydown} from '../ts/event-hub'
+import MylDialog from './myl-dialog.vue'
+import MylNotify from './myl-notify.vue'
+import eventHub from '../ts/event-hub'
 import ItemDetail from './item-detail.vue'
 import AppSetting from './app-setting.vue'
 import draggable from 'vuedraggable'
@@ -62,28 +101,23 @@ import {
 } from '../ts/store'
 import { nextTick } from 'process'
 import SetColor from './set-color.vue'
+import Category from '../ts/models/category'
 export default defineComponent({ 
-  async created(){
-    pushLayer(this)
-    await init()
-    eventHub.on('adjust', this.adjust)
-    document.documentElement.addEventListener('keydown', keydown)
+  components:{
+    NewCateDialog,
+    MylCategory,
+    MylItem,
+    MylDialog,
+    AppSetting,
+    ItemDetail,
+    draggable,
+    MylNotify,
+    SetColor
   },
   data(){
     return {
       state:state
     }
-  },
-  watch:{
-    async selectedCategory(v){
-      await getItems(v.id)
-    },
-    'state.items'(to,from){
-      updateItemsOrder(to)
-    },
-    'state.categories'(to, from){
-      updateCategoriesOrder(to)
-    },
   },
   computed:{
     aot(){
@@ -99,20 +133,24 @@ export default defineComponent({
     sortMode(){return state.sortMode},
     dragItem(){return state.dragItem}
   },
+  watch:{
+    async selectedCategory(v){
+      await getItems(v.id)
+    },
+    'state.items'(to){
+      updateItemsOrder(to)
+    },
+    'state.categories'(to){
+      updateCategoriesOrder(to)
+    },
+  },
+  async created(){
+    await init()
+    eventHub.on('adjust', this.adjust)
+  },
   mounted(){
     setTimeout(()=>this.adjust(), 100)
   },
-  components:{
-    "new-cate-dialog": NewCateDialog,
-    "a-category": Category,
-    "an-item": Item,
-    "app-dialog": Dialog,
-    AppSetting,
-    ItemDetail,
-    draggable,
-    "notify": Notify,
-    SetColor
-},
   methods:{
     switchSortMode,
     checkMove(){
@@ -129,7 +167,6 @@ export default defineComponent({
       setAlwaysOnTop(this.aot)
     },
     async dropAny(e:DragEvent):Promise<void>{
-      const trackLink = e.ctrlKey
       const {dataTransfer} = e as {dataTransfer:DataTransfer}
       const fromThis = dataTransfer.getData('myl/item')
       if(fromThis){
@@ -157,7 +194,7 @@ export default defineComponent({
       }, Promise.resolve())
       setLoading(false)
     },
-    selectCategory(c:any){
+    selectCategory(c:Category){
       setSelectedCategory(c)
     },
     adjust(){

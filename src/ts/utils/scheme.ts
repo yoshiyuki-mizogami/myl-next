@@ -1,7 +1,7 @@
 import Dexie from 'dexie'
 import Category from '../models/category'
 import Item from '../models/item'
-import {getIcon,RESIZE_OPT, ICON_OPT} from '../../ts/utils/get-file-info'
+import {getIcon,RESIZE_OPT} from '../../ts/utils/get-file-info'
 import Config from '../models/config'
 import {Sortable} from '../models/sortable'
 import { URL } from '../consts'
@@ -38,22 +38,22 @@ export default class MylDB extends Dexie{
     }
     return conf
   }
-  async exportAll(_:string){
+  async exportAll(){
     const categories  = await this.categories.toArray()
     const items = await this.items.toArray()
-    const categoriesMap = categories.reduce((b, c:any)=>{
+    const categoriesMap = categories.reduce((b, c)=>{
       b[c.id] = {
         category:c,
         items:[]
       } as ExportForm
       return b
-    },{} as {[key:string]:any})
-    items.forEach((i:any)=>{
+    },{} as {[key:string]:ExportForm})
+    items.forEach((i)=>{
       const cateId = i.cateId
       i.cateId = i.id = void 0
       categoriesMap[cateId].items.push(i)
     })
-    const exportCategories = Object.keys(categoriesMap).reduce((ary:any,idx)=>{
+    const exportCategories = Object.keys(categoriesMap).reduce((ary,idx)=>{
       const cursorItem = categoriesMap[idx]
       ary.push(cursorItem)
       return ary
@@ -61,7 +61,7 @@ export default class MylDB extends Dexie{
     return exportCategories
   }
   async saveConfig(config:Config){
-    this.config.update(config.id as any, config)
+    this.config.update(config.id, config)
   }
   async getCategories(){
     const categories = await this.categories.toArray()
@@ -84,7 +84,7 @@ export default class MylDB extends Dexie{
   }
   async removeCategory(cate:Category){
     await this.transaction('rw', this.categories, this.items,async ()=>{
-      await this.categories.delete(cate.id as any)
+      await this.categories.delete(cate.id)
       await this.items.where({cateId:cate.id}).delete()
     })
   }
@@ -96,7 +96,7 @@ export default class MylDB extends Dexie{
         }, 0) + 1
       })
   }
-  async addItem(itemProps:any):Promise<Item>{
+  async addItem(itemProps:FileInfo):Promise<Item>{
     const {cateId} = itemProps
     itemProps.sort = await this.getMaxId(cateId)
     const newItem = new Item(itemProps)
@@ -123,7 +123,7 @@ export default class MylDB extends Dexie{
     await this.items.add(newItem)
     return newItem
   }
-  async moveItem(item:any, cateId:number){
+  async moveItem(item:Item, cateId:number){
     const {id} = item
     const maxSortNumber = await this.getMaxId(cateId)
     await this.items.update(id , {cateId, sort:maxSortNumber})
@@ -139,7 +139,8 @@ async function getFavicon(origin:string):Promise<NativeImage|undefined>{
   const faviconUrl = `${origin}/favicon.ico`
   const res = await fetch(faviconUrl)
     .then(r=>r.arrayBuffer())
-    .catch(e=>{
+    .catch((e)=>{
+      console.warn(e)
       return undefined
     }) as undefined|ArrayBuffer
   if(res === undefined){

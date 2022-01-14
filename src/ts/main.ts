@@ -1,6 +1,6 @@
 import { ipcRenderer } from 'electron'
 import {createApp} from 'vue'
-import Root from '../vue/root.vue'
+import AppRoot from '../vue/app-root.vue'
 
-createApp(Root).mount('#app')
+createApp(AppRoot).mount('#app')
 

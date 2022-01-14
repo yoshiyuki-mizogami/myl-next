@@ -20,10 +20,10 @@ export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
     return app.getPath('temp')
   })
   
-  ipcMain.handle('showOpenDialog', (_ev,args:any)=>dialog.showOpenDialog(args))
+  ipcMain.handle('showOpenDialog', (_ev,args:any)=>dialog.showOpenDialog(mainWindow,args))
   
-  ipcMain.handle('showSaveDialog', (_ev,args:any)=>dialog.showSaveDialog(args))
-  
+  ipcMain.handle('showSaveDialog', (_ev,args:any)=>dialog.showSaveDialog(mainWindow, args))
+
   type hw = [number, number]
   ipcMain.on('setSize', (_ev,[h, w]:hw)=>{
     mainWindow.resizable = true

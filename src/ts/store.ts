@@ -7,10 +7,10 @@ import MylDB from './utils/scheme'
 import langSwitchFn, {LangUI} from './lib/lang-swicher'
 import switchTheme from './lib/switch-theme'
 import {Themes} from './consts'
-import Config from './models/config';
+import Config from './models/config'
 import globals from './globals'
-import {writeFile, existsSync, readFile} from 'fs';
-import eventHub from './event-hub';
+import {writeFile, existsSync, readFile} from 'fs'
+import eventHub from './event-hub'
 import { reactive, nextTick, watch, toRaw } from 'vue'
 
 const {DEFAULT_JSON_NAME} = globals
@@ -24,20 +24,19 @@ const config = new Config()
 const db = new MylDB()
 export const isUrl = /^https?:\/\//
 export const state = reactive({
-    version:'',
-    themes:Themes,
-    categories:[] as Category[],
-    items:[] as any[],
-    showNewCategoryDialog:false,
-    selectedCategory:null as null|Category,
-    config,
-    configRaw:null as any,
-    loading:false,
-    ui:{} as LangUI,
-    sortMode:false,
-    dragItem:null as object | unknown
-  }
-)
+  version:'',
+  themes:Themes,
+  categories:[] as Category[],
+  items:[] as Item[],
+  showNewCategoryDialog:false,
+  selectedCategory:null as null|Category,
+  config,
+  configRaw:null as Config,
+  loading:false,
+  ui:{} as LangUI,
+  sortMode:false,
+  dragItem:null as null | Item
+})
 export function switchSortMode(){
   state.sortMode = !state.sortMode
 }
@@ -53,10 +52,10 @@ export function setSelectedCategory(c:Category){
 export function toggleAOT(){
   state.config.aot = !state.config.aot
 }
-export function setDragItem(item:object){
+export function setDragItem(item:Item){
   state.dragItem = item
 }
-export async function moveItem(destCategory:any){
+export async function moveItem(destCategory:Category){
   if(destCategory === state.selectedCategory){
     return
   }
@@ -74,23 +73,34 @@ export async function init(){
   state.ui = await langSwitchFn(state.config.lang)
   ipcCommunicate('showWindow')
 }
-function ipcCommunicate(channel:string, data:any = undefined){
+function ipcCommunicate(channel:string, data:unknown = undefined){
   ipcRenderer.send(channel, data)
 }
-async function ipcHandleCommunicate(channel:string, data:any = undefined){
+async function ipcHandleCommunicate(channel:string, data:unknown = undefined){
   return await ipcRenderer.invoke(channel, data)
 }
 
 export async function loadConfig(){
-  state.configRaw = await db.loadConfig()
-  state.config = state.configRaw.config
+  try{
+    const configRaw = await db.loadConfig()
+    console.log(configRaw)
+    if(!configRaw.aot === undefined || configRaw.lang === undefined || configRaw.theme === undefined){
+      throw configRaw.id
+    }
+    state.configRaw = configRaw
+    state.config = state.configRaw
+  }catch(id){
+    state.config.id = id
+    state.configRaw = state.config
+  }
 }
 export async function saveConfig(){
+  console.log(state.configRaw)
   db.saveConfig(state.configRaw)
 }
-export async function langSwitch(lang:string){
-  state.config.lang = lang as any
-  state.ui = langSwitchFn(lang as any)
+export async function langSwitch(lang:Langs){
+  state.config.lang = lang
+  state.ui = langSwitchFn(lang)
   saveConfig()
 }
 export async function selectTheme(theme:string){
@@ -112,7 +122,8 @@ export function updateCategoriesOrder(newOrders:Array<Category>):void{
     db.categories.update(o.id, {'sort':o.sort})
   })
 }
-export function updateCategoryName(cate:Category){
+export function updateCategoryName(cate:Category, newName:string){
+  cate.name = newName
   return db.categories.update(cate.id, {name:cate.name})
 }
 export function updateCategoryColor(cate:Category){
@@ -143,7 +154,7 @@ export function openHP(){
 }
 export async function removeItem(item:Item){
   await db.removeItem(item)
-  const removeIndex = state.items.findIndex((i:any)=> i === item)
+  const removeIndex = state.items.findIndex((i)=> i === item)
   state.items.splice(removeIndex, 1)
   nextTick(()=>eventHub.emit('adjust'))
 }
@@ -161,7 +172,7 @@ export async function addUrl({url, name}:{url:string, name:string}){
     eventHub.emit('notify', state.ui.INVALID_URL)
     return
   }
-  const urlItem = await db.addUrlItem(name, url, state.selectedCategory?.id as any)
+  const urlItem = await db.addUrlItem(name, url, state.selectedCategory?.id)
   state.items.push(urlItem)
   nextTick(()=>eventHub.emit('adjust'))
 }
@@ -179,7 +190,6 @@ function getDesktopPath(){
   return ''
 }
 export async function importJson(){
-  const desktopPath = await ipcHandleCommunicate('getDesktopPath')
   const targetJsonFiles = await ipcHandleCommunicate('showOpenDialog', {
     title:'Select Myl save data json.',
     defaultPath:join(getDesktopPath(), DEFAULT_JSON_NAME),
@@ -195,26 +205,26 @@ export async function importJson(){
   }
   const [targetJson] = targetJsonFiles.filePaths
   if(!existsSync(targetJson)){
-    return eventHub.emit('notify', (state.ui as any).FILE_NOT_FOUND)
+    return eventHub.emit('notify', state.ui.FILE_NOT_FOUND)
   }
   try{
-    const jsonTxt = await new Promise<string>(r=>readFile(targetJson, (_e:any, d:any)=>r(d) ))
+    const jsonTxt = await new Promise<string>(r=>readFile(targetJson,'utf8',(_e, d)=>r(d) ))
     const importData = JSON.parse(jsonTxt)
-    await importData.reduce(async (b:Promise<void>,d:any)=>{
+    await importData.reduce(async (b:Promise<void>,d:unknown)=>{
       await b
-      const {category, items} = d
+      const {category, items} = d as {category:Category,items:Item[]}
       const cate:Category = await db.addCategory(category.name)
-      await items.reduce(async (ib:Promise<void>, i:any)=>{
+      await items.reduce(async (ib:Promise<void>, i)=>{
         await ib
         i.cateId = cate.id
         await db.addItem(i)
       }, Promise.resolve())
       state.categories.push(cate)
     }, Promise.resolve())
-    eventHub.emit('notify', (state.ui as any).IMPORT_DONE)
+    eventHub.emit('notify', state.ui.IMPORT_DONE)
   }catch(e){
     console.error(e)
-    eventHub.emit('notify', (state.ui as any).FILE_IS_INVALID)
+    eventHub.emit('notify', state.ui.FILE_IS_INVALID)
   }
 }
 
@@ -233,17 +243,13 @@ export async function exportJson(){
   if(!savePath.filePath){
     return
   }
-  const exportData = await db.exportAll(savePath.filePath)
+  const exportData = await db.exportAll()
   await new Promise(r=> writeFile(savePath.filePath, JSON.stringify(exportData), 'utf8' ,r))
-  eventHub.emit('notify', (state.ui as any).EXPORT_DONE)
+  eventHub.emit('notify', state.ui.EXPORT_DONE)
 }
 
-watch(state.config.lang as any,(to:string, from:string)=>{
-  langSwitchFn(to as any)
-})
-watch(state.config.theme as any,(to:string, from:string)=>{
-  selectTheme(to)
-})
+watch(()=>state.config.lang,()=>langSwitchFn(state.config.lang))
+watch(()=>state.config.theme,()=>selectTheme(state.config.theme))
 
 
 export function openColorSetter(c:Category){

@@ -1,14 +1,18 @@
 module.exports = {
   env: {
     browser: true,
-    es6: true,
     node: true
   },
+  parser:'vue-eslint-parser' ,
+  plugins:['@typescript-eslint'],
   extends: [
-    'plugin:vue/vue3-recommended'
+    'plugin:vue/vue3-recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
   parserOptions:{
-    ecmaVersion:8
+    parser:'@typescript-eslint/parser',
+    sourceType:'module',
+    ecmaVersion:12
   },
   rules: {
     'prefer-const':2,

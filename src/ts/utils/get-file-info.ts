@@ -14,13 +14,6 @@ export const RESIZE_OPT:ResizeOptions = {
   quality:'best'
 }
 
-interface FileInfo {
-  cateId?:number
-  path:string
-  type:string
-  name:string
-  icon:string
-}
 export default async function getFileInfo(filepath:string):Promise<FileInfo>{
   const fileType:string = await new Promise<string>(resolve=>{
     stat(filepath,(_, stat:Stats)=>{
