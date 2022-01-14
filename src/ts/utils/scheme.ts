@@ -21,8 +21,8 @@ export default class MylDB extends Dexie{
   config!:Dexie.Table<Config, number>
   constructor(){
     super('myl-db')
-    this.version(1).stores({
-      categories:'++id,name,sort',
+    this.version(2).stores({
+      categories:'++id,name,sort,color',
       items:'++id,*cateId,name,path,type,by,cmd,icon,sc,sort,cwd',
       config:'++id, config'
     })
@@ -59,9 +59,6 @@ export default class MylDB extends Dexie{
       return ary
     },[])
     return exportCategories
-  }
-  async importJson(_:any){
-
   }
   async saveConfig(config:Config){
     this.config.update(config.id as any, config)

@@ -11,7 +11,7 @@ import Config from './models/config';
 import globals from './globals'
 import {writeFile, existsSync, readFile} from 'fs';
 import eventHub from './event-hub';
-import { reactive, nextTick, watch } from 'vue'
+import { reactive, nextTick, watch, toRaw } from 'vue'
 
 const {DEFAULT_JSON_NAME} = globals
 
@@ -109,11 +109,14 @@ export function updateCategoriesOrder(newOrders:Array<Category>):void{
   state.categories = newOrders
   newOrders.forEach((o, i)=>{
     o.sort = i
-    db.categories.update(o.id as any, {'sort':o.sort})
+    db.categories.update(o.id, {'sort':o.sort})
   })
 }
 export function updateCategoryName(cate:Category){
-  db.categories.update(cate.id as any, {name:cate.name})
+  return db.categories.update(cate.id, {name:cate.name})
+}
+export function updateCategoryColor(cate:Category){
+  return db.categories.update(cate.id, {color:toRaw(cate.color)})
 }
 export async function addNewCategory( categoryName:string){
   const cate:Category = await db.addCategory(categoryName)
@@ -241,3 +244,8 @@ watch(state.config.lang as any,(to:string, from:string)=>{
 watch(state.config.theme as any,(to:string, from:string)=>{
   selectTheme(to)
 })
+
+
+export function openColorSetter(c:Category){
+  eventHub.emit('openColorSetter', c)
+}

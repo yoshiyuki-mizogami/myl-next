@@ -1,5 +1,5 @@
 <template>
-  <div class="layer-back" v-if="show">
+  <OverlayLayer v-if="show">
     <div class="setting-layer">
       <div class="icon-close close-btn" @click="close"/>
       <div class="setting-title">Myl <span v-once class="version">ver {{state.version}}</span> Setting</div>
@@ -33,7 +33,7 @@
         </li>
       </ul>
     </div>
-  </div>
+  </OverlayLayer>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -47,104 +47,105 @@ import {
   selectTheme, 
   openHP} from '../ts/store'
 import { ipcRenderer } from 'electron'
+import OverlayLayer from './overlay-layer.vue'
 export default defineComponent({
-  mixins:[layer],
-  data(){
-    return {
-      show:false, 
-      state
-    }
-  },
-  computed:{
-    themes(){return state.themes},
-    config(){ return state.config},
-    ui(){return state.ui}
-  },
-  async created(){
-    Hub.on('open-setting', (this as any).open);
-    (this as any).setShortcut({
-      Escape:(this as any).close
-    })
-    this.version = await ipcRenderer.invoke('getVersion')
-  },
-  methods:{
-    exportJson,
-    importJson,
-    langSwitch,
-    selectTheme,
-    open(this:any){
-      this.show = true
+    mixins: [layer],
+    data() {
+        return {
+            show: false,
+            state
+        };
     },
-    close(this:any){
-      this.show = false
+    computed: {
+        themes() { return state.themes; },
+        config() { return state.config; },
+        ui() { return state.ui; }
     },
-    openHP(){
-      openHP()
-    }
-  }
+    async created() {
+        Hub.on("open-setting", (this as any).open);
+        (this as any).setShortcut({
+            Escape: (this as any).close
+        });
+        this.version = await ipcRenderer.invoke("getVersion");
+    },
+    methods: {
+        exportJson,
+        importJson,
+        langSwitch,
+        selectTheme,
+        open(this: any) {
+            this.show = true;
+        },
+        close(this: any) {
+            this.show = false;
+        },
+        openHP() {
+            openHP();
+        }
+    },
+    components: { OverlayLayer }
 })
 </script>
 <style lang="stylus">
-  .setting-layer
-    position relative
-    width 90%
-    height 200px
-    margin 20px auto
-    background-color var(--dialog-base)
-    color var(--base-color)
-    box-shadow 0 0 5px rgba(0,0,0, .5)
-    padding 5px 
-    font-size 0
-    .version
-      font-size smaller
-      opacity 0.8
-    .setting-title
-      font-size 16px
-      text-align center
-    .setting-items
-      list-sytle none
-      padding 0
-      margin 0
-      font-size 14px
-      li
-        min-height 30px
-        display flex
-        border-bottom solid 1px rgb(150,150,150)
-        input[type=button]
+.setting-layer
+  position relative
+  width 90%
+  height 200px
+  margin 20px auto
+  background-color var(--dialog-base)
+  color var(--base-color)
+  padding 5px 
+  font-size 0
+  .version
+    font-size smaller
+    opacity 0.8
+  .setting-title
+    font-size 16px
+    text-align center
+  .setting-items
+    list-sytle none
+    padding 0
+    margin 0
+    font-size 14px
+    li
+      min-height 30px
+      display flex
+      border-bottom solid 1px rgb(150,150,150)
+      input[type=button]
+        cursor pointer
+        padding 3px 10px
+      .setting-item
+        text-align center
+        width 100%
+      .setting-name
+        text-align center
+        height 100%
+        width 110px
+      .setting-val
+        height 100%
+        flex-grow 1
+        label
+          transition background .3s ease
           cursor pointer
-          padding 3px 10px
-        .setting-item
+          padding 3px
+          background-color var(--unselect)
+          width 80px
+          display inline-block
           text-align center
-          width 100%
-        .setting-name
+          &.selected
+            background-color var(--select)
+            color white
+        input[type=radio]
+          display none
+        .theme
+          display inline-block
+          width 50px
+          margin 2px 5px
           text-align center
-          height 100%
-          width 110px
-        .setting-val
-          height 100%
-          flex-grow 1
-          label
-            transition background .3s ease
-            cursor pointer
-            padding 3px
-            background-color var(--unselect)
-            width 80px
-            display inline-block
-            text-align center
-            &.selected
-              background-color var(--select)
-              color white
-          input[type=radio]
-            display none
-          .theme
-            display inline-block
-            width 50px
-            margin 2px 5px
-            text-align center
-            background-color var(--unselect)
-            &.selected
-              background-color var(--select)
-              color white
+          background-color var(--unselect)
+          &.selected
+            background-color var(--select)
+            color white
       
 </style>
 

@@ -29,6 +29,7 @@
     <item-detail/>
     <app-dialog/>
     <notify/>
+    <set-color/>
   </div>
 </template>
 <script lang="ts">
@@ -60,6 +61,7 @@ import {
   isUrl
 } from '../ts/store'
 import { nextTick } from 'process'
+import SetColor from './set-color.vue'
 export default defineComponent({ 
   async created(){
     pushLayer(this)
@@ -101,15 +103,16 @@ export default defineComponent({
     setTimeout(()=>this.adjust(), 100)
   },
   components:{
-    'new-cate-dialog':NewCateDialog,
-    'a-category':Category,
-    'an-item':Item,
-    'app-dialog':Dialog,
+    "new-cate-dialog": NewCateDialog,
+    "a-category": Category,
+    "an-item": Item,
+    "app-dialog": Dialog,
     AppSetting,
     ItemDetail,
     draggable,
-    'notify':Notify
-  },
+    "notify": Notify,
+    SetColor
+},
   methods:{
     switchSortMode,
     checkMove(){

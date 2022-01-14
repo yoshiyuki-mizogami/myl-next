@@ -51,6 +51,15 @@ export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
         ev.sender.send('select-category-menu-item', 'rename')
       }
     })
+    const openColorSetter  = new MenuItem({
+      id:'OpenColorSetter', 
+      accelerator:'s',
+      type:'normal',
+      label:ui.OPEN_COLOR_SETTER, 
+      click(){
+        ev.sender.send('select-category-menu-item', 'openColorSetter')
+      }
+    })
     const removeItem = new MenuItem({
       id:'Delete',
       accelerator:'d',
@@ -61,6 +70,7 @@ export function setIpcFunc(app:Electron.App, mainWindow:BrowserWindow){
       }
     })
     menu.append(renameItem)
+    menu.append(openColorSetter)
     menu.append(removeItem)
     menu.popup({})
   })

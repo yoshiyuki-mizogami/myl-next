@@ -1,5 +1,6 @@
 <template>
   <div @contextmenu="showContextMenu" :class="{selected}"
+    :style="{backgroundColor}"
     @drop="dropToCategory"
     @dragstart="dragStartCategory"
     @click="$emit('select-category', category)" class="category">
@@ -12,7 +13,7 @@ import { defineComponent, toRaw } from 'vue'
 import Category from '../ts/models/category'
 import hub from '../ts/event-hub'
 import {ipcRenderer, Menu, MenuItem} from 'electron'
-import { moveItem, removeCategory, state } from '../ts/store'
+import { moveItem, openColorSetter, removeCategory, state } from '../ts/store'
 import { nextTick } from 'process'
 export default defineComponent({
   data(){
@@ -29,7 +30,15 @@ export default defineComponent({
     selected:Boolean
   },
   computed:{
-    sortMode(){return state.sortMode}
+    sortMode(){return state.sortMode},
+    backgroundColor(){
+      const {color:c} = this.category
+      if(!c){
+        return ''
+      }
+      
+      return `rgb(${c.r},${c.g},${c.b})`
+    }
   },
   watch:{
     editMode(v:boolean){
@@ -48,11 +57,15 @@ export default defineComponent({
       const dataTransfer = ev.dataTransfer as DataTransfer
       dataTransfer.setData('myl/category', '1')
     },
-    showContextMenu(this:any, ev:MouseEvent){
+    showContextMenu(ev:MouseEvent){
       ipcRenderer.once('select-category-menu-item', (e, select:string)=>{
         switch(select){
           case 'rename':{
             this.editMode = true
+            break;
+          }
+          case 'openColorSetter':{
+            openColorSetter(this.category)
             break;
           }
           case 'delete':{
@@ -68,7 +81,7 @@ export default defineComponent({
             break;
           }
           default:{
-
+            console.warn('unknown event response', select)
           }
         }
       })
@@ -126,8 +139,8 @@ export default defineComponent({
     background-color var(--cate-even-bg)
     color var(--cate-even-color)
   &.selected
-    background-color var(--selected-cate)
-    color var(--selected-cate-color)
+    font-weight bold
+    opacity 0.7
   &:hover
     background-color var(--cate-hover)
   .category-name-editor
