@@ -4,7 +4,7 @@
     class="whole"
   >
     <div
-      v-if="loading"
+      v-if="state.loading"
       class="loading"
     />
     <div class="header">
@@ -14,7 +14,7 @@
       />
       <div
         class="icon-sort-amount-asc header-btn switch-sortmode"
-        :class="{sortMode}"
+        :class="{sortMode:state.sortMode}"
         @click="switchSortMode"
       />
       <div
@@ -23,8 +23,8 @@
       />
       <div
         class="icon-clone header-btn aot-btn"
-        :class="{aot}"
-        @click="toggleAOT"
+        :class="{aot:state.config.aot}"
+        @click="doToggleAOT"
       />
       <div
         class="icon-sign-out header-btn close-app"
@@ -44,9 +44,9 @@
         >
           <template #item="{element}">
             <myl-category
-              :selected="selectedCategory === element"
+              :selected="state.selectedCategory === element"
               :category="element"
-              @select-category="selectCategory"
+              @select-category="state.selectedCategory = $event"
             />
           </template>
         </draggable>
@@ -54,7 +54,7 @@
       <div class="items">
         <draggable
           v-model="state.items"
-          :move="checkMove"
+          :move="setSelectedCategory"
           item-key="id"
         >
           <template #item="{element}">
@@ -71,8 +71,8 @@
     <set-color />
   </div>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { nextTick, watch, ref, onMounted} from 'vue'
 import MylCategory from './myl-category.vue'
 import MylItem from './myl-item.vue'
 import NewCateDialog from './new-category.vue'
@@ -99,116 +99,65 @@ import {
   updateCategoriesOrder,
   isUrl
 } from '../ts/store'
-import { nextTick } from 'process'
 import SetColor from './set-color.vue'
-import Category from '../ts/models/category'
-export default defineComponent({ 
-  components:{
-    NewCateDialog,
-    MylCategory,
-    MylItem,
-    MylDialog,
-    AppSetting,
-    ItemDetail,
-    draggable,
-    MylNotify,
-    SetColor
-  },
-  data(){
-    return {
-      state:state
-    }
-  },
-  computed:{
-    aot(){
-      return state.config.aot
-    },
-    config(){
-      return state.config
-    },
-    selectedCategory(){
-      return state.selectedCategory
-    },
-    loading(){return state.loading},
-    sortMode(){return state.sortMode},
-    dragItem(){return state.dragItem}
-  },
-  watch:{
-    async selectedCategory(v){
-      await getItems(v.id)
-    },
-    'state.items'(to){
-      updateItemsOrder(to)
-    },
-    'state.categories'(to){
-      updateCategoriesOrder(to)
-    },
-  },
-  async created(){
-    await init()
-    eventHub.on('adjust', this.adjust)
-  },
-  mounted(){
-    setTimeout(()=>this.adjust(), 100)
-  },
-  methods:{
-    switchSortMode,
-    checkMove(){
-      return state.sortMode
-    },
-    addNewCategory(){
-      setNewCategoryDialog(true)
-    },
-    close(){
-      close()
-    },
-    toggleAOT(){
-      toggleAOT()
-      setAlwaysOnTop(this.aot)
-    },
-    async dropAny(e:DragEvent):Promise<void>{
-      const {dataTransfer} = e as {dataTransfer:DataTransfer}
-      const fromThis = dataTransfer.getData('myl/item')
-      if(fromThis){
-        return
-      }
-      let files = Array.from(dataTransfer.files)
-      const url = dataTransfer.getData('text/plain')
-      const thisIsUrl = isUrl.test(url)
-      if(thisIsUrl){
-        console.log(files[0])
-        const name  = (()=>{
-          return files.length > 0 ? files[0].name : ''
-        })()
-        return await addUrl({url, name})
-      }
-      files = files.filter(f=>{
-        return (!this.dragItem) || f.path !== this.dragItem.path
-      })
-      if(!files.length){
-        return
-      }
-      setLoading(true)
-      await files.reduce((b, f)=>{
-        return b.then(async ()=>await addFile({filepath:f.path}))
-      }, Promise.resolve())
-      setLoading(false)
-    },
-    selectCategory(c:Category){
-      setSelectedCategory(c)
-    },
-    adjust(){
-      nextTick(()=>{
-        const {app} = this.$refs
-        const {clientHeight, clientWidth} = app as {clientHeight:number, clientWidth:number}
-        setSize(clientHeight, clientWidth)
-      })
-    },
-    openSetting(){
-      eventHub.emit('open-setting')
-    }
-  }
+watch(()=>state.selectedCategory,(to)=>getItems(to.id))
+watch(()=>state.items, (to)=>updateItemsOrder(to))
+watch(()=>state.categories, (to)=>updateCategoriesOrder(to))
+
+onMounted(async ()=>{
+  await init()
+  eventHub.on('adjust', adjust)
+  setTimeout(()=>adjust(), 100)
 })
+
+function addNewCategory(){
+  setNewCategoryDialog(true)
+}
+function close(){
+  window.close()
+}
+function doToggleAOT(){
+  toggleAOT()
+  setAlwaysOnTop(this.aot)
+}
+async function dropAny(e:DragEvent):Promise<void>{
+  const {dataTransfer} = e as {dataTransfer:DataTransfer}
+  const fromThis = dataTransfer.getData('myl/item')
+  if(fromThis){
+    return
+  }
+  let files = Array.from(dataTransfer.files)
+  const url = dataTransfer.getData('text/plain')
+  const thisIsUrl = isUrl.test(url)
+  if(thisIsUrl){
+    console.log(files[0])
+    const name  = (()=>{
+      return files.length > 0 ? files[0].name : ''
+    })()
+    return await addUrl({url, name})
+  }
+  files = files.filter(f=>{
+    return (!state.dragItem) || f.path !== state.dragItem.path
+  })
+  if(!files.length){
+    return
+  }
+  setLoading(true)
+  await files.reduce((b, f)=>{
+    return b.then(async ()=>await addFile({filepath:f.path}))
+  }, Promise.resolve())
+  setLoading(false)
+}
+const app = ref(null)
+function adjust(){
+  nextTick(()=>{
+    const {clientHeight, clientWidth} = app.value as HTMLDivElement
+    setSize(clientHeight, clientWidth)
+  })
+}
+function openSetting(){
+  eventHub.emit('open-setting')
+}
 </script>
 
 <style lang="stylus">

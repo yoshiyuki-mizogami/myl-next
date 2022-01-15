@@ -2,7 +2,7 @@
   <div
     class="item"
     @contextmenu="showContentMenu"
-    @dblclick="call"
+    @dblclick="()=>item.call()"
     @dragstart="setDrag"
   >
     <div
@@ -12,54 +12,40 @@
     <span class="item-content">{{ item.name }}</span>
   </div>
 </template>
-<script lang="ts">
-import { defineComponent, toRaw } from 'vue'
+<script setup lang="ts">
+import { computed, defineProps, toRaw } from 'vue'
 import hub from '../ts/event-hub'
 import Item from '../ts/models/item'
 import { ipcRenderer} from 'electron'
 import { copyItemPath, removeItem, setDragItem, showItemDetail, state } from '../ts/store'
-export default defineComponent({
-  props:{
-    item:{
-      type:Item,
-      required:true
-    }
-  }, 
-  computed:{
-    sortMode(){
-      return state.sortMode
-    },
-    dataUrl(){
-      return `url(${this.item.icon})`
-    }
-  },
-  methods:{
-    call(){
-      this.item.call()
-    },
-    showContentMenu(ev:MouseEvent){
-      contextMenu(ev, this.item)
-    },
-    setDrag(ev:DragEvent){
-      setDragItem(this.item)
-      const dataTransfer = ev.dataTransfer as DataTransfer
-      if(this.sortMode){
-        dataTransfer.setData('text/plain', this.item.path)
-        dataTransfer.setData('myl/item', '1')
-        return
-      }
-      if(this.item.type === 'url'){
-        ev.stopPropagation()
-        dataTransfer.setData('myl/item', '1')
-        dataTransfer.setData('text/uri-list', this.item.path)
-        return
-      }
-      ev.preventDefault()
-      ev.stopPropagation()
-      ipcRenderer.send('ondragstart', this.item.path)
-    }
+const props = defineProps({
+  item:{
+    type:Item,
+    required:true
   }
 })
+const dataUrl = computed(()=> `url(${props.item.icon})`)
+function showContentMenu(ev:MouseEvent){
+  contextMenu(ev, props.item)
+}
+function setDrag(ev:DragEvent){
+  setDragItem(props.item)
+  const dataTransfer = ev.dataTransfer as DataTransfer
+  if(state.sortMode){
+    dataTransfer.setData('text/plain', props.item.path)
+    dataTransfer.setData('myl/item', '1')
+    return
+  }
+  if(props.item.type === 'url'){
+    ev.stopPropagation()
+    dataTransfer.setData('myl/item', '1')
+    dataTransfer.setData('text/uri-list', props.item.path)
+    return
+  }
+  ev.preventDefault()
+  ev.stopPropagation()
+  ipcRenderer.send('ondragstart', props.item.path)
+}
 function contextMenu(ev:MouseEvent, item:Item){
   const SEND_EVENT_NAME = 'show-item-menu'
   const RESPONSE_EVENT_NAME = 'select-item-menu'

@@ -83,7 +83,6 @@ async function ipcHandleCommunicate(channel:string, data:unknown = undefined){
 export async function loadConfig(){
   try{
     const configRaw = await db.loadConfig()
-    console.log(configRaw)
     if(!configRaw.aot === undefined || configRaw.lang === undefined || configRaw.theme === undefined){
       throw configRaw.id
     }
@@ -95,7 +94,6 @@ export async function loadConfig(){
   }
 }
 export async function saveConfig(){
-  console.log(state.configRaw)
   db.saveConfig(state.configRaw)
 }
 export async function langSwitch(lang:Langs){

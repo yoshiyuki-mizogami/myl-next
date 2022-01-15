@@ -1,6 +1,6 @@
 
 <template>
-  <OverlayLayer v-if="show">
+  <OverlayLayer v-if="data.show">
     <div class="item-detail">
       <div
         class="close-btn icon-close"
@@ -9,7 +9,7 @@
       <div class="prop">
         <span class="prop-title">{{ state.ui.ITEM_NAME }}</span>
         <input
-          v-model.lazy="data.name"
+          v-model.lazy="data.data.name"
           type="text"
           class="prop-text"
         >
@@ -17,7 +17,7 @@
       <div class="prop">
         <span class="prop-title">{{ state.ui.ITEM_PATH }}</span>
         <input
-          v-model.lazy="data.path"
+          v-model.lazy="data.data.path"
           type="text"
           class="prop-text"
         >
@@ -25,7 +25,7 @@
       <div class="prop">
         <span class="prop-title">{{ state.ui.BY }}</span>
         <input
-          v-model.lazy="data.by"
+          v-model.lazy="data.data.by"
           type="text"
           class="prop-text with-text"
           readonly
@@ -43,7 +43,7 @@
       >
         <span class="prop-title">{{ state.ui.ARG }}</span>
         <input
-          v-model.lazy="data.cmd"
+          v-model.lazy="data.data.cmd"
           type="text"
           class="prop-text"
         >
@@ -51,8 +51,8 @@
     </div>
   </OverlayLayer>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { reactive, computed } from 'vue'
 import Item from '../ts/models/item'
 import EventHub from '../ts/event-hub'
 import {FILE} from '../ts/consts'
@@ -62,47 +62,33 @@ import { ipcRenderer } from 'electron'
 import { state } from '../ts/store'
 const DEF = {}
 Object.seal(DEF)
-export default defineComponent({
-  components: { OverlayLayer },
-  data() {
-    return {
-      state,
-      show: false,
-      data: DEF as Item,
-      by: ''
-    }
-  },
-  computed: {
-    isFile() {
-      return this.data.type === FILE
-    }
-  },
-  created() {
-    EventHub.on('show-item-detail', this.showMe)
-  },
-  methods: {
-    showMe(item: Item) {
-      this.show = true
-      this.data = item
-    },
-    hideMe() {
-      const { data } = this
-      this.data = DEF
-      this.show = false
-      updateItem(data)
-    },
-    async selectWith() {
-      const files = await ipcRenderer.invoke('showOpenDialog', {
-        title:state.ui.SELECT_BOOT_BY,
-      })
-      if (!files.filePaths.length) {
-        return this.data.by = ''
-      }
-      const [filepath] = files.filePaths
-      this.by = filepath
-    }
-  }
+const data = reactive({
+  show: false,
+  data: DEF as Item,
+  by: ''
 })
+const isFile = computed(()=>data.data.type === FILE)
+EventHub.on('show-item-detail', showMe)
+function showMe(item: Item) {
+  data.show = true
+  data.data = item
+}
+function hideMe() {
+  data.data = DEF as Item
+  data.show = false
+  updateItem(data.data)
+}
+async function selectWith() {
+  const files = await ipcRenderer.invoke('showOpenDialog', {
+    title:state.ui.SELECT_BOOT_BY,
+  })
+  if (!files.filePaths.length) {
+    return data.data.by = ''
+  }
+  const [filepath] = files.filePaths
+  data.by = filepath
+}
+
 </script>
 
 

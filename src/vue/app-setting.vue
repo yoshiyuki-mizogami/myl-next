@@ -14,22 +14,22 @@
       <ul class="setting-items">
         <li>
           <div class="setting-name">
-            {{ ui.LANG }}
+            {{ state.ui.LANG }}
           </div>
           <div class="setting-val">
             <label
-              :class="{selected:config.lang === 'en'}"
-              @click="langSwitch('en')"
+              :class="{selected:state.config.lang === 'en'}"
+              @click="langSwitch(Langs.EN)"
             >{{ state.ui.EN }}</label><input
-              :checked="config.lang === 'en'"
+              :checked="state.config.lang === 'en'"
               type="radio"
               name="lang"
             ><label
-              :class="{selected:config.lang === 'ja'}"
-              @click="langSwitch('ja')"
-            >{{ ui.JA }}</label>
+              :class="{selected:state.config.lang === 'ja'}"
+              @click="langSwitch(Langs.JA)"
+            >{{ state.ui.JA }}</label>
             <input
-              :checked="config.lang === 'ja'"
+              :checked="state.config.lang === 'ja'"
               type="radio"
               name="lang"
             >
@@ -44,10 +44,10 @@
             style="text-align:center"
           >
             <div
-              v-for="(t,k) in themes"
+              v-for="(t,k) in state.themes"
               :key="k"
               class="theme"
-              :class="{selected:config.theme === k}"
+              :class="{selected:state.config.theme === k}"
               @click="selectTheme(k)"
             >
               {{ t }}
@@ -58,12 +58,12 @@
           <div class="setting-item">
             <input
               type="button"
-              :value="ui.IMPORT"
+              :value="state.ui.IMPORT"
               @click="importJson"
             >
             <input 
               type="button"
-              :value="ui.EXPORT"
+              :value="state.ui.EXPORT"
               @click="exportJson"
             >
           </div>
@@ -73,58 +73,30 @@
             <a
               href="#"
               @click.prevent="openHP"
-            >{{ ui.CHECK_UPDATE }}</a>
+            >{{ state.ui.CHECK_UPDATE }}</a>
           </div>
         </li>
       </ul>
     </div>
   </OverlayLayer>
 </template>
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import Hub from '../ts/event-hub'
 import {
   state,
+  Langs,
   exportJson,
   importJson,
   langSwitch,
   selectTheme, 
   openHP} from '../ts/store'
-import { ipcRenderer } from 'electron'
 import OverlayLayer from './overlay-layer.vue'
-export default defineComponent({
-  components: { OverlayLayer },
-  data() {
-    return {
-      show: false,
-      state
-    }
-  },
-  computed: {
-    themes() { return state.themes },
-    config() { return state.config },
-    ui() { return state.ui }
-  },
-  async created() {
-    Hub.on('open-setting', this.open)
-    this.version = await ipcRenderer.invoke('getVersion')
-  },
-  methods: {
-    exportJson,
-    importJson,
-    langSwitch,
-    selectTheme,
-    open() {
-      this.show = true
-    },
-    close() {
-      this.show = false
-    },
-    openHP() {
-      openHP()
-    }
-  }
-})
+const show = ref(false)
+Hub.on('open-setting', ()=>show.value = true)
+function close() {
+  show.value = false
+}
 </script>
 <style lang="stylus">
 .setting-layer
