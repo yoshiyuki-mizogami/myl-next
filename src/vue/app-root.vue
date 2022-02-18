@@ -97,7 +97,8 @@ import {
   setAlwaysOnTop,
   updateItemsOrder,
   updateCategoriesOrder,
-  isUrl
+  isUrl,
+  activateCategoryBykeydown
 } from '../ts/store'
 import SetColor from './set-color.vue'
 watch(()=>state.selectedCategory,(to)=>getItems(to.id))
@@ -108,6 +109,7 @@ onMounted(async ()=>{
   await init()
   eventHub.on('adjust', adjust)
   setTimeout(()=>adjust(), 100)
+  setShortcut()
 })
 
 function addNewCategory(){
@@ -157,6 +159,17 @@ function adjust(){
 }
 function openSetting(){
   eventHub.emit('open-setting')
+}
+
+
+function setShortcut(){
+  window.addEventListener('keydown', ev=>{
+    const tg = ev.target as unknown|HTMLElement
+    if(tg['select'] !== undefined){
+      return
+    }
+    activateCategoryBykeydown(ev)
+  })
 }
 </script>
 

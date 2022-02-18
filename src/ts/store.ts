@@ -253,3 +253,46 @@ watch(()=>state.config.theme,()=>selectTheme(state.config.theme))
 export function openColorSetter(c:Category){
   eventHub.emit('openColorSetter', c)
 }
+
+
+const getActivateCategoryStr = (()=>{
+  const clearTime = 250
+  let findTmpStr = ''
+  let evId = null as null
+  return function(s:string){
+    clearTimeout(evId as number)
+    evId = setTimeout(()=>{
+      findTmpStr = ''
+    }, clearTime) as any
+    return findTmpStr += s
+  }
+})()
+export function activateCategoryBykeydown(ev:KeyboardEvent){
+  const {key} = ev
+  if(key.length !== 1){
+    return
+  }
+  const keyReg = new RegExp(`^${getActivateCategoryStr(key)}`, 'i')
+  const finds = [] as number[]
+  let current = null as null|number
+  state.categories.forEach((c ,ind)=>{
+    if(keyReg.test(c.name)){
+      finds.push(ind)
+    }
+    if(state.selectedCategory === c){
+      current = ind
+    }
+  })
+
+  if(finds.length === 0){
+    return
+  }
+  let pos = 0
+  if(current !== null){
+    pos = finds.find((p)=>current < p)
+    if(pos === undefined){
+      pos = finds[0]
+    }
+  }
+  state.selectedCategory = state.categories[pos]
+}
