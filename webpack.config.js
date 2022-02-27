@@ -25,7 +25,8 @@ export default [{
         loader: 'esbuild-loader',
         options:{
           loader:'ts',
-          target:'esnext'
+          target:'esnext',
+
         }
       },
       {
@@ -48,7 +49,7 @@ export default [{
       chunkFilename:'[name].css'
     })
   ],
-  devtool:'inline-source-map'
+  devtool:'eval-cheap-source-map'
 },
 {
   target:'electron-main', 
@@ -78,5 +79,5 @@ export default [{
       },
     ]
   },
-  devtool:'inline-source-map'
+  devtool:'eval-cheap-source-map'
 }]
