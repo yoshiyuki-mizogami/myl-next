@@ -5,7 +5,7 @@ import {VueLoaderPlugin} from 'vue-loader'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 console.log(import.meta.url)
-export default [{
+export default {
   target:'electron-renderer',
   entry:{
     main:'./src/ts/main.ts'
@@ -50,34 +50,4 @@ export default [{
     })
   ],
   devtool:'eval-cheap-source-map'
-},
-{
-  target:'electron-main', 
-  entry:{
-    index:'./src/index.ts'
-  },
-  mode:'development',
-  output:{
-    path:resolve(__dirname, 'app/'),
-    filename:'[name].js'
-  },
-  resolve: {
-    extensions: ['.ts', '.vue', '.js']
-  },
-  node:{
-    __dirname:false
-  },
-  module:{
-    rules:[
-      {
-        test:/\.ts$/,
-        loader: 'esbuild-loader',
-        options:{
-          loader:'ts',
-          target:'esnext'
-        }
-      },
-    ]
-  },
-  devtool:'eval-cheap-source-map'
-}]
+}

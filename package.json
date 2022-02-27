@@ -7,6 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "gulp dev",
+    "build-main":"esbuild src/index.ts --platform=node --bundle --external:electron --outfile=\"./app/index.js\"",
+    "build-main-dev":"npm run build-main -- --watch",
+    "build-main-prod": "npm run build-main -- --minify",
     "build": "gulp packProduction && electron-builder -mw",
     "build-w": "gulp packProduction && electron-builder -w"
   },
@@ -20,7 +23,7 @@
     "del": "^6.0.0",
     "electron": "^17.0.0-beta.9",
     "electron-builder": "^22.14.5",
-    "esbuild": "^0.14.11",
+    "esbuild": "^0.14.23",
     "esbuild-loader": "^2.18.0",
     "eslint": "^8.6.0",
     "eslint-plugin-vue": "^8.2.0",
