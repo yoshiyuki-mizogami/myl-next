@@ -1,13 +1,19 @@
-const {spawn} = require('child_process')
-const {series} = require('gulp')
-const webpack = require('webpack')
+import gulp from 'gulp'
+import {spawn} from'child_process'
+import webpack from 'webpack'
+import wpConfig from './webpack.config.js'
+import electron from 'electron'
+import del from 'del'
 
-const {version} = require('./app/package.json')
+import {readFileSync} from 'fs'
+
+const {task,series} = gulp
+const {version} = JSON.parse(readFileSync('./app/package.json'))
+
 console.log(`::set-env name=APP_VERSION::${version}`)
 
-exports.webpack = function doWebpack(clbk){
+task('webpack',function doWebpack(clbk){
   let compiled = false
-  const wpConfig = require('./webpack.config')
   const comp = webpack(wpConfig)
   comp.watch({}, (er, stat)=>{
     console.log(stat.toString({colors:true}))
@@ -17,18 +23,17 @@ exports.webpack = function doWebpack(clbk){
     compiled = true
     clbk()
   })
-}
+})
 
 function bootElectron(){
-  const c = spawn(require('electron'), ['app', '--trace-warnings'], {stdio:'inherit'})
+  const c = spawn(electron, ['app', '--trace-warnings'], {stdio:'inherit'})
   c.on('close',bootElectron)
 }
-exports.boot = bootElectron
+task('boot', bootElectron)
 
-exports.dev = series(exports.webpack, bootElectron)
+task('dev',series('webpack', 'boot'))
 
-exports.packProduction = function packProduction(clbk){
-  const wpConfig = require('./webpack.config')
+task('packProduction', function packProduction(clbk){
   process.env.NODE_ENV = 'production'
   wpConfig.forEach(c=>{
     c.devtool = false
@@ -39,11 +44,10 @@ exports.packProduction = function packProduction(clbk){
     console.log(stat.toString({colors:true}))
     clbk()
   })
-}
+})
 
-const del = require('del')
 async function clearDist(){
   return del(['dist/**'],{force:true})
 }
 
-exports.clearDist = clearDist
+task('clearDist',clearDist)

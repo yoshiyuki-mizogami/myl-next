@@ -74,9 +74,9 @@ function showMe(item: Item) {
   data.data = item
 }
 function hideMe() {
-  data.data = DEF as Item
   data.show = false
   updateItem(data.data)
+  data.data = DEF as Item
 }
 async function selectWith() {
   const files = await ipcRenderer.invoke('showOpenDialog', {

@@ -1,15 +1,18 @@
-const path = require('path')
-const MiniCSSExtractPlugin = require('mini-css-extract-plugin')
-const {VueLoaderPlugin} = require('vue-loader')
+import {resolve, dirname} from 'path'
+import { fileURLToPath } from 'url'
+import MiniCSSExtractPlugin from 'mini-css-extract-plugin'
+import {VueLoaderPlugin} from 'vue-loader'
 
-module.exports = [{
+const __dirname = dirname(fileURLToPath(import.meta.url))
+console.log(import.meta.url)
+export default [{
   target:'electron-renderer',
   entry:{
     main:'./src/ts/main.ts'
   },
   mode:'development',
   output:{
-    path:path.resolve(__dirname, 'app/bundle/'),
+    path:resolve(__dirname, 'app/bundle/'),
     filename:'[name].js'
   },
   resolve: {
@@ -54,7 +57,7 @@ module.exports = [{
   },
   mode:'development',
   output:{
-    path:path.resolve(__dirname, 'app/'),
+    path:resolve(__dirname, 'app/'),
     filename:'[name].js'
   },
   resolve: {

@@ -4,6 +4,7 @@
   "version": "1.1.0",
   "description": "",
   "main": "gulpfile.js",
+  "type": "module",
   "scripts": {
     "dev": "gulp dev",
     "build": "gulp packProduction && electron-builder -mw",
@@ -12,8 +13,6 @@
   "author": "yoshiyuki mizogami",
   "license": "MIT",
   "devDependencies": {
-    "@types/dexie": "^1.3.1",
-    "@types/electron": "^1.6.10",
     "@types/node": "^17.0.8",
     "@typescript-eslint/eslint-plugin": "^5.9.1",
     "@typescript-eslint/parser": "^5.9.1",
