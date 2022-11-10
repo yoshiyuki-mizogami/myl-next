@@ -21,7 +21,7 @@
     "@typescript-eslint/parser": "^5.9.1",
     "css-loader": "^6.5.1",
     "del": "^6.0.0",
-    "electron": "^17.0.0-beta.9",
+    "electron": "^18.3.7",
     "electron-builder": "^22.14.5",
     "esbuild": "^0.14.23",
     "esbuild-loader": "^2.18.0",
