@@ -60,9 +60,9 @@ export async function moveItem(destCategory: Category): Promise<void> {
   }
   const { dragItem } = state
   state.dragItem = null
-  const ind = state.items.indexOf(dragItem)
+  const ind = state.items.indexOf(dragItem!)
   state.items.splice(ind, 1)
-  await db.moveItem(dragItem, destCategory.id)
+  await db.moveItem(dragItem!, destCategory.id)
 }
 export async function init(): Promise<void> {
   loadConfig()
@@ -75,7 +75,7 @@ export async function init(): Promise<void> {
 function ipcCommunicate(channel: string, data: unknown = undefined): void {
   ipcRenderer.send(channel, data)
 }
-async function ipcHandleCommunicate(channel: string, data: unknown = undefined): void {
+async function ipcHandleCommunicate<T>(channel: string, data: unknown = undefined): Promise<T> {
   return await ipcRenderer.invoke(channel, data)
 }
 
@@ -92,12 +92,12 @@ export async function loadConfig(): Promise<void> {
     state.configRaw = configRaw
     state.config = state.configRaw
   } catch (id) {
-    state.config.id = id
+    state.config.id = id as number
     state.configRaw = state.config
   }
 }
 export async function saveConfig(): Promise<void> {
-  db.saveConfig(state.configRaw)
+  db.saveConfig(state.configRaw!)
 }
 export async function langSwitch(lang: Langs): Promise<void> {
   state.config.lang = lang
@@ -173,7 +173,7 @@ export async function addUrl({ url, name }: { url: string; name: string }): Prom
     eventHub.emit('notify', state.ui.INVALID_URL)
     return
   }
-  const urlItem = await db.addUrlItem(name, url, state.selectedCategory?.id)
+  const urlItem = await db.addUrlItem(name, url, state.selectedCategory!.id)
   state.items.push(urlItem)
   nextTick(() => eventHub.emit('adjust'))
 }
@@ -191,7 +191,7 @@ function getDesktopPath(): string {
   return ''
 }
 export async function importJson(): Promise<void> {
-  const targetJsonFiles = await ipcHandleCommunicate('showOpenDialog', {
+  const targetJsonFiles = await ipcHandleCommunicate<{ filePaths: string[] }>('showOpenDialog', {
     title: 'Select Myl save data json.',
     defaultPath: join(getDesktopPath(), DEFAULT_JSON_NAME),
     filters: [
@@ -237,7 +237,7 @@ export function setAlwaysOnTop(tf: boolean): void {
 }
 
 export async function exportJson(): Promise<void> {
-  const savePath = await ipcHandleCommunicate('showSaveDialog', {
+  const savePath = await ipcHandleCommunicate<{ filePath: string }>('showSaveDialog', {
     title: 'Select save filepath.',
     defaultPath: join(getDesktopPath(), DEFAULT_JSON_NAME)
   })
@@ -245,7 +245,19 @@ export async function exportJson(): Promise<void> {
     return
   }
   const exportData = await db.exportAll()
-  await new Promise((r) => writeFile(savePath.filePath, JSON.stringify(exportData), 'utf8', r))
+  await new Promise((r) =>
+    writeFile(
+      savePath.filePath,
+      JSON.stringify(exportData, (key, val) => {
+        if (key === 'cateId' || key === 'id') {
+          return
+        }
+        return val
+      }),
+      'utf8',
+      r
+    )
+  )
   eventHub.emit('notify', state.ui.EXPORT_DONE)
 }
 
@@ -265,7 +277,7 @@ export function openColorSetter(c: Category): void {
 const getActivateCategoryStr = ((): ((categoryName: string) => void) => {
   const clearTime = 250
   let findTmpStr = ''
-  let evId = null as null|number
+  let evId = null as null | number
   return function (s: string): string {
     clearTimeout(evId as number)
     evId = setTimeout(() => {

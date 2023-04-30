@@ -77,7 +77,7 @@ import {
 import SetColor from './components/SetColor.vue'
 watch(
   () => state.selectedCategory,
-  (to) => getItems(to.id)
+  (to) => getItems(to!.id)
 )
 watch(
   () => state.items,
@@ -103,7 +103,7 @@ function close(): void {
 }
 function doToggleAOT(): void {
   toggleAOT()
-  setAlwaysOnTop(this.aot)
+  setAlwaysOnTop(state.config.aot)
 }
 async function dropAny(e: DragEvent): Promise<void> {
   const { dataTransfer } = e as { dataTransfer: DataTransfer }
@@ -116,7 +116,7 @@ async function dropAny(e: DragEvent): Promise<void> {
   const thisIsUrl = isUrl.test(url)
   if (thisIsUrl) {
     console.log(files[0])
-    const name = (() => {
+    const name = ((): string => {
       return files.length > 0 ? files[0].name : ''
     })()
     return await addUrl({ url, name })
@@ -136,7 +136,7 @@ async function dropAny(e: DragEvent): Promise<void> {
 const app = ref(null)
 function adjust(): void {
   nextTick(() => {
-    const { clientHeight, clientWidth } = app.value as HTMLDivElement
+    const { clientHeight, clientWidth } = app.value as unknown as HTMLDivElement
     setSize(clientHeight, clientWidth)
   })
 }
@@ -146,8 +146,8 @@ function openSetting(): void {
 
 function setShortcut(): void {
   window.addEventListener('keydown', (ev) => {
-    const tg = ev.target as unknown | HTMLElement
-    if (tg['select'] !== undefined) {
+    const tg = ev.target as unknown as { select: string }
+    if (tg.select !== undefined) {
       return
     }
     activateCategoryBykeydown(ev)

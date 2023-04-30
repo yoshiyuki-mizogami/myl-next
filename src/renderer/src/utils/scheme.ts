@@ -30,7 +30,7 @@ export default class MylDB extends Dexie {
     this.items.mapToClass(Item)
     this.config.mapToClass(Config)
   }
-  async loadConfig(): any {
+  async loadConfig(): Promise<Config> {
     let conf = await this.config.toCollection().last()
     if (!conf) {
       conf = new Config()
@@ -50,7 +50,6 @@ export default class MylDB extends Dexie {
     }, {} as { [key: string]: ExportForm })
     items.forEach((i) => {
       const cateId = i.cateId
-      i.cateId = i.id = void 0
       categoriesMap[cateId].items.push(i)
     })
     const exportCategories = Object.keys(categoriesMap).reduce((ary, idx) => {
