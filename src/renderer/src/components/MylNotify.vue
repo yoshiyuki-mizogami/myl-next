@@ -1,31 +1,28 @@
 <template>
   <transition name="notify">
-    <div 
-      v-if="data.show"
-      class="notify"
-    >
+    <div v-if="data.show" class="notify">
       {{ data.m }}
     </div>
   </transition>
 </template>
 <script setup lang="ts">
 import { reactive } from 'vue'
-import hub from '../ts/event-hub'
+import hub from '../event-hub'
 const NOTIFY_TIMEOUT = 4000
 const data = reactive({
-  show:false,
-  ev:0 as number,
-  m:''
+  show: false,
+  ev: 0 as number,
+  m: ''
 })
 hub.on('notify', showNotify)
-function showNotify(message:string){
+function showNotify(message: string): void {
   data.show = true
   data.m = message
   setHideTimer()
 }
-function setHideTimer(){
+function setHideTimer(): void {
   clearTimeout(data.ev)
-  data.ev = window.setTimeout(()=>data.show = false, NOTIFY_TIMEOUT)
+  data.ev = window.setTimeout(() => (data.show = false), NOTIFY_TIMEOUT)
 }
 </script>
 

@@ -1,65 +1,36 @@
-
 <template>
   <OverlayLayer v-if="data.show">
     <div class="item-detail">
-      <div
-        class="close-btn icon-close"
-        @click="hideMe"
-      />
+      <div class="close-btn icon-close" @click="hideMe" />
       <div class="prop">
         <span class="prop-title">{{ state.ui.ITEM_NAME }}</span>
-        <input
-          v-model.lazy="data.data.name"
-          type="text"
-          class="prop-text"
-        >
+        <input v-model.lazy="data.data.name" type="text" class="prop-text" />
       </div>
       <div class="prop">
         <span class="prop-title">{{ state.ui.ITEM_PATH }}</span>
-        <input
-          v-model.lazy="data.data.path"
-          type="text"
-          class="prop-text"
-        >
+        <input v-model.lazy="data.data.path" type="text" class="prop-text" />
       </div>
       <div class="prop">
         <span class="prop-title">{{ state.ui.BY }}</span>
-        <input
-          v-model.lazy="data.data.by"
-          type="text"
-          class="prop-text with-text"
-          readonly
-        >
-        <input
-          type="button"
-          class="with-select"
-          :value="state.ui.SELECT"
-          @click="selectWith"
-        >
+        <input v-model.lazy="data.data.by" type="text" class="prop-text with-text" readonly />
+        <input type="button" class="with-select" :value="state.ui.SELECT" @click="selectWith" />
       </div>
-      <div 
-        v-if="isFile"
-        class="prop"
-      >
+      <div v-if="isFile" class="prop">
         <span class="prop-title">{{ state.ui.ARG }}</span>
-        <input
-          v-model.lazy="data.data.cmd"
-          type="text"
-          class="prop-text"
-        >
+        <input v-model.lazy="data.data.cmd" type="text" class="prop-text" />
       </div>
     </div>
   </OverlayLayer>
 </template>
 <script setup lang="ts">
 import { reactive, computed } from 'vue'
-import Item from '../ts/models/item'
-import EventHub from '../ts/event-hub'
-import {FILE} from '../ts/consts'
-import { updateItem } from '../ts/store'
-import OverlayLayer from './overlay-layer.vue'
 import { ipcRenderer } from 'electron'
-import { state } from '../ts/store'
+import Item from '../models/item'
+import EventHub from '../event-hub'
+import { FILE } from '../consts'
+import { updateItem } from '../store'
+import OverlayLayer from './OverlayLayer.vue'
+import { state } from '../store'
 const DEF = {}
 Object.seal(DEF)
 const data = reactive({
@@ -67,30 +38,28 @@ const data = reactive({
   data: DEF as Item,
   by: ''
 })
-const isFile = computed(()=>data.data.type === FILE)
+const isFile = computed(() => data.data.type === FILE)
 EventHub.on('show-item-detail', showMe)
-function showMe(item: Item) {
+function showMe(item: Item): void {
   data.show = true
   data.data = item
 }
-function hideMe() {
+function hideMe(): void {
   data.show = false
   updateItem(data.data)
   data.data = DEF as Item
 }
-async function selectWith() {
+async function selectWith(): Promise<string|void> {
   const files = await ipcRenderer.invoke('showOpenDialog', {
-    title:state.ui.SELECT_BOOT_BY,
+    title: state.ui.SELECT_BOOT_BY
   })
   if (!files.filePaths.length) {
-    return data.data.by = ''
+    return (data.data.by = '')
   }
   const [filepath] = files.filePaths
   data.by = filepath
 }
-
 </script>
-
 
 <style lang="stylus">
 .item-detail

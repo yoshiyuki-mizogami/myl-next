@@ -1,15 +1,9 @@
 <template>
   <OverlayLayer v-if="show">
     <div class="setting-layer">
-      <div
-        class="icon-close close-btn"
-        @click="close"
-      />
+      <div class="icon-close close-btn" @click="close" />
       <div class="setting-title">
-        Myl <span
-          v-once
-          class="version"
-        >ver {{ state.version }}</span> Setting
+        Myl <span v-once class="version">ver {{ state.version }}</span> Setting
       </div>
       <ul class="setting-items">
         <li>
@@ -18,36 +12,27 @@
           </div>
           <div class="setting-val">
             <label
-              :class="{selected:state.config.lang === 'en'}"
+              :class="{ selected: state.config.lang === 'en' }"
               @click="langSwitch(Langs.EN)"
-            >{{ state.ui.EN }}</label><input
-              :checked="state.config.lang === 'en'"
-              type="radio"
-              name="lang"
-            ><label
-              :class="{selected:state.config.lang === 'ja'}"
+              >{{ state.ui.EN }}</label
+            ><input :checked="state.config.lang === 'en'" type="radio" name="lang" /><label
+              :class="{ selected: state.config.lang === 'ja' }"
               @click="langSwitch(Langs.JA)"
-            >{{ state.ui.JA }}</label>
-            <input
-              :checked="state.config.lang === 'ja'"
-              type="radio"
-              name="lang"
+              >{{ state.ui.JA }}</label
             >
+            <input :checked="state.config.lang === 'ja'" type="radio" name="lang" />
           </div>
         </li>
         <li>
           <div class="setting-name">
             {{ state.ui.THEME }}
           </div>
-          <div
-            class="setting-val"
-            style="text-align:center"
-          >
+          <div class="setting-val" style="text-align: center">
             <div
-              v-for="(t,k) in state.themes"
+              v-for="(t, k) in state.themes"
               :key="k"
               class="theme"
-              :class="{selected:state.config.theme === k}"
+              :class="{ selected: state.config.theme === k }"
               @click="selectTheme(k)"
             >
               {{ t }}
@@ -56,24 +41,13 @@
         </li>
         <li>
           <div class="setting-item">
-            <input
-              type="button"
-              :value="state.ui.IMPORT"
-              @click="importJson"
-            >
-            <input 
-              type="button"
-              :value="state.ui.EXPORT"
-              @click="exportJson"
-            >
+            <input type="button" :value="state.ui.IMPORT" @click="importJson" />
+            <input type="button" :value="state.ui.EXPORT" @click="exportJson" />
           </div>
         </li>
         <li>
           <div class="setting-item">
-            <a
-              href="#"
-              @click.prevent="openHP"
-            >{{ state.ui.CHECK_UPDATE }}</a>
+            <a href="#" @click.prevent="openHP">{{ state.ui.CHECK_UPDATE }}</a>
           </div>
         </li>
       </ul>
@@ -82,19 +56,12 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import Hub from '../ts/event-hub'
-import {
-  state,
-  Langs,
-  exportJson,
-  importJson,
-  langSwitch,
-  selectTheme, 
-  openHP} from '../ts/store'
-import OverlayLayer from './overlay-layer.vue'
+import Hub from '../event-hub'
+import { state, Langs, exportJson, importJson, langSwitch, selectTheme, openHP } from '../store'
+import OverlayLayer from './OverlayLayer.vue'
 const show = ref(false)
-Hub.on('open-setting', ()=>show.value = true)
-function close() {
+Hub.on('open-setting', () => (show.value = true))
+function close(): void {
   show.value = false
 }
 </script>
@@ -106,7 +73,7 @@ function close() {
   margin 20px auto
   background-color var(--dialog-base)
   color var(--base-color)
-  padding 5px 
+  padding 5px
   font-size 0
   .version
     font-size smaller
@@ -158,6 +125,4 @@ function close() {
           &.selected
             background-color var(--select)
             color white
-      
 </style>
-

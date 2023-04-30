@@ -1,49 +1,26 @@
 <template>
-  <div
-    ref="app"
-    class="whole"
-  >
-    <div
-      v-if="state.loading"
-      class="loading"
-    />
+  <div ref="app" class="whole">
+    <div v-if="state.loading" class="loading" />
     <div class="header">
-      <div
-        class="icon-plus header-btn new-cate-btn"
-        @click="addNewCategory"
-      />
+      <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory" />
       <div
         class="icon-sort-amount-asc header-btn switch-sortmode"
-        :class="{sortMode:state.sortMode}"
+        :class="{ sortMode: state.sortMode }"
         @click="switchSortMode"
       />
-      <div
-        class="icon-gear header-btn setting"
-        @click="openSetting"
-      />
+      <div class="icon-gear header-btn setting" @click="openSetting" />
       <div
         class="icon-clone header-btn aot-btn"
-        :class="{aot:state.config.aot}"
+        :class="{ aot: state.config.aot }"
         @click="doToggleAOT"
       />
-      <div
-        class="icon-sign-out header-btn close-app"
-        @click="close"
-      />
+      <div class="icon-sign-out header-btn close-app" @click="close" />
     </div>
-    <div
-      class="content"
-      @drop.prevent="dropAny"
-      @dragenter.prevent
-      @dragover.prevent
-    >
+    <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
       <div class="categories">
-        <draggable
-          v-model="state.categories"
-          item-key="id"
-        >
-          <template #item="{element}">
-            <myl-category
+        <draggable v-model="state.categories" item-key="id">
+          <template #item="{ element }">
+            <MylCategory
               :selected="state.selectedCategory === element"
               :category="element"
               @select-category="state.selectedCategory = $event"
@@ -52,36 +29,33 @@
         </draggable>
       </div>
       <div class="items">
-        <draggable
-          v-model="state.items"
-          :move="setSelectedCategory"
-          item-key="id"
-        >
-          <template #item="{element}">
+        <draggable v-model="state.items" :move="setSelectedCategory" item-key="id">
+          <template #item="{ element }">
             <myl-item :item="element" />
           </template>
         </draggable>
       </div>
     </div>
-    <new-cate-dialog />
-    <app-setting />
-    <item-detail />
-    <myl-dialog />
-    <myl-notify />
-    <set-color />
+    <NewCategory />
+    <AppSetting />
+    <ItemDetail />
+    <MylDialog />
+    <MylNotify />
+    <SetColor />
   </div>
 </template>
 <script setup lang="ts">
-import { nextTick, watch, ref, onMounted} from 'vue'
-import MylCategory from './myl-category.vue'
-import MylItem from './myl-item.vue'
-import NewCateDialog from './new-category.vue'
-import MylDialog from './myl-dialog.vue'
-import MylNotify from './myl-notify.vue'
-import eventHub from '../ts/event-hub'
-import ItemDetail from './item-detail.vue'
-import AppSetting from './app-setting.vue'
+import { nextTick, watch, ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
+
+import MylCategory from './components/MylCategory.vue'
+import MylItem from './components/MylItem.vue'
+import NewCategory from './components/NewCategory.vue'
+import MylDialog from './components/MylDialog.vue'
+import MylNotify from './components/MylNotify.vue'
+import eventHub from './event-hub'
+import ItemDetail from './components/ItemDetail.vue'
+import AppSetting from './components/AppSetting.vue'
 import {
   switchSortMode,
   state,
@@ -99,73 +73,81 @@ import {
   updateCategoriesOrder,
   isUrl,
   activateCategoryBykeydown
-} from '../ts/store'
-import SetColor from './set-color.vue'
-watch(()=>state.selectedCategory,(to)=>getItems(to.id))
-watch(()=>state.items, (to)=>updateItemsOrder(to))
-watch(()=>state.categories, (to)=>updateCategoriesOrder(to))
+} from './store'
+import SetColor from './components/SetColor.vue'
+watch(
+  () => state.selectedCategory,
+  (to) => getItems(to.id)
+)
+watch(
+  () => state.items,
+  (to) => updateItemsOrder(to)
+)
+watch(
+  () => state.categories,
+  (to) => updateCategoriesOrder(to)
+)
 
-onMounted(async ()=>{
+onMounted(async () => {
   await init()
   eventHub.on('adjust', adjust)
-  setTimeout(()=>adjust(), 100)
+  setTimeout(() => adjust(), 100)
   setShortcut()
 })
 
-function addNewCategory(){
+function addNewCategory(): void {
   setNewCategoryDialog(true)
 }
-function close(){
+function close(): void {
   window.close()
 }
-function doToggleAOT(){
+function doToggleAOT(): void {
   toggleAOT()
   setAlwaysOnTop(this.aot)
 }
-async function dropAny(e:DragEvent):Promise<void>{
-  const {dataTransfer} = e as {dataTransfer:DataTransfer}
+async function dropAny(e: DragEvent): Promise<void> {
+  const { dataTransfer } = e as { dataTransfer: DataTransfer }
   const fromThis = dataTransfer.getData('myl/item')
-  if(fromThis){
+  if (fromThis) {
     return
   }
   let files = Array.from(dataTransfer.files)
   const url = dataTransfer.getData('text/plain')
   const thisIsUrl = isUrl.test(url)
-  if(thisIsUrl){
+  if (thisIsUrl) {
     console.log(files[0])
-    const name  = (()=>{
+    const name = (() => {
       return files.length > 0 ? files[0].name : ''
     })()
-    return await addUrl({url, name})
+    return await addUrl({ url, name })
   }
-  files = files.filter(f=>{
-    return (!state.dragItem) || f.path !== state.dragItem.path
+  files = files.filter((f) => {
+    return !state.dragItem || f.path !== state.dragItem.path
   })
-  if(!files.length){
+  if (!files.length) {
     return
   }
   setLoading(true)
-  await files.reduce((b, f)=>{
-    return b.then(async ()=>await addFile({filepath:f.path}))
+  await files.reduce((b, f) => {
+    return b.then(async () => await addFile({ filepath: f.path }))
   }, Promise.resolve())
   setLoading(false)
 }
 const app = ref(null)
-function adjust(){
-  nextTick(()=>{
-    const {clientHeight, clientWidth} = app.value as HTMLDivElement
+function adjust(): void {
+  nextTick(() => {
+    const { clientHeight, clientWidth } = app.value as HTMLDivElement
     setSize(clientHeight, clientWidth)
   })
 }
-function openSetting(){
+function openSetting(): void {
   eventHub.emit('open-setting')
 }
 
-
-function setShortcut(){
-  window.addEventListener('keydown', ev=>{
-    const tg = ev.target as unknown|HTMLElement
-    if(tg['select'] !== undefined){
+function setShortcut(): void {
+  window.addEventListener('keydown', (ev) => {
+    const tg = ev.target as unknown | HTMLElement
+    if (tg['select'] !== undefined) {
       return
     }
     activateCategoryBykeydown(ev)

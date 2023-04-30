@@ -1,5 +1,5 @@
-import ja from '../../lang/ja.json'
-import en from '../../lang/en.json'
+import ja from '../lang/ja.json'
+import en from '../lang/en.json'
 const langs = {
   ja,en
 }

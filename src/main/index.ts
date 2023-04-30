@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { electronApp, optimizer } from '@electron-toolkit/utils'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { setIpcFunc } from './setIpcFunc'
 import icon from '../../resources/icon.png?asset'
 
@@ -40,8 +40,12 @@ function createWindow(): void {
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
-
-  mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  const electronRendererUrl = process.env['ELECTRON_RENDERER_URL']
+  if (is.dev && electronRendererUrl) {
+    mainWindow.loadURL(electronRendererUrl)
+  } else {
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+  }
   setIpcFunc(app, mainWindow)
 
   const dragIcon = join(__dirname, 'imgs', 'drag.png')

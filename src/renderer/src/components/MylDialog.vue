@@ -1,27 +1,12 @@
 <template>
-  <div
-    v-if="data.show"
-    class="layer-back"
-  >
-    <div
-      class="dialog"
-      :style="{top:data.y+'px', left:data.x+'px'}"
-    >
+  <div v-if="data.show" class="layer-back">
+    <div class="dialog" :style="{ top: data.y + 'px', left: data.x + 'px' }">
       <div class="dialog-mess">
         {{ data.message }}
       </div>
       <div class="dialog-console">
-        <input
-          type="button"
-          value="OK"
-          @click="ok"
-        >
-        <input
-          v-if="data.cancelable"
-          type="button"
-          value="Cancel"
-          @click="cancel"
-        >
+        <input type="button" value="OK" @click="ok" />
+        <input v-if="data.cancelable" type="button" value="Cancel" @click="cancel" />
       </div>
     </div>
   </div>
@@ -29,35 +14,38 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
-import hub from '../ts/event-hub'
-const NOOP = ()=>{/**noop */}
-const defOpt = {
-  show:false,
-  message:'',
-  onOk:NOOP,
-  onCancel:NOOP,
-  cancelable:true,
-  x:0,
-  y:0
+import hub from '../event-hub'
+const NOOP = (): void => {
+  /**noop */
 }
-const H = 60, W = 200
+const defOpt = {
+  show: false,
+  message: '',
+  onOk: NOOP,
+  onCancel: NOOP,
+  cancelable: true,
+  x: 0,
+  y: 0
+}
+const H = 60,
+  W = 200
 const NUMBER = 'number'
 const data = reactive(Object.assign({}, defOpt))
 hub.on('show-dialog', showDialog)
-function showDialog(opts){
+function showDialog(opts): void {
   data.show = true
-  opts.cancelable = (!opts.onCancel) || !!opts.cancelable
+  opts.cancelable = !opts.onCancel || !!opts.cancelable
   Object.assign(data, opts)
   calcPos()
 }
-function calcPos(){
+function calcPos(): void {
   const wh = window.outerHeight
   const ww = window.outerWidth
-  let {y, x} = data
-  if(typeof y !== NUMBER){
+  let { y, x } = data
+  if (typeof y !== NUMBER) {
     y = wh - wh / 2
   }
-  if(typeof x !== NUMBER){
+  if (typeof x !== NUMBER) {
     x = ww - ww / 2
   }
   y -= H / 2
@@ -69,14 +57,14 @@ function calcPos(){
   data.y = y
   data.x = x
 }
-function reset(){
+function reset(): void {
   Object.assign(data, defOpt)
 }
-async function ok(){
+async function ok(): Promise<void> {
   await data.onOk()
   reset()
 }
-async function cancel(){
+async function cancel(): Promise<void> {
   await data.onCancel()
   reset()
 }
@@ -96,5 +84,4 @@ async function cancel(){
   .dialog-console
     >input
       padding 2px 10px
-
 </style>
