@@ -1,5 +1,4 @@
 import { clipboard, shell, ipcRenderer } from 'electron'
-import { join } from 'path'
 import Category from './models/category'
 import Item from './models/item'
 import getFileInfo from './utils/get-file-info'
@@ -9,9 +8,9 @@ import switchTheme from './lib/switch-theme'
 import { Themes } from './consts'
 import Config from './models/config'
 import globals from './globals'
-import { writeFile, existsSync, readFile } from 'fs'
 import eventHub from './event-hub'
 import { reactive, nextTick, watch, toRaw } from 'vue'
+import { existsFileProxy, readFileProxy, writeFileProxy } from './lib/native_fnc_proxy'
 
 const { DEFAULT_JSON_NAME } = globals
 
@@ -193,7 +192,7 @@ function getDesktopPath(): string {
 export async function importJson(): Promise<void> {
   const targetJsonFiles = await ipcHandleCommunicate<{ filePaths: string[] }>('showOpenDialog', {
     title: 'Select Myl save data json.',
-    defaultPath: join(getDesktopPath(), DEFAULT_JSON_NAME),
+    defaultPath: `${getDesktopPath()}/${DEFAULT_JSON_NAME}`,
     filters: [
       {
         name: 'Json',
@@ -205,11 +204,12 @@ export async function importJson(): Promise<void> {
     return
   }
   const [targetJson] = targetJsonFiles.filePaths
-  if (!existsSync(targetJson)) {
+  const fileExists = await existsFileProxy(targetJson)
+  if (!fileExists) {
     return eventHub.emit('notify', state.ui.FILE_NOT_FOUND)
   }
   try {
-    const jsonTxt = await new Promise<string>((r) => readFile(targetJson, 'utf8', (_e, d) => r(d)))
+    const jsonTxt = await readFileProxy(targetJson)
     const importData = JSON.parse(jsonTxt)
     await importData.reduce(async (b: Promise<void>, d: unknown) => {
       await b
@@ -239,24 +239,20 @@ export function setAlwaysOnTop(tf: boolean): void {
 export async function exportJson(): Promise<void> {
   const savePath = await ipcHandleCommunicate<{ filePath: string }>('showSaveDialog', {
     title: 'Select save filepath.',
-    defaultPath: join(getDesktopPath(), DEFAULT_JSON_NAME)
+    defaultPath: `${getDesktopPath()}/${DEFAULT_JSON_NAME}`
   })
   if (!savePath.filePath) {
     return
   }
   const exportData = await db.exportAll()
-  await new Promise((r) =>
-    writeFile(
-      savePath.filePath,
-      JSON.stringify(exportData, (key, val) => {
-        if (key === 'cateId' || key === 'id') {
-          return
-        }
-        return val
-      }),
-      'utf8',
-      r
-    )
+  await writeFileProxy(
+    savePath.filePath,
+    JSON.stringify(exportData, (key, val) => {
+      if (key === 'cateId' || key === 'id') {
+        return
+      }
+      return val
+    })
   )
   eventHub.emit('notify', state.ui.EXPORT_DONE)
 }

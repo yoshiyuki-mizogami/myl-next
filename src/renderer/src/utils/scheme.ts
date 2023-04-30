@@ -6,8 +6,7 @@ import Config from '../models/config'
 import { Sortable } from '../models/sortable'
 import { URL } from '../consts'
 import { ipcRenderer, nativeImage, NativeImage } from 'electron'
-import { join } from 'path'
-import { unlink, writeFile } from 'fs/promises'
+import { unlinkProxy, writeFileProxy } from '@renderer/lib/native_fnc_proxy'
 function sortFunc(a: Sortable, b: Sortable): number {
   return a.sort - b.sort
 }
@@ -148,10 +147,10 @@ async function getFavicon(origin: string): Promise<NativeImage | undefined> {
   }
   const tmpDir = await ipcRenderer.invoke('getTmpDir')
   const iconname = `_myl_icon_${Date.now()}.ico`
-  const tmpIconFilepath = join(tmpDir, iconname)
-  await writeFile(tmpIconFilepath, Buffer.from(res))
-  const icon = await nativeImage.createFromPath(tmpIconFilepath)
-  unlink(tmpIconFilepath)
+  const tmpIconFilepath = `${tmpDir}/${iconname}`
+  await writeFileProxy(tmpIconFilepath, Buffer.from(res).toString('base64'), 'base64')
+  const icon = nativeImage.createFromPath(tmpIconFilepath)
+  unlinkProxy(tmpIconFilepath)
   if (icon.isEmpty()) {
     return undefined
   }

@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { join } from 'node:path'
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { setIpcFunc } from './setIpcFunc'
@@ -28,11 +28,6 @@ function createWindow(): void {
     resizable: false,
     fullscreenable: false,
     maximizable: false,
-    webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true,
-      sandbox: false
-    },
     icon
   })
   mainWindow.on('ready-to-show', () => mainWindow.show())

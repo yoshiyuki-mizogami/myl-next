@@ -1,9 +1,8 @@
 import { shell } from 'electron'
-import { spawn, exec } from 'child_process'
-import { dirname } from 'path'
 import { Sortable } from './sortable'
 import { URL } from '../consts'
 import url from 'url'
+import { dirnamePath, execProcess, spawnProcess } from '@renderer/lib/native_fnc_proxy'
 export default class Item implements Sortable {
   id!: number
   cateId!: number
@@ -19,19 +18,13 @@ export default class Item implements Sortable {
   constructor(obj: unknown) {
     Object.assign(this, obj)
   }
-  call(): void|ReturnType<typeof exec> {
+  call(): void {
     if (this.by) {
-      spawn(this.by, [this.path], { detached: true })
+      spawnProcess(this.by, this.path)
       return
     }
     if (this.cmd) {
-      return exec(
-        `"${this.path}" ${this.cmd}`,
-        {
-          windowsHide: true
-        },
-        () => {}
-      )
+      return execProcess(`"${this.path}" ${this.cmd}`)
     }
     this.openItem(this.path)
   }
@@ -39,7 +32,7 @@ export default class Item implements Sortable {
     if (this.type === URL) {
       return shell.openExternal(getTopUrl(this.path))
     }
-    let parent = dirname(this.path)
+    let parent = dirnamePath(this.path)
     if (!parent) {
       parent = this.path
     }
