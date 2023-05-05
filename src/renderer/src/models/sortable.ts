@@ -1,3 +1,3 @@
-export interface Sortable{
-  sort:number
+export interface Sortable {
+  sort: number
 }

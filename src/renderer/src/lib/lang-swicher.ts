@@ -1,10 +1,11 @@
 import ja from '../lang/ja.json'
 import en from '../lang/en.json'
 const langs = {
-  ja,en
+  ja,
+  en
 }
 type Langs = keyof typeof langs
-export type LangUI = typeof ja
-export default function langSwitch(type:Langs):LangUI{
-    return langs[type]
+export type LangUI = (typeof langs)['en' | 'ja']
+export default function langSwitch(type: Langs): LangUI {
+  return langs[type]
 }

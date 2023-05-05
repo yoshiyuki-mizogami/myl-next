@@ -65,6 +65,18 @@ export function spawnProcess(program: string, arg: string): void {
   })
 }
 
+export function shellOpenExternalProxy(path: string): void {
+  ipcHandleCommunicate('open-shell-external', path)
+}
+
+export function shellOpenProxy(path: string): void {
+  ipcHandleCommunicate('open-shell', path)
+}
+
+export function readShortcutLinkProxy(path: string): Promise<{ target: string }> {
+  return ipcHandleCommunicate('read-shortcut', path)
+}
+
 export function execProcess(cmd: string): void {
   ipcHandleCommunicate('exec-process', cmd)
 }

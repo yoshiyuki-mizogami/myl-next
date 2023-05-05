@@ -1,8 +1,13 @@
-import { shell } from 'electron'
 import { Sortable } from './sortable'
 import { URL } from '../consts'
 import url from 'url'
-import { dirnamePath, execProcess, spawnProcess } from '@renderer/lib/native_fnc_proxy'
+import {
+  dirnamePath,
+  execProcess,
+  shellOpenExternalProxy,
+  shellOpenProxy,
+  spawnProcess
+} from '@renderer/lib/native_fnc_proxy'
 export default class Item implements Sortable {
   id!: number
   cateId!: number
@@ -28,9 +33,9 @@ export default class Item implements Sortable {
     }
     this.openItem(this.path)
   }
-  openParent(): void|Promise<void> {
+  openParent(): void | Promise<void> {
     if (this.type === URL) {
-      return shell.openExternal(getTopUrl(this.path))
+      return shellOpenExternalProxy(getTopUrl(this.path))
     }
     let parent = dirnamePath(this.path)
     if (!parent) {
@@ -39,8 +44,7 @@ export default class Item implements Sortable {
     this.openItem(parent)
   }
   openItem(path: string): void {
-    console.log(path)
-    shell.openPath(path)
+    shellOpenProxy(path)
   }
 }
 

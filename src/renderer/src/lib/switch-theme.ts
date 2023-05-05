@@ -1,4 +1,4 @@
-import { joinPath } from "./native_fnc_proxy"
+import { joinPath } from './native_fnc_proxy'
 
 const themeCssDir = './css/theme/'
 const theme = document.documentElement.querySelector('#theme') as HTMLAnchorElement

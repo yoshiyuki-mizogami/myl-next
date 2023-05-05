@@ -1,13 +1,11 @@
-import {
-  shell,
-  FileIconOptions,
-  ResizeOptions,
-  nativeImage,
-  NativeImage,
-  ipcRenderer
-} from 'electron'
+import { FileIconOptions, ResizeOptions, nativeImage, NativeImage, ipcRenderer } from 'electron'
 import { FILE, DIR } from '../consts'
-import { basenamePath, extnamePath, statFile } from '@renderer/lib/native_fnc_proxy'
+import {
+  basenamePath,
+  extnamePath,
+  readShortcutLinkProxy,
+  statFile
+} from '@renderer/lib/native_fnc_proxy'
 const FILEICONSIZE = 32
 const LINKSUFF = '.lnk'
 
@@ -31,7 +29,7 @@ export default async function getFileInfo(filepath: string): Promise<FileInfo> {
   const ext = extnamePath(filepath).toLowerCase()
   if (ext === LINKSUFF) {
     try {
-      const shortCut = shell.readShortcutLink(filepath)
+      const shortCut = await readShortcutLinkProxy(filepath)
       const linkTargetInfo = await getIcon(shortCut.target)
       icon = await blendShortcutIcon(linkTargetInfo)
     } catch (e) {

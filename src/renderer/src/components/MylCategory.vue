@@ -97,9 +97,9 @@ function showContextMenu(ev: MouseEvent): void {
   })
   ipcRenderer.send('show-category-menu', toRaw(state.ui))
 }
-const editor = ref(null as null | { value: HTMLInputElement })
+const editor = ref(null as null | HTMLInputElement)
 function enterEdit(): void {
-  nextTick(() => editor.value.select())
+  nextTick(() => editor.value && editor.value.select())
 }
 function updateName(event: FocusEvent | KeyboardEvent): void {
   const target = event.target as HTMLInputElement

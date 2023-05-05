@@ -17,17 +17,17 @@
 import { nextTick, ref, watch } from 'vue'
 import { addNewCategory, setNewCategoryDialog, state } from '../store'
 import OverlayLayer from './OverlayLayer.vue'
-const input = ref(null)
+const input = ref(null as null | HTMLInputElement)
 watch(
   () => state.showNewCategoryDialog,
   (to) => {
     if (!to) {
       return
     }
-    nextTick(() => input.value.focus())
+    nextTick(() => input.value && input.value.focus())
   }
 )
-function doAddNewCategory(ev: KeyboardEvent): void{
+function doAddNewCategory(ev: KeyboardEvent): void {
   const target = ev.target as HTMLInputElement
   const name = target.value.trim() as string
   if (!name) {
@@ -36,7 +36,7 @@ function doAddNewCategory(ev: KeyboardEvent): void{
   addNewCategory(name)
   closeMe()
 }
-function closeMe(): void{
+function closeMe(): void {
   setNewCategoryDialog(false)
 }
 </script>
