@@ -32,10 +32,11 @@ import {
   ref
 } from 'vue'
 import hub from '../event-hub'
-import { ipcRenderer } from 'electron'
 import { moveItem, openColorSetter, removeCategory, state, updateCategoryName } from '../store'
-import { nextTick } from 'process'
+import { nextTick } from 'vue'
 import Category from '../models/category'
+const { ipcRenderer } = (window as any)
+
 defineEmits(['select-category'])
 const thisState = reactive({
   editMode: false

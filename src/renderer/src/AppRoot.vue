@@ -47,7 +47,6 @@
 <script setup lang="ts">
 import { nextTick, watch, ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
-
 import MylCategory from './components/MylCategory.vue'
 import MylItem from './components/MylItem.vue'
 import NewCategory from './components/NewCategory.vue'
@@ -75,9 +74,10 @@ import {
   activateCategoryBykeydown
 } from './store'
 import SetColor from './components/SetColor.vue'
+
 watch(
   () => state.selectedCategory,
-  (to) => getItems(to!.id)
+  (to) => to && getItems(to.id)
 )
 watch(
   () => state.items,

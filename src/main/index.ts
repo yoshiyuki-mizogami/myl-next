@@ -28,7 +28,10 @@ function createWindow(): void {
     resizable: false,
     fullscreenable: false,
     maximizable: false,
-    icon
+    icon,
+    webPreferences:{
+      preload: join(__dirname, '../preload/index.js')
+    }
   })
   mainWindow.on('ready-to-show', () => mainWindow.show())
   mainWindow.webContents.setWindowOpenHandler((details) => {

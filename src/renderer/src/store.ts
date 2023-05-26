@@ -1,4 +1,3 @@
-import { clipboard, shell, ipcRenderer } from 'electron'
 import Category from './models/category'
 import Item from './models/item'
 import getFileInfo from './utils/get-file-info'
@@ -11,6 +10,7 @@ import globals from './globals'
 import eventHub from './event-hub'
 import { reactive, nextTick, watch, toRaw } from 'vue'
 import { existsFileProxy, readFileProxy, writeFileProxy } from './lib/native_fnc_proxy'
+const { clipboard, shell, ipcRenderer } = (window as any)
 
 const { DEFAULT_JSON_NAME } = globals
 

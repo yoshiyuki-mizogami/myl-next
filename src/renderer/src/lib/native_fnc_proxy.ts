@@ -1,4 +1,4 @@
-import { ipcRenderer } from 'electron'
+const ipcRenderer = (window as any).ipcRenderer
 import type { Stats } from 'node:fs'
 
 export function joinPath(base: string, add: string): string {

@@ -5,8 +5,8 @@ import { getIcon, RESIZE_OPT } from './get-file-info'
 import Config from '../models/config'
 import { Sortable } from '../models/sortable'
 import { URL } from '../consts'
-import { ipcRenderer, nativeImage, NativeImage } from 'electron'
 import { unlinkProxy, writeFileProxy } from '@renderer/lib/native_fnc_proxy'
+const { ipcRenderer, nativeImage} = (window as any)
 function sortFunc(a: Sortable, b: Sortable): number {
   return a.sort - b.sort
 }

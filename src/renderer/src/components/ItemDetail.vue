@@ -24,13 +24,14 @@
 </template>
 <script setup lang="ts">
 import { reactive, computed } from 'vue'
-import { ipcRenderer } from 'electron'
 import Item from '../models/item'
 import EventHub from '../event-hub'
 import { FILE } from '../consts'
 import { updateItem } from '../store'
 import OverlayLayer from './OverlayLayer.vue'
 import { state } from '../store'
+const { ipcRenderer } = (window as any)
+
 const DEF = {}
 Object.seal(DEF)
 const data = reactive({

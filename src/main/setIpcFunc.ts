@@ -1,6 +1,6 @@
-import { Menu, MenuItem, dialog, ipcMain, BrowserWindow, FileIconOptions } from 'electron'
+import { Menu, MenuItem, dialog, ipcMain, BrowserWindow, FileIconOptions, App } from 'electron'
 
-export function setIpcFunc(app: Electron.App, mainWindow: BrowserWindow): void {
+export function setIpcFunc(app: App, mainWindow: BrowserWindow): void {
   ipcMain.handle('getrootdir', () => __dirname)
 
   ipcMain.handle('getVersion', () => app.getVersion())
