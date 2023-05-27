@@ -333,12 +333,3 @@ function ipcCommunicate(channel: string, data: unknown = undefined): void {
 async function ipcHandleCommunicate<T>(channel: string, data: unknown = undefined): Promise<T> {
   return await ipcRenderer.invoke(channel, data)
 }
-
-// watch(
-//   () => state.config.lang,
-//   () => langSwitchFn(state.config.lang)
-// )
-// watch(
-//   () => state.config.theme,
-//   () => selectTheme(state.config.theme)
-// )
