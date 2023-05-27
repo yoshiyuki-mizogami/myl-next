@@ -1,4 +1,4 @@
-const ipcRenderer = (window as any).ipcRenderer
+const { ipcRenderer } = window
 import type { Stats } from 'node:fs'
 
 export function joinPath(base: string, add: string): string {

@@ -1,3 +1,4 @@
+import { FileIconOptions, NativeImage, ResizeOptions } from 'electron'
 import { FILE, DIR } from '../consts'
 import {
   basenamePath,
@@ -5,7 +6,7 @@ import {
   readShortcutLinkProxy,
   statFile
 } from '@renderer/lib/native_fnc_proxy'
-const { FileIconOptions, ResizeOptions, nativeImage, NativeImage, ipcRenderer } = (window as any)
+const { nativeImage, ipcRenderer } = window
 const FILEICONSIZE = 32
 const LINKSUFF = '.lnk'
 

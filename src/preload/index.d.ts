@@ -1,8 +1,7 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
-
+import { nativeImage, ipcRenderer } from 'electron'
 declare global {
   interface Window {
-    electron: ElectronAPI
-    api: unknown
+    ipcRenderer: ipcRenderer
+    nativeImage: ativeImage
   }
 }

@@ -30,7 +30,7 @@ import { FILE } from '../consts'
 import { updateItem } from '../store'
 import OverlayLayer from './OverlayLayer.vue'
 import { state } from '../store'
-const { ipcRenderer } = window as any
+const { ipcRenderer } = window
 
 const DEF = {}
 Object.seal(DEF)

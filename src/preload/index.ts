@@ -1,7 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron'
-
-// Custom APIs for renderer
-const api = {}
+import { contextBridge, ipcRenderer, nativeImage } from 'electron'
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -9,6 +6,7 @@ const api = {}
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('ipcRenderer', ipcRenderer)
+    contextBridge.exposeInMainWorld('nativeImage', nativeImage)
   } catch (error) {
     console.error(error)
   }

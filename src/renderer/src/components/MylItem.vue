@@ -14,7 +14,7 @@ import { computed, defineProps, toRaw } from 'vue'
 import hub from '../event-hub'
 import Item from '../models/item'
 import { copyItemPath, removeItem, setDragItem, showItemDetail, state } from '../store'
-const { ipcRenderer } = window as any
+const { ipcRenderer } = window
 
 const props = defineProps({
   item: {

@@ -35,7 +35,7 @@ import hub from '../event-hub'
 import { moveItem, openColorSetter, removeCategory, state, updateCategoryName } from '../store'
 import { nextTick } from 'vue'
 import Category from '../models/category'
-const { ipcRenderer } = window as any
+const { ipcRenderer } = window
 
 defineEmits(['select-category'])
 const thisState = reactive({
