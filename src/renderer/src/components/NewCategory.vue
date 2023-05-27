@@ -1,5 +1,5 @@
 <template>
-  <OverlayLayer v-if="state.showNewCategoryDialog">
+  <OverlayLayer v-if="appState.showNewCategoryDialog">
     <div class="new-category">
       <div class="icon-close close-btn" @click="closeMe" />
       Input new category name
@@ -7,7 +7,7 @@
         ref="input"
         type="text"
         class="new-category-input"
-        :placeholder="state.ui.INPUT_NEW_CATEGORY"
+        :placeholder="appState.ui.INPUT_NEW_CATEGORY"
         @keydown.enter="doAddNewCategory"
       />
     </div>
@@ -15,11 +15,12 @@
 </template>
 <script setup lang="ts">
 import { nextTick, ref, watch } from 'vue'
-import { addNewCategory, setNewCategoryDialog, state } from '../store'
 import OverlayLayer from './OverlayLayer.vue'
+import { useAppState } from '@renderer/state'
+const appState = useAppState()
 const input = ref(null as null | HTMLInputElement)
 watch(
-  () => state.showNewCategoryDialog,
+  () => appState.showNewCategoryDialog,
   (to) => {
     if (!to) {
       return
@@ -33,11 +34,11 @@ function doAddNewCategory(ev: KeyboardEvent): void {
   if (!name) {
     return
   }
-  addNewCategory(name)
+  appState.addNewCategory(name)
   closeMe()
 }
 function closeMe(): void {
-  setNewCategoryDialog(false)
+  appState.setNewCategoryDialog(false)
 }
 </script>
 

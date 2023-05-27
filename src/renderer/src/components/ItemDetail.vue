@@ -3,20 +3,20 @@
     <div class="item-detail">
       <div class="close-btn icon-close" @click="hideMe" />
       <div class="prop">
-        <span class="prop-title">{{ state.ui.ITEM_NAME }}</span>
+        <span class="prop-title">{{ appState.ui.ITEM_NAME }}</span>
         <input v-model.lazy="data.data.name" type="text" class="prop-text" />
       </div>
       <div class="prop">
-        <span class="prop-title">{{ state.ui.ITEM_PATH }}</span>
+        <span class="prop-title">{{ appState.ui.ITEM_PATH }}</span>
         <input v-model.lazy="data.data.path" type="text" class="prop-text" />
       </div>
       <div class="prop">
-        <span class="prop-title">{{ state.ui.BY }}</span>
+        <span class="prop-title">{{ appState.ui.BY }}</span>
         <input v-model.lazy="data.data.by" type="text" class="prop-text with-text" readonly />
-        <input type="button" class="with-select" :value="state.ui.SELECT" @click="selectWith" />
+        <input type="button" class="with-select" :value="appState.ui.SELECT" @click="selectWith" />
       </div>
       <div v-if="isFile" class="prop">
-        <span class="prop-title">{{ state.ui.ARG }}</span>
+        <span class="prop-title">{{ appState.ui.ARG }}</span>
         <input v-model.lazy="data.data.cmd" type="text" class="prop-text" />
       </div>
     </div>
@@ -27,9 +27,9 @@ import { reactive, computed } from 'vue'
 import Item from '../models/item'
 import EventHub from '../event-hub'
 import { FILE } from '../consts'
-import { updateItem } from '../store'
 import OverlayLayer from './OverlayLayer.vue'
-import { state } from '../store'
+import { useAppState } from '@renderer/state'
+const appState = useAppState()
 const { ipcRenderer } = window
 
 const DEF = {}
@@ -47,12 +47,12 @@ function showMe(item: Item): void {
 }
 function hideMe(): void {
   data.show = false
-  updateItem(data.data)
+  appState.updateItem(data.data)
   data.data = DEF as Item
 }
 async function selectWith(): Promise<string | void> {
   const files = await ipcRenderer.invoke('showOpenDialog', {
-    title: state.ui.SELECT_BOOT_BY
+    title: appState.ui.SELECT_BOOT_BY
   })
   if (!files.filePaths.length) {
     return (data.data.by = '')

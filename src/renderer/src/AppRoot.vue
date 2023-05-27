@@ -1,35 +1,35 @@
 <template>
   <div ref="app" class="whole">
-    <div v-if="state.loading" class="loading" />
+    <div v-if="appState.loading" class="loading" />
     <div class="header">
       <div class="icon-plus header-btn new-cate-btn" @click="addNewCategory" />
       <div
         class="icon-sort-amount-asc header-btn switch-sortmode"
-        :class="{ sortMode: state.sortMode }"
-        @click="switchSortMode"
+        :class="{ sortMode: appState.sortMode }"
+        @click="appState.switchSortMode"
       />
       <div class="icon-gear header-btn setting" @click="openSetting" />
       <div
         class="icon-clone header-btn aot-btn"
-        :class="{ aot: state.config.aot }"
+        :class="{ aot: appState.config.aot }"
         @click="doToggleAOT"
       />
       <div class="icon-sign-out header-btn close-app" @click="close" />
     </div>
     <div class="content" @drop.prevent="dropAny" @dragenter.prevent @dragover.prevent>
       <div class="categories">
-        <draggable v-model="state.categories" item-key="id">
+        <draggable v-model="appState.categories" item-key="id">
           <template #item="{ element }">
             <MylCategory
-              :selected="state.selectedCategory === element"
+              :selected="appState.selectedCategory === element"
               :category="element"
-              @select-category="state.selectedCategory = $event"
+              @select-category="appState.selectedCategory = $event"
             />
           </template>
         </draggable>
       </div>
       <div class="items">
-        <draggable v-model="state.items" :move="setSelectedCategory" item-key="id">
+        <draggable v-model="appState.items" :move="appState.setSelectedCategory" item-key="id">
           <template #item="{ element }">
             <myl-item :item="element" />
           </template>
@@ -55,54 +55,39 @@ import MylNotify from './components/MylNotify.vue'
 import eventHub from './event-hub'
 import ItemDetail from './components/ItemDetail.vue'
 import AppSetting from './components/AppSetting.vue'
-import {
-  switchSortMode,
-  state,
-  init,
-  getItems,
-  setNewCategoryDialog,
-  toggleAOT,
-  addUrl,
-  setLoading,
-  addFile,
-  setSelectedCategory,
-  setSize,
-  setAlwaysOnTop,
-  updateItemsOrder,
-  updateCategoriesOrder,
-  isUrl,
-  activateCategoryBykeydown
-} from './store'
+
 import SetColor from './components/SetColor.vue'
+import { useAppState } from './state'
+const appState = useAppState()
 watch(
-  () => state.selectedCategory,
-  (to) => to && getItems(to.id)
+  () => appState.selectedCategory,
+  (to) => to && appState.getItems(to.id)
 )
 watch(
-  () => state.items,
-  (to) => updateItemsOrder(to)
+  () => appState.items,
+  (to) => appState.updateItemsOrder(to)
 )
 watch(
-  () => state.categories,
-  (to) => updateCategoriesOrder(to)
+  () => appState.categories,
+  (to) => appState.updateCategoriesOrder(to)
 )
 
 onMounted(async () => {
-  await init()
+  await appState.init()
   eventHub.on('adjust', adjust)
   setTimeout(() => adjust(), 100)
   setShortcut()
 })
 
 function addNewCategory(): void {
-  setNewCategoryDialog(true)
+  appState.setNewCategoryDialog(true)
 }
 function close(): void {
   window.close()
 }
 function doToggleAOT(): void {
-  toggleAOT()
-  setAlwaysOnTop(state.config.aot)
+  appState.toggleAOT()
+  appState.setAlwaysOnTop(appState.config.aot)
 }
 async function dropAny(e: DragEvent): Promise<void> {
   const { dataTransfer } = e as { dataTransfer: DataTransfer }
@@ -112,30 +97,30 @@ async function dropAny(e: DragEvent): Promise<void> {
   }
   let files = Array.from(dataTransfer.files)
   const url = dataTransfer.getData('text/plain')
-  const thisIsUrl = isUrl.test(url)
+  const thisIsUrl = appState.isUrl(url)
   if (thisIsUrl) {
     const name = ((): string => {
       return files.length > 0 ? files[0].name : ''
     })()
-    return await addUrl({ url, name })
+    return await appState.addUrl({ url, name })
   }
   files = files.filter((f) => {
-    return !state.dragItem || f.path !== state.dragItem.path
+    return !appState.dragItem || f.path !== appState.dragItem.path
   })
   if (!files.length) {
     return
   }
-  setLoading(true)
+  appState.setLoading(true)
   await files.reduce((b, f) => {
-    return b.then(async () => await addFile({ filepath: f.path }))
+    return b.then(async () => await appState.addFile({ filepath: f.path }))
   }, Promise.resolve())
-  setLoading(false)
+  appState.setLoading(false)
 }
 const app = ref(null)
 function adjust(): void {
   nextTick(() => {
     const { clientHeight, clientWidth } = app.value as unknown as HTMLDivElement
-    setSize(clientHeight, clientWidth)
+    appState.setSize(clientHeight, clientWidth)
   })
 }
 function openSetting(): void {
@@ -148,7 +133,7 @@ function setShortcut(): void {
     if (tg.select !== undefined) {
       return
     }
-    activateCategoryBykeydown(ev)
+    appState.activateCategoryBykeydown(ev)
   })
 }
 </script>

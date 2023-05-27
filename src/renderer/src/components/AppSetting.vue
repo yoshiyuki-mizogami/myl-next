@@ -3,37 +3,37 @@
     <div class="setting-layer">
       <div class="icon-close close-btn" @click="close" />
       <div class="setting-title">
-        Myl <span v-once class="version">ver {{ state.version }}</span> Setting
+        Myl <span v-once class="version">ver {{ appState.version }}</span> Setting
       </div>
       <ul class="setting-items">
         <li>
           <div class="setting-name">
-            {{ state.ui.LANG }}
+            {{ appState.ui.LANG }}
           </div>
           <div class="setting-val">
             <label
-              :class="{ selected: state.config.lang === 'en' }"
-              @click="langSwitch(Langs.EN)"
-              >{{ state.ui.EN }}</label
-            ><input :checked="state.config.lang === 'en'" type="radio" name="lang" /><label
-              :class="{ selected: state.config.lang === 'ja' }"
-              @click="langSwitch(Langs.JA)"
-              >{{ state.ui.JA }}</label
+              :class="{ selected: appState.config.lang === 'en' }"
+              @click="appState.langSwitch(Langs.EN)"
+              >{{ appState.ui.EN }}</label
+            ><input :checked="appState.config.lang === 'en'" type="radio" name="lang" /><label
+              :class="{ selected: appState.config.lang === 'ja' }"
+              @click="appState.langSwitch(Langs.JA)"
+              >{{ appState.ui.JA }}</label
             >
-            <input :checked="state.config.lang === 'ja'" type="radio" name="lang" />
+            <input :checked="appState.config.lang === 'ja'" type="radio" name="lang" />
           </div>
         </li>
         <li>
           <div class="setting-name">
-            {{ state.ui.THEME }}
+            {{ appState.ui.THEME }}
           </div>
           <div class="setting-val" style="text-align: center">
             <div
-              v-for="(t, k) in state.themes"
+              v-for="(t, k) in appState.themes"
               :key="k"
               class="theme"
-              :class="{ selected: state.config.theme === k }"
-              @click="selectTheme(k)"
+              :class="{ selected: appState.config.theme === k }"
+              @click="appState.selectTheme(k)"
             >
               {{ t }}
             </div>
@@ -41,13 +41,13 @@
         </li>
         <li>
           <div class="setting-item">
-            <input type="button" :value="state.ui.IMPORT" @click="importJson" />
-            <input type="button" :value="state.ui.EXPORT" @click="exportJson" />
+            <input type="button" :value="appState.ui.IMPORT" @click="appState.importJson" />
+            <input type="button" :value="appState.ui.EXPORT" @click="appState.exportJson" />
           </div>
         </li>
         <li>
           <div class="setting-item">
-            <a href="#" @click.prevent="openHP">{{ state.ui.CHECK_UPDATE }}</a>
+            <a href="#" @click.prevent="appState.openHP">{{ appState.ui.CHECK_UPDATE }}</a>
           </div>
         </li>
       </ul>
@@ -57,8 +57,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Hub from '../event-hub'
-import { state, Langs, exportJson, importJson, langSwitch, selectTheme, openHP } from '../store'
+import { useAppState, Langs } from '@renderer/state'
 import OverlayLayer from './OverlayLayer.vue'
+const appState = useAppState()
 const show = ref(false)
 Hub.on('open-setting', () => (show.value = true))
 function close(): void {

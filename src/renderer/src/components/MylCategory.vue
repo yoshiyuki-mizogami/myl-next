@@ -32,9 +32,10 @@ import {
   ref
 } from 'vue'
 import hub from '../event-hub'
-import { moveItem, openColorSetter, removeCategory, state, updateCategoryName } from '../store'
 import { nextTick } from 'vue'
 import Category from '../models/category'
+import { useAppState } from '@renderer/state'
+const appState = useAppState()
 const { ipcRenderer } = window
 
 defineEmits(['select-category'])
@@ -60,7 +61,7 @@ watchEffect(() => {
 })
 
 function dragStartCategory(ev: DragEvent): void {
-  if (!state.sortMode) {
+  if (!appState.sortMode) {
     ev.stopPropagation()
     ev.preventDefault()
     return
@@ -69,23 +70,23 @@ function dragStartCategory(ev: DragEvent): void {
   dataTransfer.setData('myl/category', '1')
 }
 async function showContextMenu(ev: MouseEvent): Promise<void> {
-  const select = await ipcRenderer.invoke('show-category-menu', toRaw(state.ui))
+  const select = await ipcRenderer.invoke('show-category-menu', toRaw(appState.ui))
   switch (select) {
     case 'rename': {
       thisState.editMode = true
       break
     }
     case 'openColorSetter': {
-      openColorSetter(props.category)
+      appState.openColorSetter(props.category)
       break
     }
     case 'delete': {
       hub.emit('show-dialog', {
         y: ev.clientY,
         x: ev.clientX,
-        message: state.ui.CONFIRM_DELETE,
+        message: appState.ui.CONFIRM_DELETE,
         onOk: () => {
-          removeCategory(props.category)
+          appState.removeCategory(props.category)
         },
         cancelable: true
       })
@@ -107,8 +108,8 @@ function updateName(event: FocusEvent | KeyboardEvent): void {
   if (newName === props.category.name) {
     return
   }
-  hub.emit('notify', state.ui.NAME_UPDATED)
-  updateCategoryName(props.category, newName)
+  hub.emit('notify', appState.ui.NAME_UPDATED)
+  appState.updateCategoryName(props.category, newName)
 }
 async function dropToCategory(ev: DragEvent): Promise<void> {
   console.log(ev)
@@ -123,7 +124,7 @@ async function dropToCategory(ev: DragEvent): Promise<void> {
     return
   }
   ev.stopPropagation()
-  return moveItem(props.category)
+  return appState.moveItem(props.category)
 }
 </script>
 <style lang="scss">

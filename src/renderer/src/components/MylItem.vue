@@ -13,7 +13,8 @@
 import { computed, defineProps, toRaw } from 'vue'
 import hub from '../event-hub'
 import Item from '../models/item'
-import { copyItemPath, removeItem, setDragItem, showItemDetail, state } from '../store'
+import { useAppState } from '@renderer/state'
+const appState = useAppState()
 const { ipcRenderer } = window
 
 const props = defineProps({
@@ -27,9 +28,9 @@ function showContentMenu(ev: MouseEvent): void {
   contextMenu(ev, props.item)
 }
 function setDrag(ev: DragEvent): void {
-  setDragItem(props.item)
+  appState.setDragItem(props.item)
   const dataTransfer = ev.dataTransfer as DataTransfer
-  if (state.sortMode) {
+  if (appState.sortMode) {
     dataTransfer.setData('text/plain', props.item.path)
     dataTransfer.setData('myl/item', '1')
     return
@@ -46,7 +47,7 @@ function setDrag(ev: DragEvent): void {
 }
 async function contextMenu(ev: MouseEvent, item: Item): Promise<void> {
   const SEND_EVENT_NAME = 'show-item-menu'
-  const type = await ipcRenderer.invoke(SEND_EVENT_NAME, toRaw(state.ui))
+  const type = await ipcRenderer.invoke(SEND_EVENT_NAME, toRaw(appState.ui))
   console.log(type)
   switch (type) {
     case 'openParent': {
@@ -54,11 +55,11 @@ async function contextMenu(ev: MouseEvent, item: Item): Promise<void> {
       break
     }
     case 'copy': {
-      copyItemPath(item)
+      appState.copyItemPath(item)
       break
     }
     case 'edit': {
-      showItemDetail(item)
+      appState.showItemDetail(item)
       break
     }
     case 'remove': {
@@ -70,9 +71,9 @@ async function contextMenu(ev: MouseEvent, item: Item): Promise<void> {
         y: ev.clientY,
         x: ev.clientX,
         message: `${itemName}
-${state.ui.CONFIRM_REMOVE}`,
+${appState.ui.CONFIRM_REMOVE}`,
         onOk() {
-          removeItem(item)
+          appState.removeItem(item)
         },
         cancelable: true
       })

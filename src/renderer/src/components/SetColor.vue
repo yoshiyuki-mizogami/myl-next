@@ -25,10 +25,11 @@
 
 <script setup lang="ts">
 import Category from '../models/category'
-import { updateCategoryColor } from '../store'
 import { reactive, computed, toRaw } from 'vue'
 import eventHub from '../event-hub'
 import OverlayLayer from './OverlayLayer.vue'
+import { useAppState } from '@renderer/state'
+const appState = useAppState()
 const DEFAULT_COLOR = {
   r: 255,
   g: 255,
@@ -51,13 +52,13 @@ const toColorValue = computed(() => {
 
 async function submit(): Promise<void> {
   state.category!.color = toRaw(state.color)
-  await updateCategoryColor(state.category!)
+  await appState.updateCategoryColor(state.category!)
   close()
 }
 
 async function clear(): Promise<void> {
   state.category!.color = undefined
-  await updateCategoryColor(state.category!)
+  await appState.updateCategoryColor(state.category!)
   close()
 }
 
