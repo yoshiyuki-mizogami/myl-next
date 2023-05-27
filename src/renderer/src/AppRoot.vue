@@ -8,7 +8,7 @@
         :class="{ sortMode: appState.sortMode }"
         @click="appState.switchSortMode"
       />
-      <div class="icon-gear header-btn setting" @click="openSetting" />
+      <div class="icon-gear header-btn setting" @click="appState.setSetting(true)" />
       <div
         class="icon-clone header-btn aot-btn"
         :class="{ aot: appState.config.aot }"
@@ -45,14 +45,13 @@
   </div>
 </template>
 <script setup lang="ts">
-import { nextTick, watch, ref, onMounted } from 'vue'
+import { watch, ref, onMounted } from 'vue'
 import draggable from 'vuedraggable'
 import MylCategory from './components/MylCategory.vue'
 import MylItem from './components/MylItem.vue'
 import NewCategory from './components/NewCategory.vue'
 import MylDialog from './components/MylDialog.vue'
 import MylNotify from './components/MylNotify.vue'
-import eventHub from './event-hub'
 import ItemDetail from './components/ItemDetail.vue'
 import AppSetting from './components/AppSetting.vue'
 
@@ -71,11 +70,10 @@ watch(
   () => appState.categories,
   (to) => appState.updateCategoriesOrder(to)
 )
-
+const app = ref(null as null | HTMLDivElement)
 onMounted(async () => {
-  await appState.init()
-  eventHub.on('adjust', adjust)
-  setTimeout(() => adjust(), 100)
+  await appState.init(app.value!)
+  setTimeout(() => appState.adjust())
   setShortcut()
 })
 
@@ -115,16 +113,6 @@ async function dropAny(e: DragEvent): Promise<void> {
     return b.then(async () => await appState.addFile({ filepath: f.path }))
   }, Promise.resolve())
   appState.setLoading(false)
-}
-const app = ref(null)
-function adjust(): void {
-  nextTick(() => {
-    const { clientHeight, clientWidth } = app.value as unknown as HTMLDivElement
-    appState.setSize(clientHeight, clientWidth)
-  })
-}
-function openSetting(): void {
-  eventHub.emit('open-setting')
 }
 
 function setShortcut(): void {

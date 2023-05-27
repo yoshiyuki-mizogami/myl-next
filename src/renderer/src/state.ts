@@ -28,6 +28,8 @@ export enum Langs {
   EN = 'en',
   JA = 'ja'
 }
+const db = new MylDB()
+let appElement!: HTMLDivElement
 export const useAppState = defineStore('mylState', {
   state: () => {
     return {
@@ -38,17 +40,27 @@ export const useAppState = defineStore('mylState', {
       showNewCategoryDialog: false,
       selectedCategory: null as null | Category,
       config: new Config(),
-      db: new MylDB(),
       configRaw: null as Config | null,
       loading: false,
       ui: {} as LangUI,
       sortMode: false,
-      dragItem: null as null | Item
+      dragItem: null as null | Item,
+      showSetting: false,
+      detailItemTarget: null as null | Item
     }
   },
   actions: {
+    adjust(){
+      nextTick(() => {
+        const { clientHeight, clientWidth } = appElement
+        this.setSize(clientHeight, clientWidth)
+      })
+    },
     isUrl(s: string) {
       return /^https?:\/\//.test(s)
+    },
+    setSetting(tf: boolean){
+      this.showSetting = tf
     },
     switchSortMode(): void {
       this.sortMode = !this.sortMode
@@ -76,19 +88,21 @@ export const useAppState = defineStore('mylState', {
       this.dragItem = null
       const ind = this.items.indexOf(dragItem!)
       this.items.splice(ind, 1)
-      await this.db.moveItem(dragItem!, destCategory.id)
+      await db.moveItem(dragItem!, destCategory.id)
     },
-    async init(): Promise<void> {
+    async init(_appElement: HTMLDivElement): Promise<void> {
+      appElement = _appElement
       this.loadConfig()
       this.version = await ipcRenderer.invoke('getVersion')
-      this.categories = await this.db.getCategories()
+      this.categories = await db.getCategories()
       this.selectedCategory = this.categories[0]
       this.ui = langSwitchFn(this.config.lang)
+      this.selectTheme(this.config.theme)
       ipcCommunicate('showWindow')
     },
     async loadConfig(): Promise<void> {
       try {
-        const configRaw = await this.db.loadConfig()
+        const configRaw = await db.loadConfig()
         if (
           !configRaw.aot === undefined ||
           configRaw.lang === undefined ||
@@ -104,7 +118,7 @@ export const useAppState = defineStore('mylState', {
       }
     },
     async saveConfig(): Promise<void> {
-      return this.db.saveConfig(this.configRaw!)
+      return db.saveConfig(this.configRaw!)
     },
     async langSwitch(lang: Langs): Promise<void> {
       this.config.lang = lang
@@ -120,31 +134,31 @@ export const useAppState = defineStore('mylState', {
       this.items = newOrders
       newOrders.forEach((o, i) => {
         o.sort = i
-        this.db.items.update(o.id, { sort: o.sort })
+        db.items.update(o.id, { sort: o.sort })
       })
     },
     updateCategoriesOrder(newOrders: Category[]): void {
       this.categories = newOrders
       newOrders.forEach((o, i) => {
         o.sort = i
-        this.db.categories.update(o.id, { sort: o.sort })
+        db.categories.update(o.id, { sort: o.sort })
       })
     },
     updateCategoryName(cate: Category, newName: string): Promise<number> {
       cate.name = newName
-      return this.db.categories.update(cate.id, { name: cate.name })
+      return db.categories.update(cate.id, { name: cate.name })
     },
     updateCategoryColor(cate: Category): Promise<number> {
-      return this.db.categories.update(cate.id, { color: toRaw(cate.color) })
+      return db.categories.update(cate.id, { color: toRaw(cate.color) })
     },
     async addNewCategory(categoryName: string): Promise<void> {
-      const cate: Category = await this.db.addCategory(categoryName)
+      const cate: Category = await db.addCategory(categoryName)
       this.categories.push(cate)
       this.selectedCategory = cate
       nextTick(() => eventHub.emit('adjust'))
     },
     async removeCategory(cate: Category): Promise<void> {
-      await this.db.removeCategory(cate)
+      await db.removeCategory(cate)
       const removeIndex = this.categories.findIndex((c) => c === cate)
       this.categories.splice(removeIndex, 1)
       if (this.selectedCategory === cate) {
@@ -153,7 +167,7 @@ export const useAppState = defineStore('mylState', {
       nextTick(() => eventHub.emit('adjust'))
     },
     async getItems(cateId: number): Promise<void> {
-      const items = await this.db.getItems(cateId)
+      const items = await db.getItems(cateId)
       this.items = items
       nextTick(() => eventHub.emit('adjust'))
     },
@@ -161,7 +175,7 @@ export const useAppState = defineStore('mylState', {
       shellOpenExternalProxy(globals.HP_URL)
     },
     async removeItem(item: Item): Promise<void> {
-      await this.db.removeItem(item)
+      await db.removeItem(item)
       const removeIndex = this.items.findIndex((i) => i === item)
       this.items.splice(removeIndex, 1)
       nextTick(() => eventHub.emit('adjust'))
@@ -171,7 +185,7 @@ export const useAppState = defineStore('mylState', {
       const items = this.items
       const fileInfo = await getFileInfo(filepath)
       fileInfo.cateId = cateId
-      const fileItem = await this.db.addItem(fileInfo)
+      const fileItem = await db.addItem(fileInfo)
       items.push(fileItem)
       nextTick(() => eventHub.emit('adjust'))
     },
@@ -180,7 +194,7 @@ export const useAppState = defineStore('mylState', {
         eventHub.emit('notify', this.ui.INVALID_URL)
         return
       }
-      const urlItem = await this.db.addUrlItem(name, url, this.selectedCategory!.id)
+      const urlItem = await db.addUrlItem(name, url, this.selectedCategory!.id)
       this.items.push(urlItem)
       nextTick(() => eventHub.emit('adjust'))
     },
@@ -188,10 +202,10 @@ export const useAppState = defineStore('mylState', {
       writeClipboardProxy(item.path)
     },
     async showItemDetail(item: Item): Promise<void> {
-      eventHub.emit('show-item-detail', item)
+      this.detailItemTarget = item
     },
     async updateItem(item: Item): Promise<number> {
-      return this.db.items.update(item.id, item)
+      return db.items.update(item.id, item)
     },
     async importJson(): Promise<void> {
       const desktop = await getDesktopPathProxy()
@@ -222,11 +236,11 @@ export const useAppState = defineStore('mylState', {
         await importData.reduce(async (b: Promise<void>, d: unknown) => {
           await b
           const { category, items } = d as { category: Category; items: Item[] }
-          const cate: Category = await this.db.addCategory(category.name)
+          const cate: Category = await db.addCategory(category.name)
           await items.reduce(async (ib: Promise<void>, i) => {
             await ib
             i.cateId = cate.id
-            await this.db.addItem(i)
+            await db.addItem(i)
           }, Promise.resolve())
           this.categories.push(cate)
         }, Promise.resolve())
@@ -251,7 +265,7 @@ export const useAppState = defineStore('mylState', {
       if (!savePath.filePath) {
         return
       }
-      const exportData = await this.db.exportAll()
+      const exportData = await db.exportAll()
       await writeFileProxy(
         savePath.filePath,
         JSON.stringify(exportData, (key, val) => {
@@ -262,9 +276,6 @@ export const useAppState = defineStore('mylState', {
         })
       )
       eventHub.emit('notify', this.ui.EXPORT_DONE)
-    },
-    openColorSetter(c: Category): void {
-      eventHub.emit('openColorSetter', c)
     },
     getActivateCategoryStr: ((): ((categoryName: string) => void) => {
       const clearTime = 250
@@ -315,7 +326,6 @@ function ipcCommunicate(channel: string, data: unknown = undefined): void {
 async function ipcHandleCommunicate<T>(channel: string, data: unknown = undefined): Promise<T> {
   return await ipcRenderer.invoke(channel, data)
 }
-
 
 // watch(
 //   () => state.config.lang,

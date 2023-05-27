@@ -1,5 +1,5 @@
 <template>
-  <OverlayLayer v-if="show">
+  <OverlayLayer v-if="appState.showSetting">
     <div class="setting-layer">
       <div class="icon-close close-btn" @click="close" />
       <div class="setting-title">
@@ -55,15 +55,11 @@
   </OverlayLayer>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
-import Hub from '../event-hub'
 import { useAppState, Langs } from '@renderer/state'
 import OverlayLayer from './OverlayLayer.vue'
 const appState = useAppState()
-const show = ref(false)
-Hub.on('open-setting', () => (show.value = true))
 function close(): void {
-  show.value = false
+  appState.setSetting(false)
 }
 </script>
 <style lang="scss">

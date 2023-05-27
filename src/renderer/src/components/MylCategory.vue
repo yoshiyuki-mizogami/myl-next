@@ -31,14 +31,20 @@ import {
   watchEffect,
   ref
 } from 'vue'
-import hub from '../event-hub'
 import { nextTick } from 'vue'
 import Category from '../models/category'
 import { useAppState } from '@renderer/state'
+import { useDialog } from '@renderer/lib/dialog-store'
+import { useNotify } from '@renderer/lib/notify-store'
+import { useColorSetter } from '@renderer/lib/color-setter-store'
 const appState = useAppState()
+const dialog = useDialog()
+const notify = useNotify()
+const colorSetter = useColorSetter()
 const { ipcRenderer } = window
 
 defineEmits(['select-category'])
+
 const thisState = reactive({
   editMode: false
 })
@@ -49,6 +55,7 @@ const props = defineProps({
   },
   selected: Boolean
 })
+
 const backgroundColor = computed(() => {
   const { color: c } = props.category
   if (!c) {
@@ -77,11 +84,11 @@ async function showContextMenu(ev: MouseEvent): Promise<void> {
       break
     }
     case 'openColorSetter': {
-      appState.openColorSetter(props.category)
+      colorSetter.open(props.category)
       break
     }
     case 'delete': {
-      hub.emit('show-dialog', {
+      dialog.showDialog({
         y: ev.clientY,
         x: ev.clientX,
         message: appState.ui.CONFIRM_DELETE,
@@ -108,7 +115,7 @@ function updateName(event: FocusEvent | KeyboardEvent): void {
   if (newName === props.category.name) {
     return
   }
-  hub.emit('notify', appState.ui.NAME_UPDATED)
+  notify.showNotify(appState.ui.NAME_UPDATED)
   appState.updateCategoryName(props.category, newName)
 }
 async function dropToCategory(ev: DragEvent): Promise<void> {

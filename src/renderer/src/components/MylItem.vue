@@ -11,10 +11,11 @@
 </template>
 <script setup lang="ts">
 import { computed, defineProps, toRaw } from 'vue'
-import hub from '../event-hub'
 import Item from '../models/item'
 import { useAppState } from '@renderer/state'
+import { useDialog } from '@renderer/lib/dialog-store'
 const appState = useAppState()
+const dialog = useDialog()
 const { ipcRenderer } = window
 
 const props = defineProps({
@@ -67,7 +68,7 @@ async function contextMenu(ev: MouseEvent, item: Item): Promise<void> {
       if (itemName.length > 8) {
         itemName = itemName.substring(0, 8) + '...'
       }
-      hub.emit('show-dialog', {
+      dialog.showDialog({
         y: ev.clientY,
         x: ev.clientX,
         message: `${itemName}
