@@ -74,7 +74,6 @@ import {
   activateCategoryBykeydown
 } from './store'
 import SetColor from './components/SetColor.vue'
-
 watch(
   () => state.selectedCategory,
   (to) => to && getItems(to.id)
@@ -154,107 +153,136 @@ function setShortcut(): void {
   })
 }
 </script>
-
-<style lang="stylus">
-html,body
-  height 100%
-  width 100%
-  padding 0
-  margin 0
-  box-sizing border-box
-  font-family 'メイリオ'
-  overflow hidden
-  background-color var(--base)
-  color var(--base-color)
-.layer-enter-active, .layer-leave-active
-  transition opacity .3s ease
-  opacity 1
-.layer-enter, .layer-leave-to
-  opacity 0
-input
-  outline none
-  border-radius 2px
-  padding 2px
-  border none
-  text-align center
-  background-color rgb(244,244,244)
-div,input, textarea, select
-  box-sizing border-box
-  font-family 'メイリオ'
-input[type=button],button
-  transition background .3s ease
-  &:hover
-    background-color rgb(255,223,233)
-
-.whole
-  width 100%
-.header
-  height 20px
-  width:100%
-  -webkit-app-region drag
-  background-color var(--header-color)
-  text-align right
-  .header-btn
-    -webkit-app-region no-drag
-    text-align center
-    width 20px
-    height 20px
-    font-size 18px
-    color rgb(100,100,100)
-    border-radius 10%
-    display inline-block
-    cursor pointer
-    &.new-cate-btn
-      color rgb(120, 200, 255)
-    &.aot-btn
-      transition color .3s ease
-      font-size 15px
-    &.aot
-      color rgb(255,255,30)
-    &.close-app
-      color rgb(255, 100, 120)
-    &.setting
-      color rgb(200,200,100)
-    &.switch-sortmode
-      color rgb(100,100,100)
-      font-size 90%
-      vertical-align middle
-      &.sortMode
-        color rgb(100,255,10)
-
-.content
-  height calc(100% - 20px)
-  width 100%
-  display flex
-  flex-direction row
-  .categories
-    min-height 210px
-    height 100%
-    display flexbox
-    text-align center
-    width 122px
-  .items
-    background-color var(--item-back)
-    width 228px
-.loading
-  position fixed
-  top 0
-  left 0
-  height 1000px
-  width 100%
-  background-color rgba(0,0,0,.5)
-.loading-enter,.loading-leave-to
-  opacity 0
-.close-btn
-  position absolute
-  font-size 20px
-  top 0
-  right 0
-  width 25px
-  height 25px
-  text-align center
-  color gray
-  cursor pointer
-  &:hover
-    color black
+<style lang="scss">
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'メイリオ';
+  overflow: hidden;
+  background-color: var(--base);
+  color: var(--base-color);
+}
+.layer-enter-active,
+.layer-leave-active {
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+.layer-enter,
+.layer-leave-to {
+  opacity: 0;
+}
+input {
+  outline: none;
+  border-radius: 2px;
+  padding: 2px;
+  border: none;
+  text-align: center;
+  background-color: rgb(244, 244, 244);
+}
+div,
+input,
+textarea,
+select {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+input[type='button'],
+button {
+  transition: background 0.3s ease;
+  &:hover {
+    background-color: rgb(255, 223, 233);
+  }
+}
+.whole {
+  width: 100%;
+}
+.header {
+  height: 20px;
+  width: 100%;
+  -webkit-app-region: drag;
+  background-color: var(--header-color);
+  text-align: right;
+  .header-btn {
+    -webkit-app-region: no-drag;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    font-size: 18px;
+    color: rgb(100, 100, 100);
+    border-radius: 10%;
+    display: inline-block;
+    cursor: pointer;
+    &.new-cate-btn {
+      color: rgb(120, 200, 255);
+    }
+    &.aot-btn {
+      transition: color 0.3s ease;
+      font-size: 15px;
+    }
+    &.aot {
+      color: rgb(255, 255, 30);
+    }
+    &.close-app {
+      color: rgb(255, 100, 120);
+    }
+    &.setting {
+      color: rgb(200, 200, 100);
+    }
+    &.switch-sortmode {
+      color: rgb(100, 100, 100);
+      font-size: 90%;
+      vertical-align: middle;
+      &.sortMode {
+        color: rgb(100, 255, 10);
+      }
+    }
+  }
+}
+.content {
+  height: calc(100% - 20px);
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  .categories {
+    min-height: 210px;
+    height: 100%;
+    display: flexbox;
+    text-align: center;
+    width: 122px;
+  }
+  .items {
+    background-color: var(--item-back);
+    width: 228px;
+  }
+}
+.loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 1000px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.loading-enter,
+.loading-leave-to {
+  opacity: 0;
+}
+.close-btn {
+  position: absolute;
+  font-size: 20px;
+  top: 0;
+  right: 0;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  color: gray;
+  cursor: pointer;
+  &:hover {
+    color: black;
+  }
+}
 </style>

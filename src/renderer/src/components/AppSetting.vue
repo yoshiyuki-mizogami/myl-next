@@ -65,64 +65,78 @@ function close(): void {
   show.value = false
 }
 </script>
-<style lang="stylus">
-.setting-layer
-  position relative
-  width 90%
-  height 200px
-  margin 20px auto
-  background-color var(--dialog-base)
-  color var(--base-color)
-  padding 5px
-  font-size 0
-  .version
-    font-size smaller
-    opacity 0.8
-  .setting-title
-    font-size 16px
-    text-align center
-  .setting-items
-    list-sytle none
-    padding 0
-    margin 0
-    font-size 14px
-    li
-      min-height 30px
-      display flex
-      border-bottom solid 1px rgb(150,150,150)
-      input[type=button]
-        cursor pointer
-        padding 3px 10px
-      .setting-item
-        text-align center
-        width 100%
-      .setting-name
-        text-align center
-        height 100%
-        width 110px
-      .setting-val
-        height 100%
-        flex-grow 1
-        label
-          transition background .3s ease
-          cursor pointer
-          padding 3px
-          background-color var(--unselect)
-          width 80px
-          display inline-block
-          text-align center
-          &.selected
-            background-color var(--select)
-            color white
-        input[type=radio]
-          display none
-        .theme
-          display inline-block
-          width 50px
-          margin 2px 5px
-          text-align center
-          background-color var(--unselect)
-          &.selected
-            background-color var(--select)
-            color white
+<style lang="scss">
+.setting-layer {
+  position: relative;
+  width: 90%;
+  height: 200px;
+  margin: 20px auto;
+  background-color: var(--dialog-base);
+  color: var(--base-color);
+  padding: 5px;
+  font-size: 0;
+  .version {
+    font-size: smaller;
+    opacity: 0.8;
+  }
+  .setting-title {
+    font-size: 16px;
+    text-align: center;
+  }
+  .setting-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    li {
+      min-height: 30px;
+      display: flex;
+      border-bottom: solid 1px rgb(150, 150, 150);
+      input[type='button'] {
+        cursor: pointer;
+        padding: 3px 10px;
+      }
+      .setting-item {
+        text-align: center;
+        width: 100%;
+      }
+      .setting-name {
+        text-align: center;
+        height: 100%;
+        width: 110px;
+      }
+      .setting-val {
+        height: 100%;
+        flex-grow: 1;
+        label {
+          transition: background 0.3s ease;
+          cursor: pointer;
+          padding: 3px;
+          background-color: var(--unselect);
+          width: 80px;
+          display: inline-block;
+          text-align: center;
+          &.selected {
+            background-color: var(--select);
+            color: white;
+          }
+        }
+        input[type='radio'] {
+          display: none;
+        }
+        .theme {
+          display: inline-block;
+          width: 50px;
+          margin: 2px 5px;
+          text-align: center;
+          background-color: var(--unselect);
+          &.selected {
+            background-color: var(--select);
+            color: white;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

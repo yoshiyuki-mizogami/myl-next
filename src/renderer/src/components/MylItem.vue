@@ -14,7 +14,7 @@ import { computed, defineProps, toRaw } from 'vue'
 import hub from '../event-hub'
 import Item from '../models/item'
 import { copyItemPath, removeItem, setDragItem, showItemDetail, state } from '../store'
-const { ipcRenderer } = (window as any)
+const { ipcRenderer } = window as any
 
 const props = defineProps({
   item: {
@@ -84,34 +84,40 @@ ${state.ui.CONFIRM_REMOVE}`,
 }
 </script>
 
-<style lang="stylus">
-.item
-  padding 0
-  width 100%
-  background-color var(--item-bg)
-  color var(--item-color)
-  font-size 13px
-  word-wrap break-word
-  cursor pointer
-  >span
-    vertical-align middle
-  &:nth-child(even)
-    background-color var(--item-even-bg)
-    color var(--item-even-color)
-  .item-icon
-    vertical-align middle
-    margin 0
-    margin-right 1px
-    padding 0
-    display inline-block
-    height 22px
-    width 22px
-    background-repeat no-repeat
-    background-position center
-    background-size cover
-  &:hover
-    background-color var(--item-hover) !important
-  .item-content
-    display:inline-block;
-    width calc(100% - 23px)
+<style lang="scss">
+.item {
+  padding: 0;
+  width: 100%;
+  background-color: var(--item-bg);
+  color: var(--item-color);
+  font-size: 13px;
+  word-wrap: break-word;
+  cursor: pointer;
+  > span {
+    vertical-align: middle;
+  }
+  &:nth-child(even) {
+    background-color: var(--item-even-bg);
+    color: var(--item-even-color);
+  }
+  .item-icon {
+    vertical-align: middle;
+    margin: 0;
+    margin-right: 1px;
+    padding: 0;
+    display: inline-block;
+    height: 22px;
+    width: 22px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+  }
+  &:hover {
+    background-color: var(--item-hover) !important;
+  }
+  .item-content {
+    display: inline-block;
+    width: calc(100% - 23px);
+  }
+}
 </style>

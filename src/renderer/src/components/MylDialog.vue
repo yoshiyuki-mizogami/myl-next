@@ -69,19 +69,22 @@ async function cancel(): Promise<void> {
   reset()
 }
 </script>
-<style lang="stylus">
-.dialog
-  white-space pre-wrap
-  width 200px
-  min-height 60px
-  background-color var(--dialog-back)
-  padding 5px
-  border-radius 2px
-  text-align center
-  position fixed
-  top 0
-  left 0
-  .dialog-console
-    >input
-      padding 2px 10px
+<style lang="scss">
+.dialog {
+  white-space: pre-wrap;
+  width: 200px;
+  min-height: 60px;
+  background-color: var(--dialog-back);
+  padding: 5px;
+  border-radius: 2px;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  .dialog-console {
+    > input {
+      padding: 2px 10px;
+    }
+  }
+}
 </style>

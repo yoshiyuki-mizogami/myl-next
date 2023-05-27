@@ -76,18 +76,21 @@ eventHub.on('openColorSetter', (c: Category): void => {
 })
 </script>
 
-<style lang="stylus" scoped>
-.color-setting
-  margin 10% auto
-  background-color white
-  height 60vh
-  width 80vw
-  text-align center
-  .example
-    width 50%
-    margin auto
-    border-radius 5px
-  input[type=button]
-    width 70px
-    margin 10px
+<style lang="scss" scoped>
+.color-setting {
+  margin: 10% auto;
+  background-color: white;
+  height: 60vh;
+  width: 80vw;
+  text-align: center;
+  .example {
+    width: 50%;
+    margin: auto;
+    border-radius: 5px;
+  }
+  input[type='button'] {
+    width: 70px;
+    margin: 10px;
+  }
+}
 </style>

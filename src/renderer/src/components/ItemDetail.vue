@@ -30,7 +30,7 @@ import { FILE } from '../consts'
 import { updateItem } from '../store'
 import OverlayLayer from './OverlayLayer.vue'
 import { state } from '../store'
-const { ipcRenderer } = (window as any)
+const { ipcRenderer } = window as any
 
 const DEF = {}
 Object.seal(DEF)
@@ -50,7 +50,7 @@ function hideMe(): void {
   updateItem(data.data)
   data.data = DEF as Item
 }
-async function selectWith(): Promise<string|void> {
+async function selectWith(): Promise<string | void> {
   const files = await ipcRenderer.invoke('showOpenDialog', {
     title: state.ui.SELECT_BOOT_BY
   })
@@ -62,35 +62,42 @@ async function selectWith(): Promise<string|void> {
 }
 </script>
 
-<style lang="stylus">
-.item-detail
-  position relative
-  width 95%
-  height 200px
-  margin 20px auto
-  background-color var(--base)
-  color var(--base-color)
-  box-shadow 0 0 5px rgba(0,0,0, .5)
-  padding 5px
-  font-size 0
-  input
-    color var(--base-color)
-  .prop
-    margin 1px
-  .prop-title
-    font-size 12px
-    display inline-block
-    width 25%
-    text-align center
-  .prop-text
-    text-align left
-    border-bottom solid 1px gray
-    background-color transparent
-    width 75%
-    &.with-text
-      width 60%
-  .with-select
-    font-size 10px
-    width 15%
-    vertical-align middle
+<style lang="scss">
+.item-detail {
+  position: relative;
+  width: 95%;
+  height: 200px;
+  margin: 20px auto;
+  background-color: var(--base);
+  color: var(--base-color);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  padding: 5px;
+  font-size: 0;
+  input {
+    color: var(--base-color);
+  }
+  .prop {
+    margin: 1px;
+  }
+  .prop-title {
+    font-size: 12px;
+    display: inline-block;
+    width: 25%;
+    text-align: center;
+  }
+  .prop-text {
+    text-align: left;
+    border-bottom: solid 1px gray;
+    background-color: transparent;
+    width: 75%;
+    &.with-text {
+      width: 60%;
+    }
+  }
+  .with-select {
+    font-size: 10px;
+    width: 15%;
+    vertical-align: middle;
+  }
+}
 </style>

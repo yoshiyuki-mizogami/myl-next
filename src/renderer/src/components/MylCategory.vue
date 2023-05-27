@@ -35,7 +35,7 @@ import hub from '../event-hub'
 import { moveItem, openColorSetter, removeCategory, state, updateCategoryName } from '../store'
 import { nextTick } from 'vue'
 import Category from '../models/category'
-const { ipcRenderer } = (window as any)
+const { ipcRenderer } = window as any
 
 defineEmits(['select-category'])
 const thisState = reactive({
@@ -118,7 +118,7 @@ async function dropToCategory(ev: DragEvent): Promise<void> {
   const fromCategory = dt.getData('myl/category')
   if (fromCategory) {
     ev.stopPropagation()
-    return 
+    return
   }
   const fromThis = dt.getData('myl/item')
   if (!fromThis) {
@@ -128,26 +128,33 @@ async function dropToCategory(ev: DragEvent): Promise<void> {
   return moveItem(props.category)
 }
 </script>
-<style lang="stylus">
-.category
-  min-height 20px
-  background-color var(--cate-bg)
-  color var(--cate-color)
-  width 100%
-  cursor pointer
-  font-size 13px
-  word-wrap break-all
-  input,textarea
-    font-size inherit
-    padding inherit
-  &:nth-child(even)
-    background-color var(--cate-even-bg)
-    color var(--cate-even-color)
-  &.selected
-    font-weight bold
-    opacity 0.7
-  &:hover
-    background-color var(--cate-hover)
-  .category-name-editor
-    width 100%
+<style lang="scss">
+.category {
+  min-height: 20px;
+  background-color: var(--cate-bg);
+  color: var(--cate-color);
+  width: 100%;
+  cursor: pointer;
+  font-size: 13px;
+  word-wrap: break-all;
+  input,
+  textarea {
+    font-size: inherit;
+    padding: inherit;
+  }
+  &:nth-child(even) {
+    background-color: var(--cate-even-bg);
+    color: var(--cate-even-color);
+  }
+  &.selected {
+    font-weight: bold;
+    opacity: 0.7;
+  }
+  &:hover {
+    background-color: var(--cate-hover);
+  }
+  .category-name-editor {
+    width: 100%;
+  }
+}
 </style>

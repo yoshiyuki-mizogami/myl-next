@@ -41,14 +41,16 @@ function closeMe(): void {
 }
 </script>
 
-<style lang="stylus">
-.new-category
-  width 300px
-  margin 10% auto
-  background-color white
-  text-align center
-  padding 10px
-  border-radius 2px
-  input
-    padding 5px
+<style lang="scss">
+.new-category {
+  width: 300px;
+  margin: 10% auto;
+  background-color: white;
+  text-align: center;
+  padding: 10px;
+  border-radius: 2px;
+  input {
+    padding: 5px;
+  }
+}
 </style>
