@@ -12,7 +12,7 @@ import {
   clipboard
 } from 'electron'
 import { existsSync } from 'fs'
-import { readFile, stat } from 'fs/promises'
+import { readFile, stat, writeFile } from 'fs/promises'
 
 export function setIpcFunc(app: App, mainWindow: BrowserWindow): void {
   ipcMain.handle('getrootdir', () => __dirname)
@@ -144,6 +144,9 @@ export function setIpcFunc(app: App, mainWindow: BrowserWindow): void {
   ipcMain.handle('exists-file', (_ev, arg: { path: string }) => existsSync(arg.path))
 
   ipcMain.handle('read-file', (_ev, arg: { path: string }) => readFile(arg.path, 'utf-8'))
+  ipcMain.handle('write-file', (_ev, arg: { path: string; content: string }) => {
+    return writeFile(arg.path, arg.content, 'utf-8')
+  })
 
   ipcMain.handle('get-desktop-path', () => app.getPath('desktop'))
 

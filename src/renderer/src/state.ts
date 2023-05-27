@@ -7,7 +7,6 @@ import Config from './models/config'
 
 import Item from './models/item'
 import langSwitchFn, { LangUI } from './lib/lang-swicher'
-import eventHub from './event-hub'
 
 import switchTheme, { ThemeName } from './lib/switch-theme'
 
@@ -22,12 +21,15 @@ import {
   writeFileProxy
 } from './lib/native_fnc_proxy'
 import getFileInfo from './utils/get-file-info'
+import { useNotify } from './lib/notify-store'
+
 const { ipcRenderer } = window
 const { DEFAULT_JSON_NAME } = globals
 export enum Langs {
   EN = 'en',
   JA = 'ja'
 }
+//DB can't set state
 const db = new MylDB()
 let appElement!: HTMLDivElement
 export const useAppState = defineStore('mylState', {
@@ -155,7 +157,7 @@ export const useAppState = defineStore('mylState', {
       const cate: Category = await db.addCategory(categoryName)
       this.categories.push(cate)
       this.selectedCategory = cate
-      nextTick(() => eventHub.emit('adjust'))
+      nextTick(() => this.adjust())
     },
     async removeCategory(cate: Category): Promise<void> {
       await db.removeCategory(cate)
@@ -164,12 +166,12 @@ export const useAppState = defineStore('mylState', {
       if (this.selectedCategory === cate) {
         this.items = []
       }
-      nextTick(() => eventHub.emit('adjust'))
+      nextTick(() => this.adjust())
     },
     async getItems(cateId: number): Promise<void> {
       const items = await db.getItems(cateId)
       this.items = items
-      nextTick(() => eventHub.emit('adjust'))
+      nextTick(() => this.adjust())
     },
     openHP(): void {
       shellOpenExternalProxy(globals.HP_URL)
@@ -178,7 +180,7 @@ export const useAppState = defineStore('mylState', {
       await db.removeItem(item)
       const removeIndex = this.items.findIndex((i) => i === item)
       this.items.splice(removeIndex, 1)
-      nextTick(() => eventHub.emit('adjust'))
+      nextTick(() => this.adjust())
     },
     async addFile({ filepath }: { filepath: string }): Promise<void> {
       const cateId = this.selectedCategory?.id
@@ -187,16 +189,17 @@ export const useAppState = defineStore('mylState', {
       fileInfo.cateId = cateId
       const fileItem = await db.addItem(fileInfo)
       items.push(fileItem)
-      nextTick(() => eventHub.emit('adjust'))
+      nextTick(() => this.adjust())
     },
     async addUrl({ url, name }: { url: string; name: string }): Promise<void> {
       if (!this.isUrl(url)) {
-        eventHub.emit('notify', this.ui.INVALID_URL)
+        const notify = useNotify()
+        notify.showNotify(this.ui.INVALID_URL)
         return
       }
       const urlItem = await db.addUrlItem(name, url, this.selectedCategory!.id)
       this.items.push(urlItem)
-      nextTick(() => eventHub.emit('adjust'))
+      nextTick(() => this.adjust())
     },
     async copyItemPath(item: Item): Promise<void> {
       writeClipboardProxy(item.path)
@@ -228,7 +231,8 @@ export const useAppState = defineStore('mylState', {
       const [targetJson] = targetJsonFiles.filePaths
       const fileExists = await existsFileProxy(targetJson)
       if (!fileExists) {
-        return eventHub.emit('notify', this.ui.FILE_NOT_FOUND)
+        const notify = useNotify()
+        return notify.showNotify(this.ui.FILE_NOT_FOUND)
       }
       try {
         const jsonTxt = await readFileProxy(targetJson)
@@ -244,10 +248,12 @@ export const useAppState = defineStore('mylState', {
           }, Promise.resolve())
           this.categories.push(cate)
         }, Promise.resolve())
-        eventHub.emit('notify', this.ui.IMPORT_DONE)
+        const notify = useNotify()
+        notify.showNotify(this.ui.IMPORT_DONE)
       } catch (e) {
         console.error(e)
-        eventHub.emit('notify', this.ui.FILE_IS_INVALID)
+        const notify = useNotify()
+        notify.showNotify(this.ui.FILE_IS_INVALID)
       }
     },
     setSize(h: number, w: number): void {
@@ -275,7 +281,8 @@ export const useAppState = defineStore('mylState', {
           return val
         })
       )
-      eventHub.emit('notify', this.ui.EXPORT_DONE)
+      const notify = useNotify()
+      notify.showNotify(this.ui.EXPORT_DONE)
     },
     getActivateCategoryStr: ((): ((categoryName: string) => void) => {
       const clearTime = 250
