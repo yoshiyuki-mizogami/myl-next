@@ -17,16 +17,16 @@ export default async function getFileInfo(filepath: string): Promise<FileInfo> {
   }
 
   let icon = await getIcon(filepath)
-  const ext = extnamePath(filepath).toLowerCase()
-  console.log(filepath, ext)
-  if (ext === LINKSUFF) {
-    try {
-      const shortCutTarget = await readShortcutLinkProxy(filepath)
-      console.log(shortCutTarget)
-      const linkTargetInfo = await getIcon(shortCutTarget)
-      icon = await blendShortcutIcon(linkTargetInfo)
-    } catch (e) {
-      /** nope */
+  if (!stat.isDir) {
+    const ext = extnamePath(filepath).toLowerCase()
+    if (!stat.isDir && ext === LINKSUFF) {
+      try {
+        const shortCutTarget = await readShortcutLinkProxy(filepath)
+        const linkTargetInfo = await getIcon(shortCutTarget)
+        icon = await blendShortcutIcon(linkTargetInfo)
+      } catch (e) {
+        /** nope */
+      }
     }
   }
   const fileName = basenamePath(filepath)

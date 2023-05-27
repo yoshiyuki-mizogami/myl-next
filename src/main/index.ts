@@ -30,6 +30,7 @@ function createWindow(): void {
     maximizable: false,
     icon,
     webPreferences:{
+      webSecurity: false,
       preload: join(__dirname, '../preload/index.js')
     }
   })

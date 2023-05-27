@@ -5,7 +5,6 @@ import {
   dialog,
   ipcMain,
   BrowserWindow,
-  FileIconOptions,
   App,
   OpenDialogOptions,
   SaveDialogOptions,

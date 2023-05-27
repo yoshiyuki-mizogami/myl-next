@@ -110,9 +110,8 @@ export default class MylDB extends Dexie {
     let iconDataUrl!: string
     if (icon === undefined) {
       iconDataUrl = await getIcon(location.href)
-    }else{
-      const resizedIcon = icon.resize({height:22, width:22, quality: 'best'})
-      iconDataUrl = resizedIcon.toDataURL()
+    } else {
+      iconDataUrl = icon
     }
     const sort = await this.getMaxId(cateId)
     const newItem = new Item({
@@ -137,25 +136,25 @@ export default class MylDB extends Dexie {
   }
 }
 
-async function getFavicon(origin: string): Promise<NativeImage | undefined> {
+async function getFavicon(origin: string): Promise<string | undefined> {
   const faviconUrl = `${origin}/favicon.ico`
   const res = (await fetch(faviconUrl)
-    .then((r) => r.arrayBuffer())
+    .then((r) => r.blob())
     .catch((e) => {
       console.warn(e)
       return undefined
-    })) as undefined | ArrayBuffer
+    })) as undefined | Blob
   if (res === undefined) {
     return undefined
   }
-  const tmpDir = await ipcRenderer.invoke('getTmpDir')
-  const iconname = `_myl_icon_${Date.now()}.ico`
-  const tmpIconFilepath = `${tmpDir}/${iconname}`
-  await writeFileProxy(tmpIconFilepath, Buffer.from(res).toString('base64'), 'base64')
-  const icon = nativeImage.createFromPath(tmpIconFilepath)
-  unlinkProxy(tmpIconFilepath)
-  if (icon.isEmpty()) {
-    return undefined
-  }
-  return icon
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.addEventListener('load', () => {
+      if (!(reader.result as string).includes('image/')) {
+        return resolve(getIcon('something.html'))
+      }
+      resolve(reader.result as string)
+    })
+    reader.readAsDataURL(res)
+  })
 }

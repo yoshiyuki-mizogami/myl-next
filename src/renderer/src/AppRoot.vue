@@ -114,7 +114,6 @@ async function dropAny(e: DragEvent): Promise<void> {
   const url = dataTransfer.getData('text/plain')
   const thisIsUrl = isUrl.test(url)
   if (thisIsUrl) {
-    console.log(files[0])
     const name = ((): string => {
       return files.length > 0 ? files[0].name : ''
     })()
