@@ -44,43 +44,41 @@ function setDrag(ev: DragEvent): void {
   ev.stopPropagation()
   ipcRenderer.send('ondragstart', props.item.path)
 }
-function contextMenu(ev: MouseEvent, item: Item): void {
+async function contextMenu(ev: MouseEvent, item: Item): Promise<void> {
   const SEND_EVENT_NAME = 'show-item-menu'
-  const RESPONSE_EVENT_NAME = 'select-item-menu'
-  ipcRenderer.once(RESPONSE_EVENT_NAME, (_ev, type) => {
-    switch (type) {
-      case 'openParent': {
-        item.openParent()
-        break
-      }
-      case 'copy': {
-        copyItemPath(item)
-        break
-      }
-      case 'edit': {
-        showItemDetail(item)
-        break
-      }
-      case 'remove': {
-        let itemName = item.name
-        if (itemName.length > 8) {
-          itemName = itemName.substring(0, 8) + '...'
-        }
-        hub.emit('show-dialog', {
-          y: ev.clientY,
-          x: ev.clientX,
-          message: `${itemName}
-${state.ui.CONFIRM_REMOVE}`,
-          onOk() {
-            removeItem(item)
-          },
-          cancelable: true
-        })
-        break
-      }
+  const type = await ipcRenderer.invoke(SEND_EVENT_NAME, toRaw(state.ui))
+  console.log(type)
+  switch (type) {
+    case 'openParent': {
+      item.openParent()
+      break
     }
-  })
-  ipcRenderer.send(SEND_EVENT_NAME, toRaw(state.ui))
+    case 'copy': {
+      copyItemPath(item)
+      break
+    }
+    case 'edit': {
+      showItemDetail(item)
+      break
+    }
+    case 'remove': {
+      let itemName = item.name
+      if (itemName.length > 8) {
+        itemName = itemName.substring(0, 8) + '...'
+      }
+      hub.emit('show-dialog', {
+        y: ev.clientY,
+        x: ev.clientX,
+        message: `${itemName}
+${state.ui.CONFIRM_REMOVE}`,
+        onOk() {
+          removeItem(item)
+        },
+        cancelable: true
+      })
+      break
+    }
+  }
 }
 </script>
 

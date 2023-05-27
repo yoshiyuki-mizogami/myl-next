@@ -9,7 +9,7 @@ export function joinPath(base: string, add: string): string {
 }
 
 export function extnamePath(path: string): string {
-  const m = path.match(/(<=[^/\\]+\.).+$/)
+  const m = path.match(/\.[^/\\]+$/)
   if (m == null) {
     return ''
   }
@@ -66,20 +66,37 @@ export function spawnProcess(program: string, arg: string): void {
 }
 
 export function shellOpenExternalProxy(path: string): void {
-  ipcHandleCommunicate('open-shell-external', path)
+  ipcSend('open-shell-external', path)
 }
 
 export function shellOpenProxy(path: string): void {
-  ipcHandleCommunicate('open-shell', path)
+  ipcSend('open-shell', path)
 }
 
-export function readShortcutLinkProxy(path: string): Promise<{ target: string }> {
-  return ipcHandleCommunicate('read-shortcut', path)
+export function writeClipboardProxy(txt: string): void {
+  ipcSend('write-clipboard', txt)
+}
+
+export function readShortcutLinkProxy(path: string): Promise<string> {
+  return ipcHandleCommunicate<string>('read-shortcut', path)
 }
 
 export function execProcess(cmd: string): void {
   ipcHandleCommunicate('exec-process', cmd)
 }
+
+export function getDesktopPathProxy(): Promise<string>{
+  return ipcHandleCommunicate('get-desktop-path')
+}
+
+export function getFileIconProxy(path: string): Promise<string>{
+  return ipcHandleCommunicate('get-file-icon', path)
+}
+
 function ipcHandleCommunicate<T>(channel: string, data: unknown = undefined): Promise<T> {
   return ipcRenderer.invoke(channel, data)
+}
+
+function ipcSend(channel: string, data: unknown): void {
+  ipcRenderer.send(channel, data)
 }

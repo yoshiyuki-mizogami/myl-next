@@ -1,7 +1,7 @@
-import { nativeImage, ipcRenderer } from 'electron'
+import { NativeImage, IpcRenderer } from 'electron'
 declare global {
   interface Window {
-    ipcRenderer: ipcRenderer
-    nativeImage: ativeImage
+    ipcRenderer: IpcRenderer
+    nativeImage: NativeImage
   }
 }

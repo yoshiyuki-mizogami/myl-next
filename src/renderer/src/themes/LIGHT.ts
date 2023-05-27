@@ -1,4 +1,4 @@
-*{
+export const LIGHT = `*{
   --base:rgb(255,255,255);
   --dialog-base:rgb(255,255,255);
   --header-color:#ffefc2;
@@ -18,4 +18,4 @@
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(180,180,180);
   --select:rgb(50, 100, 220);
-}
+}`

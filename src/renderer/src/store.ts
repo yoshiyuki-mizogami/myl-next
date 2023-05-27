@@ -3,14 +3,14 @@ import Item from './models/item'
 import getFileInfo from './utils/get-file-info'
 import MylDB from './utils/scheme'
 import langSwitchFn, { LangUI } from './lib/lang-swicher'
-import switchTheme from './lib/switch-theme'
+import switchTheme, { ThemeName } from './lib/switch-theme'
 import { Themes } from './consts'
 import Config from './models/config'
 import globals from './globals'
 import eventHub from './event-hub'
 import { reactive, nextTick, watch, toRaw } from 'vue'
-import { existsFileProxy, readFileProxy, writeFileProxy } from './lib/native_fnc_proxy'
-const { clipboard, shell, ipcRenderer } = (window as any)
+import { existsFileProxy, getDesktopPathProxy, readFileProxy, shellOpenExternalProxy, writeClipboardProxy, writeFileProxy } from './lib/native_fnc_proxy'
+const { ipcRenderer } = window
 
 const { DEFAULT_JSON_NAME } = globals
 
@@ -103,7 +103,7 @@ export async function langSwitch(lang: Langs): Promise<void> {
   state.ui = langSwitchFn(lang)
   saveConfig()
 }
-export async function selectTheme(theme: string): Promise<void> {
+export async function selectTheme(theme: ThemeName): Promise<void> {
   state.config.theme = theme
   saveConfig()
   switchTheme(theme)
@@ -150,7 +150,7 @@ export async function getItems(cateId: number): Promise<void> {
   nextTick(() => eventHub.emit('adjust'))
 }
 export function openHP(): void {
-  shell.openExternal(globals.HP_URL)
+  shellOpenExternalProxy(globals.HP_URL)
 }
 export async function removeItem(item: Item): Promise<void> {
   await db.removeItem(item)
@@ -177,7 +177,7 @@ export async function addUrl({ url, name }: { url: string; name: string }): Prom
   nextTick(() => eventHub.emit('adjust'))
 }
 export async function copyItemPath(item: Item): Promise<void> {
-  clipboard.writeText(item.path)
+  writeClipboardProxy(item.path)
 }
 export async function showItemDetail(item: Item): Promise<void> {
   eventHub.emit('show-item-detail', item)
@@ -186,13 +186,12 @@ export async function updateItem(item: Item): Promise<void> {
   db.items.update(item.id, item)
 }
 //TODO
-function getDesktopPath(): string {
-  return ''
-}
+
 export async function importJson(): Promise<void> {
+  const desktop = await getDesktopPathProxy()
   const targetJsonFiles = await ipcHandleCommunicate<{ filePaths: string[] }>('showOpenDialog', {
     title: 'Select Myl save data json.',
-    defaultPath: `${getDesktopPath()}/${DEFAULT_JSON_NAME}`,
+    defaultPath: `${desktop}/${DEFAULT_JSON_NAME}`,
     filters: [
       {
         name: 'Json',
@@ -237,9 +236,10 @@ export function setAlwaysOnTop(tf: boolean): void {
 }
 
 export async function exportJson(): Promise<void> {
+  const desktop = await getDesktopPathProxy()
   const savePath = await ipcHandleCommunicate<{ filePath: string }>('showSaveDialog', {
     title: 'Select save filepath.',
-    defaultPath: `${getDesktopPath()}/${DEFAULT_JSON_NAME}`
+    defaultPath: `${desktop}/${DEFAULT_JSON_NAME}`
   })
   if (!savePath.filePath) {
     return

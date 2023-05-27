@@ -1,4 +1,4 @@
-*{
+export const MONO = `*{
   --base:white;
   --base-color:black;
   --dialog-base:white;
@@ -21,4 +21,4 @@
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(100,100,100);
   --select:rgb(250,180,180);
-}
+}`

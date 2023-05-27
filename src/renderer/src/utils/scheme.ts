@@ -1,12 +1,13 @@
 import Dexie from 'dexie'
 import Category from '../models/category'
 import Item from '../models/item'
-import { getIcon, RESIZE_OPT } from './get-file-info'
+import { getIcon } from './get-file-info'
 import Config from '../models/config'
 import { Sortable } from '../models/sortable'
 import { URL } from '../consts'
 import { unlinkProxy, writeFileProxy } from '@renderer/lib/native_fnc_proxy'
-const { ipcRenderer, nativeImage} = (window as any)
+import { NativeImage } from 'electron'
+const { ipcRenderer, nativeImage } = window
 function sortFunc(a: Sortable, b: Sortable): number {
   return a.sort - b.sort
 }
@@ -105,16 +106,18 @@ export default class MylDB extends Dexie {
   }
   async addUrlItem(name: string, urlString: string, cateId: number): Promise<Item> {
     const { origin, host } = new window.URL(urlString)
-    let icon = await getFavicon(origin)
+    const icon = await getFavicon(origin)
+    let iconDataUrl!: string
     if (icon === undefined) {
-      icon = await getIcon(location.href)
+      iconDataUrl = await getIcon(location.href)
+    }else{
+      const resizedIcon = icon.resize({height:22, width:22, quality: 'best'})
+      iconDataUrl = resizedIcon.toDataURL()
     }
-    const resizedIcon = icon.resize(RESIZE_OPT)
-    const dateUrl = resizedIcon.toDataURL()
     const sort = await this.getMaxId(cateId)
     const newItem = new Item({
       name: name || host,
-      icon: dateUrl,
+      icon: iconDataUrl,
       sort,
       cateId,
       path: urlString,

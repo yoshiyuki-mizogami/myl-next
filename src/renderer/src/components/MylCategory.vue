@@ -68,35 +68,33 @@ function dragStartCategory(ev: DragEvent): void {
   const dataTransfer = ev.dataTransfer as DataTransfer
   dataTransfer.setData('myl/category', '1')
 }
-function showContextMenu(ev: MouseEvent): void {
-  ipcRenderer.once('select-category-menu-item', (_, select: string) => {
-    switch (select) {
-      case 'rename': {
-        thisState.editMode = true
-        break
-      }
-      case 'openColorSetter': {
-        openColorSetter(props.category)
-        break
-      }
-      case 'delete': {
-        hub.emit('show-dialog', {
-          y: ev.clientY,
-          x: ev.clientX,
-          message: state.ui.CONFIRM_DELETE,
-          onOk: () => {
-            removeCategory(props.category)
-          },
-          cancelable: true
-        })
-        break
-      }
-      default: {
-        console.warn('unknown event response', select)
-      }
+async function showContextMenu(ev: MouseEvent): Promise<void> {
+  const select = await ipcRenderer.invoke('show-category-menu', toRaw(state.ui))
+  switch (select) {
+    case 'rename': {
+      thisState.editMode = true
+      break
     }
-  })
-  ipcRenderer.send('show-category-menu', toRaw(state.ui))
+    case 'openColorSetter': {
+      openColorSetter(props.category)
+      break
+    }
+    case 'delete': {
+      hub.emit('show-dialog', {
+        y: ev.clientY,
+        x: ev.clientX,
+        message: state.ui.CONFIRM_DELETE,
+        onOk: () => {
+          removeCategory(props.category)
+        },
+        cancelable: true
+      })
+      break
+    }
+    default: {
+      console.warn('unknown event response', select)
+    }
+  }
 }
 const editor = ref(null as null | HTMLInputElement)
 function enterEdit(): void {

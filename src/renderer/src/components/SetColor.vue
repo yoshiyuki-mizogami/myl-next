@@ -50,14 +50,14 @@ const toColorValue = computed(() => {
 })
 
 async function submit(): Promise<void> {
-  state.category.color = toRaw(state.color)
-  await updateCategoryColor(state.category)
+  state.category!.color = toRaw(state.color)
+  await updateCategoryColor(state.category!)
   close()
 }
 
 async function clear(): Promise<void> {
-  state.category.color = undefined
-  await updateCategoryColor(state.category)
+  state.category!.color = undefined
+  await updateCategoryColor(state.category!)
   close()
 }
 

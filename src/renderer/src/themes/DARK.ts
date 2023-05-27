@@ -1,3 +1,4 @@
+export const DARK = `
 *{
   --base:rgb(20,20,20);
   --base-color:white;
@@ -20,4 +21,4 @@
   --notify-bg:rgb(255,255,255);
   --unselect:#252525;
   --select:#676767;
-}
+}`

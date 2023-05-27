@@ -1,3 +1,4 @@
+export const EVIL = `
 *{
   --base:black;
   --base-color:white;
@@ -21,4 +22,4 @@
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(143, 143, 143);
   --select:#50318d;
-}
+}`

@@ -1,4 +1,4 @@
-*{
+export const PASTEL = `*{
   --base:rgb(255,255,255);
   --dialog-base:rgb(156, 253, 240);
   --header-color:#dce3ff;
@@ -18,4 +18,4 @@
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(180,180,180);
   --select:rgb(50, 100, 220);
-}
+}`
