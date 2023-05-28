@@ -10,7 +10,7 @@
         <span class="prop-title">{{ appState.ui.ITEM_PATH }}</span>
         <input v-model="appState.detailItemTarget.path" type="text" class="prop-text" />
       </div>
-      <div class="prop">
+      <div class="prop select-program">
         <span class="prop-title">{{ appState.ui.BY }}</span>
         <input
           v-model="appState.detailItemTarget.by"
@@ -28,7 +28,7 @@
   </OverlayLayer>
 </template>
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
+import { computed } from 'vue'
 import { FILE } from '../consts'
 import OverlayLayer from './OverlayLayer.vue'
 import { useAppState } from '@renderer/state'
@@ -36,16 +36,9 @@ import { useAppState } from '@renderer/state'
 const appState = useAppState()
 const { ipcRenderer } = window
 
-const DEF = {}
-Object.seal(DEF)
-const data = reactive({
-  show: false,
-  by: ''
-})
 const isFile = computed(() => appState.detailItemTarget!.type === FILE)
 
 function hideMe(): void {
-  data.show = false
   appState.updateItem(appState.detailItemTarget!)
   appState.detailItemTarget = null
 }
@@ -57,7 +50,7 @@ async function selectWith(): Promise<string | void> {
     return (appState.detailItemTarget!.by = '')
   }
   const [filepath] = files.filePaths
-  data.by = filepath
+  appState.detailItemTarget!.by = filepath
 }
 </script>
 
@@ -93,7 +86,14 @@ async function selectWith(): Promise<string | void> {
       width: 60%;
     }
   }
+  .select-program {
+    display: flex;
+    justify-items: center;
+    align-items: center;
+  }
   .with-select {
+    background-color: var(--btn-bg);
+    color: var(--btn-front);
     font-size: 10px;
     width: 15%;
     vertical-align: middle;

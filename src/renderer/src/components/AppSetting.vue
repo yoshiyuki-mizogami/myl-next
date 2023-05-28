@@ -41,7 +41,12 @@
         </li>
         <li>
           <div class="setting-item">
-            <input type="button" :value="appState.ui.IMPORT" @click="appState.importJson" />
+            <input
+              style="margin-right: 1rem"
+              type="button"
+              :value="appState.ui.IMPORT"
+              @click="appState.importJson"
+            />
             <input type="button" :value="appState.ui.EXPORT" @click="appState.exportJson" />
           </div>
         </li>

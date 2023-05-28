@@ -18,4 +18,6 @@ export const PASTEL = `*{
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(180,180,180);
   --select:rgb(50, 100, 220);
+  --btn-bg: white;
+  --btn-front: #30A0A0;
 }`

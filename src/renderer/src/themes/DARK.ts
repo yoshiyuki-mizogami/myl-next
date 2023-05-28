@@ -21,4 +21,6 @@ export const DARK = `
   --notify-bg:rgb(255,255,255);
   --unselect:#252525;
   --select:#676767;
+  --btn-bg: #404040;
+  --btn-front: #A0A0A0;
 }`

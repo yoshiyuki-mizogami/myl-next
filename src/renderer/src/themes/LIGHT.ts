@@ -18,4 +18,6 @@ export const LIGHT = `*{
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(180,180,180);
   --select:rgb(50, 100, 220);
+  --btn-bg: #404040;
+  --btn-front: #A0A0A0;
 }`

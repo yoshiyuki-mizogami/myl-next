@@ -21,4 +21,6 @@ export const MONO = `*{
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(100,100,100);
   --select:rgb(250,180,180);
+  --btn-bg: #404040;
+  --btn-front: #A0A0A0;
 }`

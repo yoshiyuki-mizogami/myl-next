@@ -22,4 +22,6 @@ export const EVIL = `
   --notify-bg:rgb(255,255,255);
   --unselect:rgb(143, 143, 143);
   --select:#50318d;
+  --btn-bg: #404040;
+  --btn-front: #A0A0A0;
 }`

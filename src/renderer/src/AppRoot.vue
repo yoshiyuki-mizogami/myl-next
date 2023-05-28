@@ -164,9 +164,11 @@ select {
 }
 input[type='button'],
 button {
-  transition: background 0.3s ease;
+  transition: opacity 0.3s ease;
+  background-color: var(--btn-bg);
+  color: var(--btn-front);
   &:hover {
-    background-color: rgb(255, 223, 233);
+    opacity: 0.8;
   }
 }
 .whole {
