@@ -12,10 +12,9 @@ export default defineConfig({
   renderer: {
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src'),
-        path: 'path-browserify'
+        '@renderer': resolve('src/renderer/src')
       }
     },
     plugins: [vue()]
-  },
+  }
 })
