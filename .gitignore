@@ -6,4 +6,6 @@ node_modules
 .DS_Store
 
 /src/**/*.js
-/out
+/out/main
+/out/preload
+/out/renderer
