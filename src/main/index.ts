@@ -45,6 +45,9 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+  if (process.argv.at(-1) === 'debug') {
+    mainWindow.webContents.openDevTools()
+  }
   setIpcFunc(app, mainWindow)
 
   const dragIcon = join(__dirname, 'imgs', 'drag.png')
