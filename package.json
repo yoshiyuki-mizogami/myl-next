@@ -6,14 +6,15 @@
   "main": "./out/main/index.js",
   "scripts": {
     "start": "electron-vite  preview",
-    "build": "electron-vite build",
+    "prebuild": "electron-vite build",
+    "build": "npm run prebuild && npm run build:win && npm run build:mac",
     "dev": "electron-vite dev",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.vue --fix",
     "postinstall": "electron-builder install-app-deps",
     "build:win": "electron-builder --win --x64 --config",
-    "build:mac": "npm run build && electron-builder --mac --config",
-    "build:linux": "npm run build && electron-builder --linux --config"
+    "build:mac": "electron-builder --mac --config",
+    "build:linux": "electron-builder --linux --config"
   },
   "author": "yoshiyuki mizogami",
   "license": "MIT",
