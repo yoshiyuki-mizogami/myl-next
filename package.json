@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "myl-next",
-  "version": "1.1.0",
+  "version": "1.3.0",
   "description": "",
   "main": "./out/main/index.js",
   "scripts": {
@@ -62,7 +62,7 @@
       "app": "app",
       "output": "dist"
     },
-    "copyright": "Copyright 2018 Yoshiyuki Mizogami",
+    "copyright": "Copyright 2023 Yoshiyuki Mizogami",
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": [
