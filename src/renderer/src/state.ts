@@ -1,6 +1,5 @@
 import { nextTick, toRaw } from 'vue'
 import { defineStore } from 'pinia'
-import { Themes } from './consts'
 import Category from './models/category'
 import MylDB from './utils/scheme'
 import Config from './models/config'
@@ -8,7 +7,7 @@ import Config from './models/config'
 import Item from './models/item'
 import langSwitchFn, { LangUI } from './lib/lang-swicher'
 
-import switchTheme from './lib/switch-theme'
+import switchTheme, { ThemeName } from './lib/switch-theme'
 
 import globals from './globals'
 
@@ -51,7 +50,7 @@ export const useAppState = defineStore('mylState', {
     }
   },
   actions: {
-    adjust(){
+    adjust() {
       nextTick(() => {
         const { clientHeight, clientWidth } = appElement
         this.setSize(clientHeight, clientWidth)
@@ -60,7 +59,7 @@ export const useAppState = defineStore('mylState', {
     isUrl(s: string) {
       return /^https?:\/\//.test(s)
     },
-    setSetting(tf: boolean){
+    setSetting(tf: boolean) {
       this.showSetting = tf
     },
     switchSortMode(): void {

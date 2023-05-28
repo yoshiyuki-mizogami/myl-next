@@ -29,7 +29,7 @@
           </div>
           <div class="setting-val" style="text-align: center">
             <div
-              v-for="(t, k) in appState.themes"
+              v-for="(t, k) in Themes"
               :key="k"
               class="theme"
               :class="{ selected: appState.config.theme === k }"
@@ -62,6 +62,7 @@
 <script setup lang="ts">
 import { useAppState, Langs } from '@renderer/state'
 import OverlayLayer from './OverlayLayer.vue'
+import { Themes } from '@renderer/consts'
 const appState = useAppState()
 function close(): void {
   appState.setSetting(false)
