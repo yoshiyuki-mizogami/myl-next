@@ -8,7 +8,7 @@ import Config from './models/config'
 import Item from './models/item'
 import langSwitchFn, { LangUI } from './lib/lang-swicher'
 
-import switchTheme, { ThemeName } from './lib/switch-theme'
+import switchTheme from './lib/switch-theme'
 
 import globals from './globals'
 
@@ -36,7 +36,6 @@ export const useAppState = defineStore('mylState', {
   state: () => {
     return {
       version: '',
-      themes: Themes,
       categories: [] as Category[],
       items: [] as Item[],
       showNewCategoryDialog: false,
