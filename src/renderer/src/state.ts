@@ -120,7 +120,7 @@ export const useAppState = defineStore('mylState', {
       }
     },
     async saveConfig(): Promise<void> {
-      return db.saveConfig(this.configRaw!)
+      return db.saveConfig(this.config!)
     },
     async langSwitch(lang: Langs): Promise<void> {
       this.config.lang = lang
