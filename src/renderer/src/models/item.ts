@@ -5,8 +5,7 @@ import {
   dirnamePath,
   execProcess,
   shellOpenExternalProxy,
-  shellOpenProxy,
-  spawnProcess
+  shellOpenProxy
 } from '@renderer/lib/native_fnc_proxy'
 export default class Item implements Sortable {
   id!: number
@@ -25,7 +24,11 @@ export default class Item implements Sortable {
   }
   call(): void {
     if (this.by) {
-      spawnProcess(this.by, this.path)
+      let cmd = `"${[this.by, this.path].join('" "')}"`
+      if (this.cmd) {
+        cmd += ` ${this.cmd}`
+      }
+      execProcess(cmd)
       return
     }
     if (this.cmd) {

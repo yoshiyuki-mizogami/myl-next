@@ -58,12 +58,6 @@ export async function statFile(filepath: string): Promise<Stats & { isDir: boole
   return ipcHandleCommunicate('stat-file', filepath)
 }
 
-export function spawnProcess(program: string, arg: string): void {
-  ipcHandleCommunicate('spawn-process', {
-    program,
-    arg
-  })
-}
 
 export function shellOpenExternalProxy(path: string): void {
   ipcSend('open-shell-external', path)

@@ -1,3 +1,4 @@
+import { exec, spawn } from 'child_process'
 import { LangUI } from './../renderer/src/lib/lang-swicher'
 import {
   Menu,
@@ -177,4 +178,7 @@ export function setIpcFunc(app: App, mainWindow: BrowserWindow): void {
 
   ipcMain.on('write-clipboard', (_ev, txt: string) => clipboard.writeText(txt))
 
+  ipcMain.handle('exec-process', (_ev, cmd: string): void => {
+    exec(cmd)
+  })
 }

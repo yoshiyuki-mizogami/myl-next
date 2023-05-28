@@ -15,8 +15,6 @@
 <script setup lang="ts">
 import { useDialog } from '@renderer/lib/dialog-store'
 const dialog = useDialog()
-
-
 </script>
 <style lang="scss">
 .dialog {
@@ -33,6 +31,9 @@ const dialog = useDialog()
   .dialog-console {
     > input {
       padding: 2px 10px;
+      &:first-child {
+        margin-right: 1rem;
+      }
     }
   }
 }
